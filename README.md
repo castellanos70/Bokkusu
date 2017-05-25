@@ -1,6 +1,19 @@
 # ArchadeMachine
+Albuquerque Game Developers Guild Arcade Cabinet: https://agdg.co/arcade-submission/
 
-Ben, Robin and I are making a game for the AGDG Meow Wolf cabinet.
+System Requirements
+  Run on the Windows 7 or higher operating system.
+  Must be able to run as a .exe 
+  Be compatible with the Arcade Controller 
+  No game crashing bugs
+  Must not have any malicious software/code that can corrupt the system.
+  Must run on a 16:9 screen ratio (target resolutions can include 1280×720, 1600×900, 1920×1080, 3640×2160)
+  
+  
+Controller Layout
+   The arcade machine will have **2 player controller** layouts each with a joystick and 8 buttons for your game. 
+
+  
 
 The basic idea is a real-time retro puzzle game where enemies shoot and move at the player in continuous space. The player has only one life. The player moves by teleporting in discrete space, perhaps, we are thinking, as the chess knight (one of 8 spaces).
 
