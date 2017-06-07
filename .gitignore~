@@ -11,3 +11,9 @@ sysinfo.txt
 /Assets/AssetStoreTools*
 *.apk
 *.unitypackage
+
+
+# =================#
+# Vim generated    #
+# =================#
+*.~
