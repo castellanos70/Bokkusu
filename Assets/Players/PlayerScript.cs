@@ -6,8 +6,9 @@ public class PlayerScript : MonoBehaviour
 {
     public GameObject boardBlock;
     public Material[] wallMat = new Material[10];
+    public TextMesh levelMovesTextMesh;
 
-
+    private int movesRemaining;
     private bool moving = false;
     private float speedX = 0;
     private float speedZ = 0;
@@ -20,9 +21,10 @@ public class PlayerScript : MonoBehaviour
     
     void Start ()
     {
-	   //TODO: (Ben) populate grid from ASCII file	
-       for (int x=0; x< boardSize; x++)
-       {
+        //TODO: (Ben) populate grid from ASCII file	
+        movesRemaining = 8;
+        for (int x=0; x< boardSize; x++)
+        {
             for (int z = 0; z < boardSize; z++)
             {
                 grid[x, z] = Element.FLOOR;
@@ -33,6 +35,8 @@ public class PlayerScript : MonoBehaviour
             }
         }
 
+
+        levelMovesTextMesh.text = movesRemaining.ToString();
 
 
         // Spawn board blocks
@@ -106,29 +110,39 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-            if (Input.GetKey("up"))
+            if (movesRemaining > 0)
             {
-                speedZ = 10;
-                speedX = 0;
-                moving = true;
-            }
-            else if (Input.GetKey("down"))
-            {
-                speedZ = -10;
-                speedX = 0;
-                moving = true;
-            }
-            else if (Input.GetKey("right"))
-            {
-                speedZ = 0;
-                speedX = 10;
-                moving = true;
-            }
-            else if (Input.GetKey("left"))
-            {
-                speedZ = 0;
-                speedX = -10;
-                moving = true;
+                if (Input.GetKey("up"))
+                {
+                    speedZ = 10;
+                    speedX = 0;
+                    moving = true;
+                }
+                else if (Input.GetKey("down"))
+                {
+                    speedZ = -10;
+                    speedX = 0;
+                    moving = true;
+                }
+                else if (Input.GetKey("right"))
+                {
+                    speedZ = 0;
+                    speedX = 10;
+                    moving = true;
+                }
+                else if (Input.GetKey("left"))
+                {
+                    speedZ = 0;
+                    speedX = -10;
+                    moving = true;
+                }
+
+
+                if (moving)
+                {
+                    movesRemaining--;
+                    levelMovesTextMesh.text = movesRemaining.ToString();
+                }
             }
         }
 
