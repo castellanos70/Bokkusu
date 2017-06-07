@@ -14,7 +14,7 @@ Albuquerque Game Developers Guild Arcade Cabinet: https://agdg.co/arcade-submiss
    The arcade machine will have **2 player controller** layouts each with a joystick and 8 buttons for your game. 
 
   
-<br><b>Real-time, two-player, cooperative retro puzzle game.<br>
+<br>Real-time, two-player, cooperative retro puzzle game.<br>
 <b>GOAL:</b> Get one player token to move into the goal tile in less then the level's move limit.<br>
 Earn extra points for each turn under the turnlimit for the level.<br>
 At the same time, each player uses joystick to move his or her token up, down, left or right. <br>
