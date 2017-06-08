@@ -4,63 +4,50 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
-    public GameObject boardBlock;
-    public Material[] wallMat = new Material[10];
+    public int playerNumber;
     public TextMesh levelMovesTextMesh;
 
     private int movesRemaining;
     private bool moving = false;
     private float speedX = 0;
     private float speedZ = 0;
-    private const int boardSize = 25;
+    private int boardSize;
 
-    private enum Element { FLOOR, WALL, PLAYER1, PLAYER2, PORTAL1, PORTAL2, PORTAL3 };
-    private Element[,] grid = new Element[boardSize, boardSize];
+    private CameraScript.Element[,] grid;
+
+    private KeyCode[] keycode = new KeyCode[4];
 
 
-    
+    public void setMaxLevelMoves(int moveCount)
+    {
+        movesRemaining = moveCount;
+    }
+
+    public void setBoard(CameraScript.Element[,] myGrid, int size)
+    {
+        grid = myGrid;
+        boardSize = size;
+    }
+
+
+
     void Start ()
     {
-        //TODO: (Ben) populate grid from ASCII file	
-        movesRemaining = 8;
-        for (int x=0; x< boardSize; x++)
-        {
-            for (int z = 0; z < boardSize; z++)
-            {
-                grid[x, z] = Element.FLOOR;
-                if (x == 0 || z == 0) grid[x, z] = Element.WALL;
-                else if (x == boardSize-1 || z == boardSize-1) grid[x, z] = Element.WALL;
-                else if (x==12 && z==12) grid[x, z] = Element.PLAYER1;
-                else if (Random.value < 0.04f) grid[x, z] = Element.WALL;
-            }
-        }
-
-
         levelMovesTextMesh.text = movesRemaining.ToString();
 
-
-        // Spawn board blocks
-        for (int x = 0; x < boardSize; x++)
+        if (playerNumber == 1)
         {
-            for (int z = 0; z < boardSize; z++)
-            {
-
-                GameObject block = Instantiate(boardBlock, new Vector3(x, 0, z), Quaternion.identity);
-                if (grid[x, z] == Element.WALL)
-                {
-
-                    Renderer renderer = block.GetComponent<Renderer>();
-                    renderer.material = wallMat[Random.Range(0, wallMat.Length)];
-                    block.transform.Translate(Vector3.up);
-                }
-                else if (grid[x, z] == Element.PLAYER1)
-                {
-
-                    transform.Translate(new Vector3(x,1,z));
-                    grid[x, z] = Element.FLOOR;
-                }
-
-            }
+            keycode[0] = KeyCode.W;
+            keycode[1] = KeyCode.D;
+            keycode[2] = KeyCode.S;
+            keycode[3] = KeyCode.A;
+        }
+        else
+        {
+            keycode[0] = KeyCode.UpArrow;
+            keycode[1] = KeyCode.RightArrow;
+            keycode[2] = KeyCode.DownArrow;
+            keycode[3] = KeyCode.LeftArrow;
         }
     }
 	
@@ -82,19 +69,19 @@ public class PlayerScript : MonoBehaviour
             bool hit = false;
             if (speedX > 0)
             {
-                if (grid[x2, z0] != Element.FLOOR) hit = true;
+                if (grid[x2, z0] != CameraScript.Element.FLOOR) hit = true;
             }
             else if (speedX < 0)
             {
-                if (grid[x1, z0] != Element.FLOOR) hit = true;
+                if (grid[x1, z0] != CameraScript.Element.FLOOR) hit = true;
             }
             else if (speedZ > 0)
             {
-                if (grid[x0, z2] != Element.FLOOR) hit = true;
+                if (grid[x0, z2] != CameraScript.Element.FLOOR) hit = true;
             }
             else if (speedZ < 0)
             {
-                if (grid[x0, z1] != Element.FLOOR) hit = true;
+                if (grid[x0, z1] != CameraScript.Element.FLOOR) hit = true;
             }
 
             if (hit)
@@ -112,25 +99,25 @@ public class PlayerScript : MonoBehaviour
         {
             if (movesRemaining > 0)
             {
-                if (Input.GetKey("up"))
+                if (Input.GetKey(keycode[0]))
                 {
                     speedZ = 10;
                     speedX = 0;
                     moving = true;
                 }
-                else if (Input.GetKey("down"))
+                else if (Input.GetKey(keycode[2]))
                 {
                     speedZ = -10;
                     speedX = 0;
                     moving = true;
                 }
-                else if (Input.GetKey("right"))
+                else if (Input.GetKey(keycode[1]))
                 {
                     speedZ = 0;
                     speedX = 10;
                     moving = true;
                 }
-                else if (Input.GetKey("left"))
+                else if (Input.GetKey(keycode[3]))
                 {
                     speedZ = 0;
                     speedX = -10;
