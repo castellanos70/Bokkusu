@@ -11,7 +11,7 @@ public class PlayerScript : MonoBehaviour
     private bool moving = false;
     private float speedX = 0;
     private float speedZ = 0;
-    private int boardSize;
+    private int boardWidth, boardHeight;
 
     private CameraScript.Element[,] grid;
 
@@ -23,10 +23,11 @@ public class PlayerScript : MonoBehaviour
         movesRemaining = moveCount;
     }
 
-    public void setBoard(CameraScript.Element[,] myGrid, int size)
+    public void setBoard(CameraScript.Element[,] myGrid, int width, int height)
     {
         grid = myGrid;
-        boardSize = size;
+        boardWidth = width;
+        boardHeight = height;
     }
 
 
