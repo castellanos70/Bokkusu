@@ -14,6 +14,7 @@ public class PlayerScript : MonoBehaviour
     private int boardWidth, boardHeight;
 
     private CameraScript.Element[,] grid;
+    private CameraScript.Element myPlayer;
 
     private KeyCode[] keycode = new KeyCode[4];
 
@@ -23,11 +24,11 @@ public class PlayerScript : MonoBehaviour
         movesRemaining = moveCount;
     }
 
-    public void setBoard(CameraScript.Element[,] myGrid, int width, int height)
+    public void setBoard(CameraScript.Element[,] myGrid)
     {
         grid = myGrid;
-        boardWidth = width;
-        boardHeight = height;
+        boardWidth = grid.GetLength(0);
+        boardHeight = grid.GetLength(1);
     }
 
 
@@ -42,6 +43,7 @@ public class PlayerScript : MonoBehaviour
             keycode[1] = KeyCode.D;
             keycode[2] = KeyCode.S;
             keycode[3] = KeyCode.A;
+            myPlayer = CameraScript.Element.PLAYER1;
         }
         else
         {
@@ -49,6 +51,7 @@ public class PlayerScript : MonoBehaviour
             keycode[1] = KeyCode.RightArrow;
             keycode[2] = KeyCode.DownArrow;
             keycode[3] = KeyCode.LeftArrow;
+            myPlayer = CameraScript.Element.PLAYER2;
         }
     }
 	
@@ -59,6 +62,8 @@ public class PlayerScript : MonoBehaviour
         {
             int x0 = (int)transform.position.x;
             int z0 = (int)transform.position.z;
+            grid[x0,z0] = CameraScript.Element.FLOOR;
+
             float x = transform.position.x + speedX * Time.deltaTime;
             float z = transform.position.z + speedZ * Time.deltaTime;
 
@@ -91,10 +96,11 @@ public class PlayerScript : MonoBehaviour
                 moving = false;
             }
 
-
             transform.position = new Vector3(x, 1, z);
 
-
+            x0 = (int)transform.position.x;
+            z0 = (int)transform.position.z;
+            grid[x0, z0] = CameraScript.Element.PLAYER2;
         }
         else
         {
@@ -133,6 +139,5 @@ public class PlayerScript : MonoBehaviour
                 }
             }
         }
-
     }
 }

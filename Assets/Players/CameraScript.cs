@@ -21,8 +21,8 @@ public class CameraScript : MonoBehaviour
         playerScript1 = player1.GetComponent<PlayerScript>();
         playerScript2 = player2.GetComponent<PlayerScript>();
 
-        playerScript1.setBoard(grid, boardWidth, boardHeight);
-        playerScript2.setBoard(grid, boardWidth, boardHeight);
+        playerScript1.setBoard(grid);
+        playerScript2.setBoard(grid);
 
 
         //TODO: (Ben) populate grid from ASCII file	
@@ -62,7 +62,7 @@ public class CameraScript : MonoBehaviour
                 else if (grid[x, z] == Element.PLAYER2)
                 {
                     player2.transform.Translate(new Vector3(x, 1, z));
-                    grid[x, z] = Element.FLOOR;
+                    //grid[x, z] = Element.FLOOR;
                 }
             }
         }
