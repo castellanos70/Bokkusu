@@ -58,49 +58,26 @@ public class PlayerScript : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
+        int x0 = (int)transform.position.x;
+        int z0 = (int)transform.position.z;
+
         if (moving)
         {
-            int x0 = (int)transform.position.x;
-            int z0 = (int)transform.position.z;
-            grid[x0,z0] = CameraScript.Element.FLOOR;
-
             float x = transform.position.x + speedX * Time.deltaTime;
             float z = transform.position.z + speedZ * Time.deltaTime;
-
-            int x1 = (int)(x - 0.5f);
-            int z1 = (int)(z - 0.5f);
-            int x2 = (int)(x + 0.5f);
-            int z2 = (int)(z + 0.5f);
-
-            bool hit = false;
-            if (speedX > 0)
-            {
-                if (grid[x2, z0] != CameraScript.Element.FLOOR) hit = true;
-            }
-            else if (speedX < 0)
-            {
-                if (grid[x1, z0] != CameraScript.Element.FLOOR) hit = true;
-            }
-            else if (speedZ > 0)
-            {
-                if (grid[x0, z2] != CameraScript.Element.FLOOR) hit = true;
-            }
-            else if (speedZ < 0)
-            {
-                if (grid[x0, z1] != CameraScript.Element.FLOOR) hit = true;
-            }
+            bool hit = checkMove(x0, z0, x, z);
 
             if (hit)
             {
                 x = x0; z = z0;
                 moving = false;
             }
-
+            else
+            {
+                grid[x0, z0] = CameraScript.Element.FLOOR;
+                grid[(int)x, (int)z] = myPlayer;
+            }
             transform.position = new Vector3(x, 1, z);
-
-            x0 = (int)transform.position.x;
-            z0 = (int)transform.position.z;
-            grid[x0, z0] = CameraScript.Element.PLAYER2;
         }
         else
         {
@@ -134,10 +111,42 @@ public class PlayerScript : MonoBehaviour
 
                 if (moving)
                 {
-                    movesRemaining--;
-                    levelMovesTextMesh.text = movesRemaining.ToString();
+                    float x = transform.position.x + speedX * Time.deltaTime;
+                    float z = transform.position.z + speedZ * Time.deltaTime;
+                    bool hit = checkMove(x0, z0, x, z);
+                    //Debug.Log(Time.time + ": hit=" + hit);
+
+                    if (hit)
+                    {
+                        speedX = 0;
+                        speedZ = 0;
+                        moving = false;
+                    }
+                    else
+                    {
+                        movesRemaining--;
+                        levelMovesTextMesh.text = movesRemaining.ToString();
+                    }
                 }
             }
         }
+    }
+
+    private bool checkMove(int x0, int z0, float x, float z)
+    {
+        int x1 = x0;
+        int z1 = z0;
+
+        if (speedX > 0) x1 = (int)(x + 0.55f);
+        else if (speedX < 0) x1 = (int)(x - 0.55f);
+        else if (speedZ > 0) z1 = (int)(z + 0.55f);
+        else if (speedZ < 0) z1 = (int)(z - 0.55f);
+
+        //Debug.Log(Time.time + ": [" + x0 + "," + z0 + "]===> "+ " grid[" +x1+","+z1+"]="+grid[x1,z1]);
+
+        if (grid[x1, z1] == CameraScript.Element.FLOOR) return false;
+        if (grid[x1, z1] == CameraScript.Element.GOAL) return false;
+        if (grid[x1, z1] == myPlayer) return false;
+        return true;
     }
 }
