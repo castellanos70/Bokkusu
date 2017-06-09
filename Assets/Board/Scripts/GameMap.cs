@@ -32,14 +32,13 @@ public class GameMap{
 		}
 
 		grid = new CameraScript.Element[width, height];
-		//Debug.Log ("width: " + width + ", height: " + height); 
+		Debug.Log ("width: " + width + ", height: " + height); 
 
 		for (int i = 1; i < lines.Length; i++){
 			string row = lines[i];
-            Debug.Log(row+", idx="+ ((lines.Length - 1) - i));
+            //Debug.Log(row+", idx="+ ((lines.Length - 1) - i));
             for (int j = 0; j < row.Length; j++){
-				int val = System.Array.IndexOf (MapLoader.tempMapping, row[j]);
-                grid [j, (lines.Length-2)-i] = CameraScript.getElement(val);
+                grid [j, (lines.Length-2)-i] = CameraScript.getElement(row[j]);
 			}
 		}
 	}

@@ -2,13 +2,7 @@
 
 public static class MapLoader : object{
 	                                  
-	public static int[] tempMapping = {
-		'.', //floor
-		'#', //wall
-		'=', //goal
-		'1', //player1
-		'2', //player2
-	};
+
 
 	public static GameMap[] loadAllMaps(){
 		
