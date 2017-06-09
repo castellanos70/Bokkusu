@@ -5,16 +5,16 @@ using UnityEngine;
 public class GameMap{
 	public int width, height;
 	public int moves;
-	public int[,] grid;
+	public CameraScript.Element[,] grid;
 
 	public GameMap(int width, int height, int moves){
 		this.width = width;
 		this.height = height;
 		this.moves = moves;
-		grid = new int[width,height];
+		grid = new CameraScript.Element[width,height];
 	}
 
-	public GameMap(int[,] grid){
+	public GameMap(CameraScript.Element[,] grid){
 		width = grid.GetLength (0);
 		height = grid.GetLength (1);
 		this.grid = grid;
@@ -31,7 +31,7 @@ public class GameMap{
 			if (lines[i].Length > width) width = lines[i].Length;
 		}
 
-		grid = new int[width, height];
+		grid = new CameraScript.Element[width, height];
 		Debug.Log ("width: " + width + ", height: " + height); 
 
 		for (int i = 1; i < lines.Length; i++){
@@ -39,7 +39,7 @@ public class GameMap{
 			Debug.Log (line);
 			for (int j = 0; j < line.Length; j++){
 				int val = System.Array.IndexOf (MapLoader.tempMapping, line [j]);
-				grid [j, i-1] = val;
+				grid [j, i-1] = CameraScript.getElement(val);
 			}
 		}
 	}

@@ -13,8 +13,8 @@ public class PlayerScript : MonoBehaviour
     private float speedZ = 0;
     private int boardWidth, boardHeight;
 
-    private int[,] grid;
-    private int myPlayer;
+    private CameraScript.Element[,] grid;
+    private CameraScript.Element myPlayer;
 
     private KeyCode[] keycode = new KeyCode[4];
 
@@ -24,7 +24,7 @@ public class PlayerScript : MonoBehaviour
         movesRemaining = moveCount;
     }
 
-    public void setBoard(int[,] myGrid)
+    public void setBoard(CameraScript.Element[,] myGrid)
     {
         grid = myGrid;
         boardWidth = grid.GetLength(0);
@@ -43,7 +43,7 @@ public class PlayerScript : MonoBehaviour
             keycode[1] = KeyCode.D;
             keycode[2] = KeyCode.S;
             keycode[3] = KeyCode.A;
-			myPlayer = (int)CameraScript.Element.PLAYER1;
+			myPlayer = CameraScript.Element.PLAYER1;
         }
         else
         {
@@ -51,7 +51,7 @@ public class PlayerScript : MonoBehaviour
             keycode[1] = KeyCode.RightArrow;
             keycode[2] = KeyCode.DownArrow;
             keycode[3] = KeyCode.LeftArrow;
-			myPlayer = (int)CameraScript.Element.PLAYER2;
+			myPlayer = CameraScript.Element.PLAYER2;
         }
     }
 		
@@ -75,7 +75,7 @@ public class PlayerScript : MonoBehaviour
             }
             else
             {
-				grid[x0, z0] = (int)CameraScript.Element.FLOOR;
+				grid[x0, z0] = CameraScript.Element.FLOOR;
                 grid[(int)x, (int)z] = myPlayer;
             }
             transform.position = new Vector3(x, 1, z);
@@ -151,8 +151,8 @@ public class PlayerScript : MonoBehaviour
 
         //Debug.Log(Time.time + ": [" + x0 + "," + z0 + "]===> "+ " grid[" +x1+","+z1+"]="+grid[x1,z1]);
 
-		if (grid[x1, z1] == (int)CameraScript.Element.FLOOR) return false;
-		if (grid[x1, z1] == (int)CameraScript.Element.GOAL) return false;
+		if (grid[x1, z1] == CameraScript.Element.FLOOR) return false;
+		if (grid[x1, z1] == CameraScript.Element.GOAL) return false;
         if (grid[x1, z1] == myPlayer) return false;
         return true;
     }
