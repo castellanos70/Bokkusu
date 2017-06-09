@@ -4,11 +4,14 @@ public class PlayerScript : MonoBehaviour
 {
     public int playerNumber;
     public TextMesh levelMovesTextMesh;
+    public int speedMax;
+    public int speedMin;
+    public int acceleration;
 
     private int movesRemaining;
     private bool moving = false;
-    private float speedX = 0;
-    private float speedZ = 0;
+    public float speedX = 0;
+    public float speedZ = 0;
     private int boardWidth, boardHeight;
 
     private CameraScript.Element[,] grid;
@@ -73,6 +76,35 @@ public class PlayerScript : MonoBehaviour
                 x = x0; z = z0;
                 moving = false;
             }
+
+            else if (Input.GetKey(keycode[0]) && speedX == 0)
+            {
+                speedZ += acceleration * Time.deltaTime;
+                if (speedZ > speedMax) speedZ = speedMax;
+                else if (speedZ < -speedMax) speedZ = -speedMax;
+            }
+
+            else if (Input.GetKey(keycode[2]) && speedX == 0)
+            {
+                speedZ -= acceleration * Time.deltaTime;
+                if (speedZ > speedMax) speedZ = speedMax;
+                else if (speedZ < -speedMax) speedZ = -speedMax;
+            }
+
+            else if (Input.GetKey(keycode[1]) && speedZ == 0)
+            {
+                speedX += acceleration * Time.deltaTime;
+                if (speedX > speedMax) speedX = speedMax;
+                else if (speedX < -speedMax) speedX = -speedMax;
+            }
+
+            else if (Input.GetKey(keycode[3]) && speedZ == 0)
+            {
+                speedX -= acceleration * Time.deltaTime;
+                if (speedX > speedMax) speedX = speedMax;
+                else if (speedX < -speedMax) speedX = -speedMax;
+            }
+
             else
             {
 				grid[x0, z0] = CameraScript.Element.FLOOR;
@@ -94,14 +126,14 @@ public class PlayerScript : MonoBehaviour
                 int z1 = z0;
                 if (Input.GetKey(keycode[0]))
                 {
-                    speedZ = 10;
+                    speedZ = acceleration * Time.deltaTime;
                     speedX = 0;
                     z1 += 1;
                     moving = true;
                 }
                 else if (Input.GetKey(keycode[2]))
                 {
-                    speedZ = -10;
+                    speedZ = -acceleration * Time.deltaTime;
                     speedX = 0;
                     z1 -= 1;
                     moving = true;
@@ -109,14 +141,14 @@ public class PlayerScript : MonoBehaviour
                 else if (Input.GetKey(keycode[1]))
                 {
                     speedZ = 0;
-                    speedX = 10;
+                    speedX = acceleration * Time.deltaTime;
                     x1 += 1;
                     moving = true;
                 }
                 else if (Input.GetKey(keycode[3]))
                 {
                     speedZ = 0;
-                    speedX = -10;
+                    speedX = -acceleration * Time.deltaTime;
                     x1 -= 1;
                     moving = true;
                 }
