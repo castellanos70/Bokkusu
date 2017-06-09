@@ -10,8 +10,8 @@ public class PlayerScript : MonoBehaviour
 
     private int movesRemaining;
     private bool moving = false;
-    public float speedX = 0;
-    public float speedZ = 0;
+    private float speedX = 0;
+    private float speedZ = 0;
     private int boardWidth, boardHeight;
 
     private CameraScript.Element[,] grid;
@@ -74,6 +74,8 @@ public class PlayerScript : MonoBehaviour
             if (hit)
             {
                 x = x0; z = z0;
+                if (speedX > 0) { x = x0 + 1; }
+                if (speedZ > 0) { z = z0 + 1; }
                 moving = false;
             }
 
@@ -82,6 +84,8 @@ public class PlayerScript : MonoBehaviour
                 speedZ += acceleration * Time.deltaTime;
                 if (speedZ > speedMax) speedZ = speedMax;
                 else if (speedZ < -speedMax) speedZ = -speedMax;
+                else if (speedZ < speedMin && speedZ > 0) speedZ = speedMin;
+                else if (speedZ > -speedMin && speedZ < 0) speedZ = -speedMin;
             }
 
             else if (Input.GetKey(keycode[2]) && speedX == 0)
@@ -89,6 +93,8 @@ public class PlayerScript : MonoBehaviour
                 speedZ -= acceleration * Time.deltaTime;
                 if (speedZ > speedMax) speedZ = speedMax;
                 else if (speedZ < -speedMax) speedZ = -speedMax;
+                else if (speedZ < speedMin && speedZ > 0) speedZ = speedMin;
+                else if (speedZ > -speedMin && speedZ < 0) speedZ = -speedMin;
             }
 
             else if (Input.GetKey(keycode[1]) && speedZ == 0)
@@ -96,6 +102,8 @@ public class PlayerScript : MonoBehaviour
                 speedX += acceleration * Time.deltaTime;
                 if (speedX > speedMax) speedX = speedMax;
                 else if (speedX < -speedMax) speedX = -speedMax;
+                else if (speedX < speedMin && speedX > 0) speedX = speedMin;
+                else if (speedX > -speedMin && speedX < 0) speedX = -speedMin;
             }
 
             else if (Input.GetKey(keycode[3]) && speedZ == 0)
@@ -103,6 +111,8 @@ public class PlayerScript : MonoBehaviour
                 speedX -= acceleration * Time.deltaTime;
                 if (speedX > speedMax) speedX = speedMax;
                 else if (speedX < -speedMax) speedX = -speedMax;
+                else if (speedX < speedMin && speedX > 0) speedX = speedMin;
+                else if (speedX > -speedMin && speedX < 0) speedX = -speedMin;
             }
 
             else
@@ -179,10 +189,10 @@ public class PlayerScript : MonoBehaviour
         int x1 = x0;
         int z1 = z0;
 
-        if (speedX > 0) x1 = (int)(x + 0.51f + speedX * Time.deltaTime);
-        else if (speedX < 0) x1 = (int)(x - 0.51f);
-        else if (speedZ > 0) z1 = (int)(z + 0.51f + speedZ * Time.deltaTime);
-        else if (speedZ < 0) z1 = (int)(z - 0.51f);
+        if (speedX > 0) x1 = (int)(x + 1);
+        else if (speedX < 0) x1 = (int)(x);
+        else if (speedZ > 0) z1 = (int)(z + 1);
+        else if (speedZ < 0) z1 = (int)(z);
 
         //Debug.Log(Time.time + ": [" + x0 + "," + z0 + "]===> "+ " grid[" +x1+","+z1+"]="+grid[x1,z1]);
 
