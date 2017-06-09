@@ -6,8 +6,8 @@ public class CameraScript : MonoBehaviour
 {
     public GameObject boardBlock;
     public GameObject player1, player2;
-	public Material goalMaterial;
     public Material[] wallMat = new Material[10];
+    public Material goalMat;
 
     private const int boardWidth = 24;
     private const int boardHeight = 13;
@@ -16,6 +16,7 @@ public class CameraScript : MonoBehaviour
     private Element[,] grid = new Element[boardWidth, boardHeight];
 
     private PlayerScript playerScript1, playerScript2;
+    private GameObject goalBlock;
 
     void Awake()
     {
@@ -37,6 +38,7 @@ public class CameraScript : MonoBehaviour
                 else if (x == boardWidth - 1 || z == boardHeight - 1) grid[x, z] = Element.WALL;
                 else if (x == 10 && z == 7) grid[x, z] = Element.PLAYER1;
                 else if (x == 14 && z == 7) grid[x, z] = Element.PLAYER2;
+                else if (x == 12 && z == 10) grid[x, z] = Element.GOAL;
                 else if (Random.value < 0.04f) grid[x, z] = Element.WALL;
             }
         }
@@ -64,20 +66,21 @@ public class CameraScript : MonoBehaviour
                     renderer.material = wallMat[Random.Range(0, wallMat.Length)];
                     block.transform.Translate(Vector3.up);
                 }
-				if (val == (int)Element.GOAL) {
-					Renderer renderer = block.GetComponent<Renderer>();
-					renderer.material = goalMaterial;
-					gameMap.grid[x, z] = (int)Element.FLOOR;
-				}
 				else if (val == (int)Element.PLAYER1)
                 {
                     player1.transform.Translate(new Vector3(x, 1, z));
-					gameMap.grid[x, z] = (int)Element.FLOOR;
                 }
 				else if (val == (int)Element.PLAYER2)
                 {
                     player2.transform.Translate(new Vector3(x, 1, z));
-					gameMap.grid[x, z] = (int)Element.FLOOR;
+                }
+				else if (val == (int)Element.GOAL)
+                {
+                    Renderer renderer = block.GetComponent<Renderer>();
+                    renderer.material = goalMat;
+                    block.transform.Translate(new Vector3(0, -1, 0));
+                    block.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                    goalBlock = block;
                 }
             }
         }
@@ -86,6 +89,6 @@ public class CameraScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        goalBlock.transform.Rotate(Vector3.up * Time.deltaTime*20);
     }
 }
