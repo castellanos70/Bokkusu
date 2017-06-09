@@ -12,6 +12,10 @@ public class CameraScript : MonoBehaviour
     private const int boardWidth = 24;
     private const int boardHeight = 13;
 
+
+    public enum GameState { INTRO, PLAYING, LOST, WON };
+    private GameState gameState;
+
     public enum Element { FLOOR, WALL, GOAL, PLAYER1, PLAYER2, PORTAL1, PORTAL2, PORTAL3 };
     private static Element[] elementValues;
     private GameMap[] gameMaps;
@@ -36,8 +40,8 @@ public class CameraScript : MonoBehaviour
         playerScript1.setMaxLevelMoves(gameMap.moves);
 		playerScript2.setMaxLevelMoves(gameMap.moves);
 
-		playerScript1.setBoard(grid);
-		playerScript2.setBoard(grid);
+		playerScript1.setBoard(this, grid);
+		playerScript2.setBoard(this, grid);
 
         // Spawn board blocks
 		for (int x = 0; x < gameMap.width; x++)
@@ -63,18 +67,30 @@ public class CameraScript : MonoBehaviour
                 {
                     Renderer renderer = block.GetComponent<Renderer>();
                     renderer.material = goalMat;
-                    block.transform.Translate(new Vector3(0, -1, 0));
-                    block.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                    block.transform.Translate(new Vector3(0, 0.01f, 0));
                     goalBlock = block;
                 }
             }
         }
+
+        gameState = GameState.PLAYING;
     }
 
     // Update is called once per frame
     void Update()
     {
         goalBlock.transform.Rotate(Vector3.up * Time.deltaTime*20);
+    }
+
+
+    public void setGameState(GameState state)
+    {
+        gameState = state;
+        if (gameState == GameState.WON)
+        {
+            Time.timeScale = 0;
+        }
+
     }
 
     public static Element getElement(int idx)
