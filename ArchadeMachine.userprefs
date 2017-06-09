@@ -1,0 +1,16 @@
+﻿<Properties StartupItem="Assembly-CSharp.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\_Scripts\MapLoader.cs">
+    <Files>
+      <File FileName="Assets\Players\PlayerScript.cs" Line="87" Column="5" />
+      <File FileName="Assets\_Scripts\MapLoader.cs" Line="21" Column="38" />
+      <File FileName="Assets\Players\CameraScript.cs" Line="56" Column="30" />
+      <File FileName="Assets\_Scripts\GameMap.cs" Line="48" Column="42" />
+      <File FileName="Assets\Resources\Maps\testMap.txt" Line="12" Column="15" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
