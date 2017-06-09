@@ -6,6 +6,7 @@ public class CameraScript : MonoBehaviour
 {
     public GameObject boardBlock;
     public GameObject player1, player2;
+	public Material goalMaterial;
     public Material[] wallMat = new Material[10];
 
     private const int boardWidth = 24;
@@ -21,11 +22,10 @@ public class CameraScript : MonoBehaviour
         playerScript1 = player1.GetComponent<PlayerScript>();
         playerScript2 = player2.GetComponent<PlayerScript>();
 
+		/*
         playerScript1.setBoard(grid);
         playerScript2.setBoard(grid);
 
-
-        //TODO: (Ben) populate grid from ASCII file	
         playerScript1.setMaxLevelMoves(12);
         playerScript2.setMaxLevelMoves(12);
         for (int x = 0; x < boardWidth; x++)
@@ -40,29 +40,44 @@ public class CameraScript : MonoBehaviour
                 else if (Random.value < 0.04f) grid[x, z] = Element.WALL;
             }
         }
+        */
 
+		GameMap[] gameMaps = MapLoader.loadAllMaps ();
+		GameMap gameMap = gameMaps [Random.Range (0, gameMaps.Length)];
+
+		playerScript1.setMaxLevelMoves(gameMap.moves);
+		playerScript2.setMaxLevelMoves(gameMap.moves);
+
+		playerScript1.setBoard(gameMap.grid);
+		playerScript2.setBoard(gameMap.grid);
 
         // Spawn board blocks
-        for (int x = 0; x < boardWidth; x++)
+		for (int x = 0; x < gameMap.width; x++)
         {
-            for (int z = 0; z < boardHeight; z++)
+			for (int z = 0; z < gameMap.height; z++)
             {
+				int val = gameMap.grid [x, z];
                 GameObject block = Instantiate(boardBlock, new Vector3(x, 0, z), Quaternion.identity);
-                if (grid[x, z] == Element.WALL)
+				if (val == (int)Element.WALL)
                 {
                     Renderer renderer = block.GetComponent<Renderer>();
                     renderer.material = wallMat[Random.Range(0, wallMat.Length)];
                     block.transform.Translate(Vector3.up);
                 }
-                else if (grid[x, z] == Element.PLAYER1)
+				if (val == (int)Element.GOAL) {
+					Renderer renderer = block.GetComponent<Renderer>();
+					renderer.material = goalMaterial;
+					gameMap.grid[x, z] = (int)Element.FLOOR;
+				}
+				else if (val == (int)Element.PLAYER1)
                 {
                     player1.transform.Translate(new Vector3(x, 1, z));
-                    grid[x, z] = Element.FLOOR;
+					gameMap.grid[x, z] = (int)Element.FLOOR;
                 }
-                else if (grid[x, z] == Element.PLAYER2)
+				else if (val == (int)Element.PLAYER2)
                 {
                     player2.transform.Translate(new Vector3(x, 1, z));
-                    //grid[x, z] = Element.FLOOR;
+					gameMap.grid[x, z] = (int)Element.FLOOR;
                 }
             }
         }

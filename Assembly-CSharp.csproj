@@ -48,6 +48,9 @@
   <ItemGroup>
      <Compile Include="Assets\Players\CameraScript.cs" />
      <Compile Include="Assets\Players\PlayerScript.cs" />
+     <Compile Include="Assets\_Scripts\GameMap.cs" />
+     <Compile Include="Assets\_Scripts\MapLoader.cs" />
+     <None Include="Assets\Resources\Maps\testMap.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

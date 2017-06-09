@@ -13,8 +13,8 @@ public class PlayerScript : MonoBehaviour
     private float speedZ = 0;
     private int boardWidth, boardHeight;
 
-    private CameraScript.Element[,] grid;
-    private CameraScript.Element myPlayer;
+    private int[,] grid;
+    private int myPlayer;
 
     private KeyCode[] keycode = new KeyCode[4];
 
@@ -24,7 +24,7 @@ public class PlayerScript : MonoBehaviour
         movesRemaining = moveCount;
     }
 
-    public void setBoard(CameraScript.Element[,] myGrid)
+    public void setBoard(int[,] myGrid)
     {
         grid = myGrid;
         boardWidth = grid.GetLength(0);
@@ -43,7 +43,7 @@ public class PlayerScript : MonoBehaviour
             keycode[1] = KeyCode.D;
             keycode[2] = KeyCode.S;
             keycode[3] = KeyCode.A;
-            myPlayer = CameraScript.Element.PLAYER1;
+			myPlayer = (int)CameraScript.Element.PLAYER1;
         }
         else
         {
@@ -51,9 +51,10 @@ public class PlayerScript : MonoBehaviour
             keycode[1] = KeyCode.RightArrow;
             keycode[2] = KeyCode.DownArrow;
             keycode[3] = KeyCode.LeftArrow;
-            myPlayer = CameraScript.Element.PLAYER2;
+			myPlayer = (int)CameraScript.Element.PLAYER2;
         }
     }
+		
 	
 	// Update is called once per frame
 	void Update ()
@@ -62,7 +63,7 @@ public class PlayerScript : MonoBehaviour
         {
             int x0 = (int)transform.position.x;
             int z0 = (int)transform.position.z;
-            grid[x0,z0] = CameraScript.Element.FLOOR;
+			grid[x0,z0] = (int)CameraScript.Element.FLOOR;
 
             float x = transform.position.x + speedX * Time.deltaTime;
             float z = transform.position.z + speedZ * Time.deltaTime;
@@ -75,19 +76,19 @@ public class PlayerScript : MonoBehaviour
             bool hit = false;
             if (speedX > 0)
             {
-                if (grid[x2, z0] != CameraScript.Element.FLOOR) hit = true;
+				if (grid[x2, z0] != (int)CameraScript.Element.FLOOR) hit = true;
             }
             else if (speedX < 0)
             {
-                if (grid[x1, z0] != CameraScript.Element.FLOOR) hit = true;
+				if (grid[x1, z0] != (int)CameraScript.Element.FLOOR) hit = true;
             }
             else if (speedZ > 0)
             {
-                if (grid[x0, z2] != CameraScript.Element.FLOOR) hit = true;
+				if (grid[x0, z2] != (int)CameraScript.Element.FLOOR) hit = true;
             }
             else if (speedZ < 0)
             {
-                if (grid[x0, z1] != CameraScript.Element.FLOOR) hit = true;
+				if (grid[x0, z1] != (int)CameraScript.Element.FLOOR) hit = true;
             }
 
             if (hit)
@@ -100,7 +101,7 @@ public class PlayerScript : MonoBehaviour
 
             x0 = (int)transform.position.x;
             z0 = (int)transform.position.z;
-            grid[x0, z0] = CameraScript.Element.PLAYER2;
+			grid[x0, z0] = (int)CameraScript.Element.PLAYER2;
         }
         else
         {
