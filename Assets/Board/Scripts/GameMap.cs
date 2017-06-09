@@ -24,7 +24,7 @@ public class GameMap{
 		string[] lines = mapString.Split(new string[] { "\r\n", "\n" }, System.StringSplitOptions.None);
 
 		moves = int.Parse(lines[0]);
-		height = lines.Length-1;
+		height = lines.Length-2;
 		width = 0;
 
 		for (int i = 1; i < lines.Length; i++){
@@ -32,14 +32,14 @@ public class GameMap{
 		}
 
 		grid = new CameraScript.Element[width, height];
-		Debug.Log ("width: " + width + ", height: " + height); 
+		//Debug.Log ("width: " + width + ", height: " + height); 
 
 		for (int i = 1; i < lines.Length; i++){
-			string line = lines[i];
-			Debug.Log (line);
-			for (int j = 0; j < line.Length; j++){
-				int val = System.Array.IndexOf (MapLoader.tempMapping, line [j]);
-				grid [j, i-1] = CameraScript.getElement(val);
+			string row = lines[i];
+            Debug.Log(row+", idx="+ ((lines.Length - 1) - i));
+            for (int j = 0; j < row.Length; j++){
+				int val = System.Array.IndexOf (MapLoader.tempMapping, row[j]);
+                grid [j, (lines.Length-2)-i] = CameraScript.getElement(val);
 			}
 		}
 	}

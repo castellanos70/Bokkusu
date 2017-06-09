@@ -7,7 +7,7 @@ public class CameraScript : MonoBehaviour
     public GameObject boardBlock;
     public GameObject player1, player2;
     public Material[] wallMat = new Material[10];
-    public Material goalMat;
+    public GameObject goalBlock;
 
     private const int boardWidth = 24;
     private const int boardHeight = 13;
@@ -23,7 +23,6 @@ public class CameraScript : MonoBehaviour
     private CameraScript.Element[,] grid;
 
     private PlayerScript playerScript1, playerScript2;
-    private GameObject goalBlock;
 
     void Awake()
     {
@@ -65,10 +64,12 @@ public class CameraScript : MonoBehaviour
                 }
 				else if (grid[x, z] == Element.GOAL)
                 {
-                    Renderer renderer = block.GetComponent<Renderer>();
-                    renderer.material = goalMat;
-                    block.transform.Translate(new Vector3(0, 0.01f, 0));
-                    goalBlock = block;
+                    //Renderer renderer = block.GetComponent<Renderer>();
+                    //renderer.material = goalMat;
+                    //block.transform.Translate(new Vector3(0, 1, 0));
+                    //block.transform.localScale = new Vector3(1.25f, 0.6f, 1.2f);
+                    //goalBlock = block;
+                    goalBlock.transform.position = new Vector3(x, 1, z);
                 }
             }
         }
@@ -80,6 +81,9 @@ public class CameraScript : MonoBehaviour
     void Update()
     {
         goalBlock.transform.Rotate(Vector3.up * Time.deltaTime*20);
+        goalBlock.transform.Rotate(Vector3.right * Time.deltaTime * 5);
+        //float scale = 1 + 0.2f*Mathf.Abs(Mathf.Sin(2*Mathf.PI*goalBlock.transform.eulerAngles.y/180f));
+        //goalBlock.transform.localScale = new Vector3(scale,1, scale);
     }
 
 
