@@ -16,7 +16,10 @@ public class CameraScript : MonoBehaviour
     public enum GameState { INTRO, PLAYING, LOST, WON };
     private GameState gameState;
 
-    public enum Element { FLOOR, WALL, GOAL, PLAYER1, PLAYER2, PORTAL1, PORTAL2, PORTAL3 };
+    public enum Element                { FLOOR, WALL, GOAL, PLAYER1, PLAYER2, PORTALA, PORTALB, PORTALC };
+    public static char[] ELEMENT_ASCII={ '.'  , '#' , '=',  '1'    , '2'    , 'A',     'B',     'C' };
+
+
     private static Element[] elementValues;
     private GameMap[] gameMaps;
     private GameMap gameMap;
@@ -100,5 +103,18 @@ public class CameraScript : MonoBehaviour
     public static Element getElement(int idx)
     {
         return elementValues[idx];
+    }
+
+    public static Element getElement(char c)
+    {
+        if (c == '.') return Element.FLOOR;
+        else if (c == '#') return Element.WALL;
+        else if (c == '=') return Element.GOAL;
+        else if (c == '1') return Element.PLAYER1;
+        else if (c == '2') return Element.PLAYER2;
+        else if (c == 'A') return Element.PORTALA;
+        else if (c == 'B') return Element.PORTALB;
+        else if (c == 'C') return Element.PORTALC;
+        return Element.FLOOR;
     }
 }
