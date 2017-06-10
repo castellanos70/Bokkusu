@@ -13,6 +13,8 @@ public class PlayerScript : MonoBehaviour
     private float speedX = 0;
     private float speedZ = 0;
     private int boardWidth, boardHeight;
+	private int prevX = 0;
+	private int prevZ = 0;
 
     private CameraScript.Element[,] grid;
     private CameraScript.Element myPlayer;
@@ -34,6 +36,11 @@ public class PlayerScript : MonoBehaviour
         boardHeight = grid.GetLength(1);
     }
 
+	public void setPosition(int x, int z){
+		transform.Translate(new Vector3(x, 1, z));
+		prevX = x;
+		prevZ = z;
+	}
 
 
     void Start ()
@@ -123,10 +130,12 @@ public class PlayerScript : MonoBehaviour
                 {
                     cameraScript.setGameState(CameraScript.GameState.WON);
                 }
-
-                grid[(int)x, (int)z] = myPlayer;
             }
             transform.position = new Vector3(x, 1, z);
+			grid [prevX, prevZ] = CameraScript.Element.FLOOR;
+			prevX = (int)(x);
+			prevZ = (int)(z);
+			grid [prevX, prevZ] = myPlayer;
         }
         else
         {

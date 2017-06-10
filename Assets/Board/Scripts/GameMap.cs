@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class GameMap{
 	public int width, height;
-	public int moves;
+	public int[] moves = {0, 0};
 	public CameraScript.Element[,] grid;
 
-	public GameMap(int width, int height, int moves){
+	public GameMap(int width, int height, int[] moves){
 		this.width = width;
 		this.height = height;
 		this.moves = moves;
@@ -23,8 +23,11 @@ public class GameMap{
 	public GameMap(string mapString){
 		string[] lines = mapString.Split(new string[] { "\r\n", "\n" }, System.StringSplitOptions.None);
 
-		moves = int.Parse(lines[0]);
-		height = lines.Length-2;
+		string[] movesString = (lines[0]).Split (new string[] { ", " }, System.StringSplitOptions.None);
+
+		moves[0] = int.Parse(movesString[0]);
+		moves [1] = int.Parse (movesString [1]);
+		height = lines.Length-1;
 		width = 0;
 
 		for (int i = 1; i < lines.Length; i++){
@@ -38,7 +41,7 @@ public class GameMap{
 			string row = lines[i];
             //Debug.Log(row+", idx="+ ((lines.Length - 1) - i));
             for (int j = 0; j < row.Length; j++){
-                grid [j, (lines.Length-2)-i] = CameraScript.getElement(row[j]);
+                grid [j, (lines.Length-1)-i] = CameraScript.getElement(row[j]);
 			}
 		}
 	}

@@ -39,8 +39,8 @@ public class CameraScript : MonoBehaviour
         grid = gameMap.grid;
 
 
-        playerScript1.setMaxLevelMoves(gameMap.moves);
-		playerScript2.setMaxLevelMoves(gameMap.moves);
+        playerScript1.setMaxLevelMoves(gameMap.moves[0]);
+		playerScript2.setMaxLevelMoves(gameMap.moves[1]);
 
 		playerScript1.setBoard(this, grid);
 		playerScript2.setBoard(this, grid);
@@ -59,11 +59,11 @@ public class CameraScript : MonoBehaviour
                 }
 				else if (grid[x, z] == Element.PLAYER1)
                 {
-                    player1.transform.Translate(new Vector3(x, 1, z));
+					playerScript1.setPosition (x, z);
                 }
 				else if (grid[x, z] == Element.PLAYER2)
                 {
-                    player2.transform.Translate(new Vector3(x, 1, z));
+					playerScript2.setPosition (x, z);
                 }
 				else if (grid[x, z] == Element.GOAL)
                 {
