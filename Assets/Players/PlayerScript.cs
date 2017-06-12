@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -16,11 +17,12 @@ public class PlayerScript : MonoBehaviour
 	private int prevX = 0;
 	private int prevZ = 0;
 
-    private CameraScript.Element[,] grid;
+    private Cell[,] grid;
     private CameraScript.Element myPlayer;
     private CameraScript cameraScript;
 
     private KeyCode[] keycode = new KeyCode[4];
+    private HashSet<GameObject> entities;
 
 
     public void setMaxLevelMoves(int moveCount)
@@ -28,7 +30,7 @@ public class PlayerScript : MonoBehaviour
         movesRemaining = moveCount;
     }
 
-    public void setBoard(CameraScript cameraScript, CameraScript.Element[,] myGrid)
+    public void setBoard(CameraScript cameraScript, Cell[,] myGrid)
     {
         this.cameraScript = cameraScript;
         grid = myGrid;
@@ -69,13 +71,15 @@ public class PlayerScript : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        int x0 = (int)transform.position.x;
+        int x0 = (int)transform.position.x; // current position (rounded down)
         int z0 = (int)transform.position.z;
 
         if (moving)
         {
             float x = transform.position.x + speedX * Time.deltaTime;
             float z = transform.position.z + speedZ * Time.deltaTime;
+            //float xBehind = transform.position.x - speedX * Time.deltaTime;
+            //float zBehind = transform.position.z - speedZ * Time.deltaTime;
             bool hit = checkMove(x0, z0, x, z);
 
             if (hit)
@@ -124,19 +128,20 @@ public class PlayerScript : MonoBehaviour
 
             else
             {
-				grid[x0, z0] = CameraScript.Element.FLOOR;
+				//grid[x0, z0] = CameraScript.Element.FLOOR;
 
-                if (grid[(int)x, (int)z] == CameraScript.Element.GOAL)
+                if (grid[(int)x, (int)z].getEnvironment() == CameraScript.Element.GOAL)
                 {
                     cameraScript.setGameState(CameraScript.GameState.WON);
                 }
             }
             transform.position = new Vector3(x, 1, z);
-			grid [prevX, prevZ] = CameraScript.Element.FLOOR;
+			grid [prevX, prevZ].removeEntity();
 			prevX = (int)(x);
 			prevZ = (int)(z);
-			grid [prevX, prevZ] = myPlayer;
+			grid [prevX, prevZ].setEntity(myPlayer);
         }
+
         else
         {
             if (movesRemaining > 0)
@@ -193,6 +198,11 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    public void setEntities(HashSet<GameObject> entities)
+    {
+        this.entities = entities;
+    }
+
     private bool checkMove(int x0, int z0, float x, float z)
     {
         int x1 = x0;
@@ -205,9 +215,14 @@ public class PlayerScript : MonoBehaviour
 
         //Debug.Log(Time.time + ": [" + x0 + "," + z0 + "]===> "+ " grid[" +x1+","+z1+"]="+grid[x1,z1]);
 
-		if (grid[x1, z1] == CameraScript.Element.FLOOR) return false;
-		if (grid[x1, z1] == CameraScript.Element.GOAL) return false;
-        if (grid[x1, z1] == myPlayer) return false;
+        /*if (grid[x1, z1].getEnvironment() == CameraScript.Element.FLOOR) return false;
+		if (grid[x1, z1].getEnvironment() == CameraScript.Element.GOAL) return false;
+        if (grid[x1, z1].getEntity() == myPlayer) return false;*/
+
+        if ((grid[x1, z1].getEntity() == CameraScript.Element.NOTHING
+            || grid[x1, z1].getEntity() == myPlayer)
+            && grid[x1, z1].getEnvironment() != CameraScript.Element.WALL) return false;
+
         return true;
     }
 
@@ -215,9 +230,14 @@ public class PlayerScript : MonoBehaviour
 
     private bool checkMove(int x1, int z1)
     {
-        if (grid[x1, z1] == CameraScript.Element.FLOOR) return false;
-        if (grid[x1, z1] == CameraScript.Element.GOAL) return false;
-        if (grid[x1, z1] == myPlayer) return false;
+        /*if (grid[x1, z1].getEnvironment() == CameraScript.Element.FLOOR) return false;
+        if (grid[x1, z1].getEnvironment() == CameraScript.Element.GOAL) return false;
+        if (grid[x1, z1].getEntity() == myPlayer) return false;*/
+
+        if ((grid[x1, z1].getEntity() == CameraScript.Element.NOTHING
+            || grid[x1, z1].getEntity() == myPlayer)
+            && grid[x1, z1].getEnvironment() != CameraScript.Element.WALL) return false;
+
         return true;
     }
 }

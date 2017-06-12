@@ -16,14 +16,14 @@ public class CameraScript : MonoBehaviour
     public enum GameState { INTRO, PLAYING, LOST, WON };
     private GameState gameState;
 
-    public enum Element                { FLOOR, WALL, GOAL, PLAYER1, PLAYER2, PORTALA, PORTALB, PORTALC };
-    public static char[] ELEMENT_ASCII={ '.'  , '#' , '=',  '1'    , '2'    , 'A',     'B',     'C' };
+    public enum Element                  { FLOOR, WALL, GOAL, PLAYER1, PLAYER2, PORTALA, PORTALB, PORTALC, NOTHING };
+    public static char[] ELEMENT_ASCII = { '.'  , '#' , '=',  '1'    , '2'    , 'A',     'B',     'C',     ' '     };
 
 
     private static Element[] elementValues;
     private GameMap[] gameMaps;
     private GameMap gameMap;
-    private CameraScript.Element[,] grid;
+    private Cell[,] grid;
 
     private PlayerScript playerScript1, playerScript2;
 
@@ -51,21 +51,21 @@ public class CameraScript : MonoBehaviour
 			for (int z = 0; z < gameMap.height; z++)
             {
                 GameObject block = Instantiate(boardBlock, new Vector3(x, 0, z), Quaternion.identity);
-				if (grid[x, z] == Element.WALL)
+				if (grid[x, z].getEnvironment() == Element.WALL)
                 {
                     Renderer renderer = block.GetComponent<Renderer>();
                     renderer.material = wallMat[Random.Range(0, wallMat.Length)];
                     block.transform.Translate(Vector3.up);
                 }
-				else if (grid[x, z] == Element.PLAYER1)
+				else if (grid[x, z].getEntity() == Element.PLAYER1)
                 {
 					playerScript1.setPosition (x, z);
                 }
-				else if (grid[x, z] == Element.PLAYER2)
+				else if (grid[x, z].getEntity() == Element.PLAYER2)
                 {
 					playerScript2.setPosition (x, z);
                 }
-				else if (grid[x, z] == Element.GOAL)
+				else if (grid[x, z].getEnvironment() == Element.GOAL)
                 {
                     //Renderer renderer = block.GetComponent<Renderer>();
                     //renderer.material = goalMat;
