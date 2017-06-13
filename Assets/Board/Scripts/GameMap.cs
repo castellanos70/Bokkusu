@@ -35,6 +35,14 @@ public class GameMap{
 		}
 
 		grid = new Cell[width, height];
+
+		//fill wih empty
+		for (var i = 0; i < width; i++) {
+			for (var j = 0; j < height; j++) {
+				grid [i, j] = new Cell(CameraScript.Element.NOTHING);
+			}
+		}
+
 		Debug.Log ("width: " + width + ", height: " + height); 
 
 		for (int i = 1; i < lines.Length; i++){
@@ -51,16 +59,5 @@ public class GameMap{
                 else grid [j, (lines.Length-1)-i] = new Cell(CameraScript.getElement(row[j]));
 			}
 		}
-	}
-
-	public CameraScript.Element[,] getElementMap(){
-		CameraScript.Element[,] elements = new CameraScript.Element [width, height];
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
-				//TODO
-			}
-		}
-
-		return elements;
 	}
 }

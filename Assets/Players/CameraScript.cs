@@ -50,6 +50,8 @@ public class CameraScript : MonoBehaviour
         {
 			for (int z = 0; z < gameMap.height; z++)
             {
+				if (grid[x, z].getEnvironment() == Element.NOTHING) continue;
+
                 GameObject block = Instantiate(boardBlock, new Vector3(x, 0, z), Quaternion.identity);
 				if (grid[x, z].getEnvironment() == Element.WALL)
                 {
@@ -102,6 +104,7 @@ public class CameraScript : MonoBehaviour
 
     public static Element getElement(int idx)
     {
+		if (idx == -1) return elementValues[0];
         return elementValues[idx];
     }
 
@@ -115,6 +118,7 @@ public class CameraScript : MonoBehaviour
         else if (c == 'A') return Element.PORTALA;
         else if (c == 'B') return Element.PORTALB;
         else if (c == 'C') return Element.PORTALC;
+		else if (c == ' ') return Element.NOTHING;
         return Element.FLOOR;
     }
 }
