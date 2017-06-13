@@ -103,8 +103,8 @@ public class CameraScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        goalBlock.transform.Rotate(Vector3.up * Time.deltaTime*20);
-        goalBlock.transform.Rotate(Vector3.right * Time.deltaTime * 5);
+        goalBlock.transform.Rotate(Vector3.up * Time.deltaTime*40);
+        //goalBlock.transform.Rotate(Vector3.right * Time.deltaTime * 5);
         //float scale = 1 + 0.2f*Mathf.Abs(Mathf.Sin(2*Mathf.PI*goalBlock.transform.eulerAngles.y/180f));
         //goalBlock.transform.localScale = new Vector3(scale,1, scale);
     }
