@@ -85,6 +85,8 @@ public class CameraScript : MonoBehaviour
             }
         }
 
+		boardBlock.SetActive(false);
+
         gameState = GameState.PLAYING;
 
 		float height = cameraPosition.y;
