@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class CameraScript : MonoBehaviour
 {
+	//based on the current camera FOV 
+	private static float fullWidth = 32;
+	private static float fullHeight = 14;
+
     public GameObject boardBlock;
     public GameObject player1, player2;
     public Material[] wallMat = new Material[10];
@@ -45,6 +49,8 @@ public class CameraScript : MonoBehaviour
 		playerScript1.setBoard(this, grid);
 		playerScript2.setBoard(this, grid);
 
+		Vector3 cameraPosition = transform.position;
+
         // Spawn board blocks
 		for (int x = 0; x < gameMap.width; x++)
         {
@@ -74,12 +80,22 @@ public class CameraScript : MonoBehaviour
                     //block.transform.Translate(new Vector3(0, 1, 0));
                     //block.transform.localScale = new Vector3(1.25f, 0.6f, 1.2f);
                     //goalBlock = block;
-                    goalBlock.transform.position = new Vector3(x, 1, z);
+					goalBlock.transform.position = new Vector3(x, 1, z);
                 }
             }
         }
 
         gameState = GameState.PLAYING;
+
+		float height = cameraPosition.y;
+		float widthDiff = gameMap.width/fullWidth;
+		float heightDiff = gameMap.height/fullHeight;
+		float heightMod = Mathf.Max(widthDiff, heightDiff);
+
+		Debug.Log(widthDiff + ", " + heightDiff);
+
+		transform.position = new Vector3(gameMap.width/2.0f - .5f, height*heightMod, gameMap.height/2.0f - .5f);
+
     }
 
     // Update is called once per frame
