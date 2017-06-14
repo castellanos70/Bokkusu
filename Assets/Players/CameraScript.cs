@@ -14,10 +14,6 @@ public class CameraScript : MonoBehaviour
     public Material[] floorMat = new Material[5];
     public GameObject goalBlock;
 
-    private const int boardWidth = 24;
-    private const int boardHeight = 13;
-
-
     public enum GameState { INTRO, PLAYING, LOST, WON };
     private GameState gameState;
 
@@ -110,6 +106,7 @@ public class CameraScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        clearMap();
         goalBlock.transform.Rotate(Vector3.up * Time.deltaTime*40);
         //goalBlock.transform.Rotate(Vector3.right * Time.deltaTime * 5);
         //float scale = 1 + 0.2f*Mathf.Abs(Mathf.Sin(2*Mathf.PI*goalBlock.transform.eulerAngles.y/180f));
@@ -145,5 +142,29 @@ public class CameraScript : MonoBehaviour
         else if (c == 'C') return Element.PORTALC;
 		else if (c == ' ') return Element.NOTHING;
         return Element.FLOOR;
+    }
+
+    public void clearMap()
+    {
+        for (int i = 0; i < gameMap.width; i++)
+        {
+            for (int j = 0; j < gameMap.height; j++)
+            {
+                grid[i, j].setEntity(CameraScript.Element.NOTHING, true);
+            }
+        }
+        int x1 = (int)player1.transform.position.x;
+        int z1 = (int)player1.transform.position.z;
+        int x2 = (int)player2.transform.position.x;
+        int z2 = (int)player2.transform.position.z;
+        //grid[(int)player1.transform.position.x, (int)player1.transform.position.z].setEntity(Element.PLAYER1, false);
+        //grid[(int)player2.transform.position.x, (int)player2.transform.position.z].setEntity(Element.PLAYER2, false);
+        grid[x1, z1].setEntity(Element.PLAYER1, true);
+        grid[x2, z2].setEntity(Element.PLAYER2, true);
+        grid[x1 + playerScript1.getDirectionX(), z1 + playerScript1.getDirectionZ()].setEntity(Element.PLAYER1, false);
+        grid[x2 + playerScript2.getDirectionX(), z2 + playerScript2.getDirectionZ()].setEntity(Element.PLAYER2, false);
+        //Debug.Log("x1: " + playerScript1.getDirectionX());
+        //Debug.Log("z1: " + playerScript1.getDirectionZ());
+        //if (playerScript1.getDirectionX() == 0 && playerScript1.getDirectionZ() == 0) Debug.Log("testing");
     }
 }
