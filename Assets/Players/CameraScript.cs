@@ -11,6 +11,7 @@ public class CameraScript : MonoBehaviour
     public GameObject boardBlock;
     public GameObject player1, player2;
     public Material[] wallMat = new Material[10];
+    public Material[] floorMat = new Material[4];
     public GameObject goalBlock;
 
     private const int boardWidth = 24;
@@ -63,6 +64,8 @@ public class CameraScript : MonoBehaviour
                 {
                     Renderer renderer = block.GetComponent<Renderer>();
                     renderer.material = wallMat[Random.Range(0, wallMat.Length)];
+                    block.transform.Rotate(new Vector3(0,90*Random.Range(0, 4),0));
+
                     block.transform.Translate(Vector3.up);
                 }
 				else if (grid[x, z].getEntity() == Element.PLAYER1)
@@ -75,12 +78,18 @@ public class CameraScript : MonoBehaviour
                 }
 				else if (grid[x, z].getEnvironment() == Element.GOAL)
                 {
-                    //Renderer renderer = block.GetComponent<Renderer>();
-                    //renderer.material = goalMat;
-                    //block.transform.Translate(new Vector3(0, 1, 0));
-                    //block.transform.localScale = new Vector3(1.25f, 0.6f, 1.2f);
-                    //goalBlock = block;
 					goalBlock.transform.position = new Vector3(x, 1, z);
+                }
+
+
+                if (grid[x, z].getEnvironment() == Element.FLOOR)
+                
+                {
+                    Renderer renderer = block.GetComponent<Renderer>();
+                    renderer.material = floorMat[Random.Range(0, floorMat.Length)];
+                    block.transform.Rotate(new Vector3(0, 90 * Random.Range(0, 4), 0));
+
+
                 }
             }
         }
