@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections.Generic;
 
 public class PlayerScript : MonoBehaviour
@@ -69,17 +70,20 @@ public class PlayerScript : MonoBehaviour
 		
 	
 	// Update is called once per frame
-	void Update ()
+	void FixedUpdate ()
     {
-        int x0 = (int)transform.position.x; // current position (rounded down)
-        int z0 = (int)transform.position.z;
+        int x0; // current position (rounded down)
+        int z0;
+        if (speedX < 0) x0 = (int) (transform.position.x + 0.5);
+        else x0 = (int) transform.position.x;
+        if (speedZ < 0) z0 = (int) (transform.position.z + 0.5);
+        else z0 = (int) transform.position.z;
 
         if (moving)
         {
             float x = transform.position.x + speedX * Time.deltaTime;
             float z = transform.position.z + speedZ * Time.deltaTime;
-            //float xBehind = transform.position.x - speedX * Time.deltaTime;
-            //float zBehind = transform.position.z - speedZ * Time.deltaTime;
+
             bool hit = checkMove(x0, z0, x, z);
 
             if (hit)
@@ -135,11 +139,15 @@ public class PlayerScript : MonoBehaviour
                     cameraScript.setGameState(CameraScript.GameState.WON);
                 }
             }
+
+            grid[prevX, prevZ].removeEntity(myPlayer);
+            grid[prevX, prevZ].removeEntity(myPlayer);
             transform.position = new Vector3(x, 1, z);
-			grid [prevX, prevZ].removeEntity();
-			prevX = (int)(x);
-			prevZ = (int)(z);
-			grid [prevX, prevZ].setEntity(myPlayer);
+            if (speedX < 0) prevX = (int)(x + 1);
+            else prevX = (int)(x);
+            if (speedZ < 0) prevZ = (int)(z + 1);
+            else prevZ = (int)(z);
+            grid[prevX, prevZ].setEntity(myPlayer, false);
         }
 
         else
@@ -194,6 +202,7 @@ public class PlayerScript : MonoBehaviour
                         levelMovesTextMesh.text = movesRemaining.ToString();
                     }
                 }
+                else grid[prevX, prevZ].setEntity(myPlayer, true);
             }
         }
     }

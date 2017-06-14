@@ -19,9 +19,9 @@ public class Cell
         entity = CameraScript.Element.NOTHING;
     }
 
-    public bool setEntity(CameraScript.Element entity)
+    public bool setEntity(CameraScript.Element entity, bool prejudice)
     {
-        if (this.entity == CameraScript.Element.NOTHING)
+        if (this.entity == CameraScript.Element.NOTHING || prejudice)
         {
             this.entity = entity;
             return true;
@@ -29,9 +29,11 @@ public class Cell
         else return false;
     }
 
-    public void removeEntity()
+    public bool removeEntity(CameraScript.Element remover)
     {
+        if (entity != remover && entity != CameraScript.Element.NOTHING) return false;
         entity = CameraScript.Element.NOTHING;
+        return true;
     }
 
     public CameraScript.Element getEnvironment()
