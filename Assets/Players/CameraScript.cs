@@ -11,7 +11,7 @@ public class CameraScript : MonoBehaviour
     public GameObject boardBlock;
     public GameObject player1, player2;
     public Material[] wallMat = new Material[10];
-    public Material[] floorMat = new Material[4];
+    public Material[] floorMat = new Material[5];
     public GameObject goalBlock;
 
     private const int boardWidth = 24;
