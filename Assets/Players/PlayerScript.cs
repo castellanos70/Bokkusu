@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class PlayerScript : MonoBehaviour
 {
+
     public int playerNumber;
     public TextMesh levelMovesTextMesh;
     public int speedMax;
@@ -97,37 +98,25 @@ public class PlayerScript : MonoBehaviour
             else if (Input.GetKey(keycode[0]) && speedX == 0)
             {
                 speedZ += acceleration * Time.deltaTime;
-                if (speedZ > speedMax) speedZ = speedMax;
-                else if (speedZ < -speedMax) speedZ = -speedMax;
-                else if (speedZ < speedMin && speedZ > 0) speedZ = speedMin;
-                else if (speedZ > -speedMin && speedZ < 0) speedZ = -speedMin;
+				speedZ = toSpeedBounds(speedZ);
             }
 
             else if (Input.GetKey(keycode[2]) && speedX == 0)
             {
                 speedZ -= acceleration * Time.deltaTime;
-                if (speedZ > speedMax) speedZ = speedMax;
-                else if (speedZ < -speedMax) speedZ = -speedMax;
-                else if (speedZ < speedMin && speedZ > 0) speedZ = speedMin;
-                else if (speedZ > -speedMin && speedZ < 0) speedZ = -speedMin;
+				speedZ = toSpeedBounds(speedZ);
             }
 
             else if (Input.GetKey(keycode[1]) && speedZ == 0)
             {
                 speedX += acceleration * Time.deltaTime;
-                if (speedX > speedMax) speedX = speedMax;
-                else if (speedX < -speedMax) speedX = -speedMax;
-                else if (speedX < speedMin && speedX > 0) speedX = speedMin;
-                else if (speedX > -speedMin && speedX < 0) speedX = -speedMin;
+				speedX = toSpeedBounds(speedX);
             }
 
             else if (Input.GetKey(keycode[3]) && speedZ == 0)
             {
                 speedX -= acceleration * Time.deltaTime;
-                if (speedX > speedMax) speedX = speedMax;
-                else if (speedX < -speedMax) speedX = -speedMax;
-                else if (speedX < speedMin && speedX > 0) speedX = speedMin;
-                else if (speedX > -speedMin && speedX < 0) speedX = -speedMin;
+				speedX = toSpeedBounds(speedX);
             }
 
             else
@@ -234,9 +223,7 @@ public class PlayerScript : MonoBehaviour
 
         return true;
     }
-
-
-
+		
     private bool checkMove(int x1, int z1)
     {
         /*if (grid[x1, z1].getEnvironment() == CameraScript.Element.FLOOR) return false;
@@ -249,4 +236,13 @@ public class PlayerScript : MonoBehaviour
 
         return true;
     }
+
+	private float toSpeedBounds(float n){
+		if (n > speedMax) n = speedMax;
+		else if (n < -speedMax) n = -speedMax;
+		else if (n > 0 && n < speedMin) n = speedMin;
+		else if (n < 0 && n > -speedMin) n = -speedMin;
+
+		return n;
+	}
 }
