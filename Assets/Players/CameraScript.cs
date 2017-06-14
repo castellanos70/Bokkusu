@@ -88,8 +88,6 @@ public class CameraScript : MonoBehaviour
                     Renderer renderer = block.GetComponent<Renderer>();
                     renderer.material = floorMat[Random.Range(0, floorMat.Length)];
                     block.transform.Rotate(new Vector3(0, 90 * Random.Range(0, 4), 0));
-
-
                 }
             }
         }
