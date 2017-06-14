@@ -1,12 +1,13 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\_Scripts\MapLoader.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Players\PlayerScript.cs">
     <Files>
-      <File FileName="Assets\Players\PlayerScript.cs" Line="87" Column="5" />
-      <File FileName="Assets\_Scripts\MapLoader.cs" Line="21" Column="38" />
-      <File FileName="Assets\Players\CameraScript.cs" Line="56" Column="30" />
-      <File FileName="Assets\_Scripts\GameMap.cs" Line="48" Column="42" />
-      <File FileName="Assets\Resources\Maps\testMap.txt" Line="12" Column="15" />
+      <File FileName="Assets\Players\PlayerScript.cs" Line="73" Column="56" />
+      <File FileName="Assets\Players\CameraScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Resources\Maps\MapLevel1.txt" Line="1" Column="1" />
+      <File FileName="Assets\Board\Scripts\GameMap.cs" Line="1" Column="1" />
+      <File FileName="Assets\Resources\Maps\superLarge.txt" Line="1" Column="1" />
+      <File FileName="Assets\Resources\Maps\fullMap.txt" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

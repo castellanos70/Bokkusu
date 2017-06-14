@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class GameMap{
 	public int width, height;
-	public int moves;
-	public CameraScript.Element[,] grid;
+	public int[] moves = {0, 0};
+	public Cell[,] grid;
 
-	public GameMap(int width, int height, int moves){
+    public GameMap(int width, int height, int[] moves){
 		this.width = width;
 		this.height = height;
 		this.moves = moves;
-		grid = new CameraScript.Element[width,height];
+		grid = new Cell[width,height];
 	}
 
-	public GameMap(CameraScript.Element[,] grid){
+	public GameMap(Cell[,] grid){
 		width = grid.GetLength (0);
 		height = grid.GetLength (1);
 		this.grid = grid;
@@ -23,34 +23,41 @@ public class GameMap{
 	public GameMap(string mapString){
 		string[] lines = mapString.Split(new string[] { "\r\n", "\n" }, System.StringSplitOptions.None);
 
-		moves = int.Parse(lines[0]);
-		height = lines.Length-2;
+		string[] movesString = (lines[0]).Split (new string[] { ", " }, System.StringSplitOptions.None);
+
+		moves[0] = int.Parse(movesString[0]);
+		moves [1] = int.Parse (movesString [1]);
+		height = lines.Length-1;
 		width = 0;
 
 		for (int i = 1; i < lines.Length; i++){
 			if (lines[i].Length > width) width = lines[i].Length;
 		}
 
-		grid = new CameraScript.Element[width, height];
+		grid = new Cell[width, height];
+
+		//fill wih empty
+		for (var i = 0; i < width; i++) {
+			for (var j = 0; j < height; j++) {
+				grid [i, j] = new Cell(CameraScript.Element.NOTHING);
+			}
+		}
+
 		Debug.Log ("width: " + width + ", height: " + height); 
 
 		for (int i = 1; i < lines.Length; i++){
 			string row = lines[i];
             //Debug.Log(row+", idx="+ ((lines.Length - 1) - i));
             for (int j = 0; j < row.Length; j++){
-                grid [j, (lines.Length-2)-i] = CameraScript.getElement(row[j]);
+                CameraScript.Element element = CameraScript.getElement(row[j]);
+                if (element == CameraScript.Element.PLAYER1
+                    || element == CameraScript.Element.PLAYER2)
+                {
+                    grid[j, (lines.Length - 1) - i] = new Cell(CameraScript.Element.FLOOR,
+                                                               CameraScript.getElement(row[j]));
+                }
+                else grid [j, (lines.Length-1)-i] = new Cell(CameraScript.getElement(row[j]));
 			}
 		}
-	}
-
-	public CameraScript.Element[,] getElementMap(){
-		CameraScript.Element[,] elements = new CameraScript.Element [width, height];
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
-				//TODO
-			}
-		}
-
-		return elements;
 	}
 }
