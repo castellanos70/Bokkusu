@@ -71,14 +71,10 @@ public class PlayerScript : MonoBehaviour
 		
 	
 	// Update is called once per frame
-	void Update ()
+	void FixedUpdate ()
     {
         int x0; // current position (rounded down)
         int z0;
-        /*if (speedX < 0) x0 = (int) (transform.position.x + 0.5);
-        else x0 = (int) transform.position.x;
-        if (speedZ < 0) z0 = (int) (transform.position.z + 0.5);
-        else z0 = (int) transform.position.z;*/
 
         x0 = (int)(transform.position.x);
         z0 = (int)(transform.position.z);
@@ -90,11 +86,10 @@ public class PlayerScript : MonoBehaviour
 
             bool hit = checkMove(x0, z0);
 
-            if (hit)
+            // These extra conditions stop the players from jerking against the wall
+            if (hit && ((speedX >= 0 || Math.Abs(x - x0) < 0.2) && (speedZ >= 0 || Math.Abs(z - z0) < 0.2)))
             {
                 x = x0; z = z0;
-                //if (speedX > 0) { x = x0 + 1; }
-                //if (speedZ > 0) { z = z0 + 1; }
                 speedX = 0;
                 speedZ = 0;
                 moving = false;
@@ -123,22 +118,13 @@ public class PlayerScript : MonoBehaviour
                 speedX -= acceleration * Time.deltaTime;
 				speedX = toSpeedBounds(speedX);
             }
-				//grid[x0, z0] = CameraScript.Element.FLOOR;
+
             if (grid[(int)x, (int)z].getEnvironment() == CameraScript.Element.GOAL)
             {
                 cameraScript.setGameState(CameraScript.GameState.WON);
             }
 
-            //Debug.Log("x: " + x + ", z: " + z);
-            //grid[prevX, prevZ].removeEntity(myPlayer);
             transform.position = new Vector3(x, 1, z);
-            /*if (speedX < 0) prevX = (int)(x + 1);
-            else prevX = (int)(x);
-            if (speedZ < 0) prevZ = (int)(z + 1);
-            else prevZ = (int)(z);*/
-            //prevX = (int)x;
-            //prevZ = (int)z;
-            //grid[prevX, prevZ].setEntity(myPlayer, false);
         }
 
         else
