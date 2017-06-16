@@ -69,16 +69,10 @@ public class CameraScript : MonoBehaviour
                 else if (grid[x, z].getEntity() == Element.CRATE)
                 {
                     crateClone = Instantiate(crateBlock, new Vector3(x, 1, z), Quaternion.identity);
-                    //Renderer renderer = crateClone.GetComponent<Renderer>();
-                    //block.transform.Rotate(new Vector3(0, 90 * Random.Range(0, 4), 0));
+                    crateClone.GetComponent<CrateScript>().assignGameObject(crateClone);
+                    crateClone.GetComponent<CrateScript>().setBoard(this, grid);
 
-                    //block.transform.Translate(Vector3.up);
-
-                    Renderer renderer = crateBlock.GetComponent<Renderer>();
-                    //renderer.material = wallMat[Random.Range(0, wallMat.Length)];
                     block.transform.Rotate(new Vector3(0, 90 * Random.Range(0, 4), 0));
-
-                    //block.transform.Translate(Vector3.up);
                 }
 				else if (grid[x, z].getEntity() == Element.PLAYER1)
                 {

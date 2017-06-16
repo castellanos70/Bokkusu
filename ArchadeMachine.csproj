@@ -81,6 +81,7 @@
     <Compile Include="Assets\Board\Scripts\Cell.cs" />
     <Compile Include="Assets\Board\Scripts\GameMap.cs" />
     <Compile Include="Assets\Board\Scripts\MapLoader.cs" />
+    <Compile Include="Assets\CrateScript.cs" />
     <Compile Include="Assets\Players\CameraScript.cs" />
     <Compile Include="Assets\Players\PlayerScript.cs" />
   </ItemGroup>

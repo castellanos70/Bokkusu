@@ -70,7 +70,7 @@ public class PlayerScript : MonoBehaviour
     }
 		
 	
-	// Update is called once per frame
+	// Update is called once per
 	void FixedUpdate ()
     {
         int x0; // current position (rounded down)
