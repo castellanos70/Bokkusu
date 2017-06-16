@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class CrateScript : MonoBehaviour {
 
+    private static int strength = 15;
     private GameObject crateObject;
+    public ParticleSystem crateParticles;
+    //private ParticleSystem particleSystem;
     private CameraScript cameraScript;
     private Cell[,] grid;
 
@@ -21,8 +24,13 @@ public class CrateScript : MonoBehaviour {
 
         if (grid[x, z].getEntity() != CameraScript.Element.CRATE)
         {
-            crateObject.SetActive(false);
-            Destroy(crateObject);
+            //ParticleSystem.MainModule settings = GetComponent<ParticleSystem>().main;
+            //settings.startColor = new ParticleSystem.MinMaxGradient(new Color(1, 0, 1));
+            crateParticles.Emit(1);
+            GetComponent<Renderer>().enabled = false;
+            //crateObject.GetComponent<Renderer>().enabled = false;
+            //crateObject.SetActive(false);
+            Destroy(crateObject, 1);
         }
 
     }
@@ -36,5 +44,11 @@ public class CrateScript : MonoBehaviour {
     public void assignGameObject(GameObject crateObject)
     {
         this.crateObject = crateObject;
+        //this.crateParticles = crateParticles;
+    }
+
+    public static int getStrength()
+    {
+        return strength;
     }
 }

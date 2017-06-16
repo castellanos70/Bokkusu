@@ -72,7 +72,7 @@ public class CameraScript : MonoBehaviour
                     crateClone.GetComponent<CrateScript>().assignGameObject(crateClone);
                     crateClone.GetComponent<CrateScript>().setBoard(this, grid);
 
-                    block.transform.Rotate(new Vector3(0, 90 * Random.Range(0, 4), 0));
+                    block.transform.Rotate(new Vector3(180, 180, 180));
                 }
 				else if (grid[x, z].getEntity() == Element.PLAYER1)
                 {

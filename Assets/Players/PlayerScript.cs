@@ -88,6 +88,7 @@ public class PlayerScript : MonoBehaviour
 
             // These extra conditions stop the players from jerking against the wall
             if (hit && ((speedX >= 0 || Math.Abs(x - x0) < 0.2) && (speedZ >= 0 || Math.Abs(z - z0) < 0.2)))
+            //if (hit)
             {
                 x = x0; z = z0;
                 speedX = 0;
@@ -222,7 +223,8 @@ public class PlayerScript : MonoBehaviour
 
         if (grid[x1, z1].getEntity() == CameraScript.Element.CRATE)
         {
-            if (speedX > 15 || speedX < -15 || speedZ > 15 || speedZ < -15)
+            if (speedX > CrateScript.getStrength() || speedX < -CrateScript.getStrength()
+                || speedZ > CrateScript.getStrength() || speedZ < -CrateScript.getStrength())
             {
                 return false;
             }
@@ -244,7 +246,8 @@ public class PlayerScript : MonoBehaviour
 
         if (grid[x1, z1].getEntity() == CameraScript.Element.CRATE)
         {
-            if (speedX > 15 || speedX < -15 || speedZ > 15 || speedZ < -15)
+            if (speedX > CrateScript.getStrength() || speedX < -CrateScript.getStrength()
+                || speedZ > CrateScript.getStrength() || speedZ < -CrateScript.getStrength())
             {
                 return false;
             }
