@@ -7,13 +7,15 @@ public class CrateScript : MonoBehaviour {
     private static int strength = 15;
     private GameObject crateObject;
     public ParticleSystem crateParticles;
-    //private ParticleSystem particleSystem;
+    public AudioSource crateAudio;
     private CameraScript cameraScript;
     private Cell[,] grid;
+    private bool destroying;
 
 	// Use this for initialization
 	void Start () {
-
+        Debug.Log(crateAudio.isPlaying);
+        destroying = false;
     }
 
     // Update is called once per frame
@@ -22,15 +24,20 @@ public class CrateScript : MonoBehaviour {
         int x = (int) transform.position.x;
         int z = (int)transform.position.z;
 
-        if (grid[x, z].getEntity() != CameraScript.Element.CRATE)
+        if (grid[x, z].getEntity() != CameraScript.Element.CRATE && !destroying)
         {
             //ParticleSystem.MainModule settings = GetComponent<ParticleSystem>().main;
             //settings.startColor = new ParticleSystem.MinMaxGradient(new Color(1, 0, 1));
-            crateParticles.Emit(1);
+            crateParticles.Emit(10);
+            //crateAudio.Stop();
+            crateAudio.Play();
+            Debug.Log(crateAudio.isPlaying);
             GetComponent<Renderer>().enabled = false;
+
             //crateObject.GetComponent<Renderer>().enabled = false;
             //crateObject.SetActive(false);
             Destroy(crateObject, 1);
+            destroying = true;
         }
 
     }
