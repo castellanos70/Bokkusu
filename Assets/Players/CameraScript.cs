@@ -9,6 +9,7 @@ public class CameraScript : MonoBehaviour
 	private static float fullHeight = 14;
 
     public GameObject boardBlock;
+    public GameObject crateBlock;
     public GameObject player1, player2;
     public Material[] wallMat = new Material[10];
     public Material[] floorMat = new Material[5];
@@ -17,8 +18,8 @@ public class CameraScript : MonoBehaviour
     public enum GameState { INTRO, PLAYING, LOST, WON };
     private GameState gameState;
 
-    public enum Element                  { FLOOR, WALL, GOAL, PLAYER1, PLAYER2, PORTALA, PORTALB, PORTALC, NOTHING };
-    public static char[] ELEMENT_ASCII = { '.'  , '#' , '=',  '1'    , '2'    , 'A',     'B',     'C',     ' '     };
+    public enum Element                  { FLOOR, WALL, GOAL, CRATE, PLAYER1, PLAYER2, PORTALA, PORTALB, PORTALC, NOTHING };
+    public static char[] ELEMENT_ASCII = { '.'  , '#' , '=',  '&',    '1'    , '2'    , 'A',     'B',     'C',     ' '     };
 
 
     private static Element[] elementValues;
@@ -56,13 +57,28 @@ public class CameraScript : MonoBehaviour
 				if (grid[x, z].getEnvironment() == Element.NOTHING) continue;
 
                 GameObject block = Instantiate(boardBlock, new Vector3(x, 0, z), Quaternion.identity);
+                GameObject crateClone;
 				if (grid[x, z].getEnvironment() == Element.WALL)
                 {
                     Renderer renderer = block.GetComponent<Renderer>();
                     renderer.material = wallMat[Random.Range(0, wallMat.Length)];
-                    block.transform.Rotate(new Vector3(0,90*Random.Range(0, 4),0));
+                    block.transform.Rotate(new Vector3(0, 90 * Random.Range(0, 4), 0));
 
                     block.transform.Translate(Vector3.up);
+                }
+                else if (grid[x, z].getEntity() == Element.CRATE)
+                {
+                    crateClone = Instantiate(crateBlock, new Vector3(x, 1, z), Quaternion.identity);
+                    //Renderer renderer = crateClone.GetComponent<Renderer>();
+                    //block.transform.Rotate(new Vector3(0, 90 * Random.Range(0, 4), 0));
+
+                    //block.transform.Translate(Vector3.up);
+
+                    Renderer renderer = crateBlock.GetComponent<Renderer>();
+                    //renderer.material = wallMat[Random.Range(0, wallMat.Length)];
+                    block.transform.Rotate(new Vector3(0, 90 * Random.Range(0, 4), 0));
+
+                    //block.transform.Translate(Vector3.up);
                 }
 				else if (grid[x, z].getEntity() == Element.PLAYER1)
                 {
@@ -77,7 +93,6 @@ public class CameraScript : MonoBehaviour
 					goalBlock.transform.position = new Vector3(x, 1, z);
                 }
 
-
                 if (grid[x, z].getEnvironment() == Element.FLOOR)
                 
                 {
@@ -89,6 +104,7 @@ public class CameraScript : MonoBehaviour
         }
 
 		boardBlock.SetActive(false);
+        crateBlock.SetActive(false);
 
         gameState = GameState.PLAYING;
 
@@ -106,7 +122,7 @@ public class CameraScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        clearMap();
+        clearMapOfPlayers();
         goalBlock.transform.Rotate(Vector3.up * Time.deltaTime*40);
         //goalBlock.transform.Rotate(Vector3.right * Time.deltaTime * 5);
         //float scale = 1 + 0.2f*Mathf.Abs(Mathf.Sin(2*Mathf.PI*goalBlock.transform.eulerAngles.y/180f));
@@ -135,6 +151,7 @@ public class CameraScript : MonoBehaviour
         if (c == '.') return Element.FLOOR;
         else if (c == '#') return Element.WALL;
         else if (c == '=') return Element.GOAL;
+        else if (c == '&') return Element.CRATE;
         else if (c == '1') return Element.PLAYER1;
         else if (c == '2') return Element.PLAYER2;
         else if (c == 'A') return Element.PORTALA;
@@ -144,13 +161,14 @@ public class CameraScript : MonoBehaviour
         return Element.FLOOR;
     }
 
-    public void clearMap()
+    public void clearMapOfPlayers()
     {
         for (int i = 0; i < gameMap.width; i++)
         {
             for (int j = 0; j < gameMap.height; j++)
             {
-                grid[i, j].setEntity(CameraScript.Element.NOTHING, true);
+                grid[i, j].removeEntity(Element.PLAYER1);
+                grid[i, j].removeEntity(Element.PLAYER2);
             }
         }
         int x1 = (int)player1.transform.position.x;

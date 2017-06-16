@@ -220,7 +220,16 @@ public class PlayerScript : MonoBehaviour
 		if (grid[x1, z1].getEnvironment() == CameraScript.Element.GOAL) return false;
         if (grid[x1, z1].getEntity() == myPlayer) return false;*/
 
-        if ((grid[x1, z1].getEntity() == CameraScript.Element.NOTHING
+        if (grid[x1, z1].getEntity() == CameraScript.Element.CRATE)
+        {
+            if (speedX > 15 || speedX < -15 || speedZ > 15 || speedZ < -15)
+            {
+                return false;
+            }
+            else return true;
+        }
+
+        else if ((grid[x1, z1].getEntity() == CameraScript.Element.NOTHING
             || grid[x1, z1].getEntity() == myPlayer)
             && grid[x1, z1].getEnvironment() != CameraScript.Element.WALL) return false;
 
@@ -233,7 +242,16 @@ public class PlayerScript : MonoBehaviour
         if (grid[x1, z1].getEnvironment() == CameraScript.Element.GOAL) return false;
         if (grid[x1, z1].getEntity() == myPlayer) return false;*/
 
-        if ((grid[x1, z1].getEntity() == CameraScript.Element.NOTHING
+        if (grid[x1, z1].getEntity() == CameraScript.Element.CRATE)
+        {
+            if (speedX > 15 || speedX < -15 || speedZ > 15 || speedZ < -15)
+            {
+                return false;
+            }
+            else return true;
+        }
+
+        else if ((grid[x1, z1].getEntity() == CameraScript.Element.NOTHING
             || grid[x1, z1].getEntity() == myPlayer)
             && grid[x1, z1].getEnvironment() != CameraScript.Element.WALL) return false;
 

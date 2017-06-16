@@ -26,7 +26,7 @@ public class GameMap{
 		string[] movesString = (lines[0]).Split (new string[] { ", " }, System.StringSplitOptions.None);
 
 		moves[0] = int.Parse(movesString[0]);
-		moves [1] = int.Parse (movesString [1]);
+		moves[1] = int.Parse (movesString [1]);
 		height = lines.Length-1;
 		width = 0;
 
@@ -51,12 +51,13 @@ public class GameMap{
             for (int j = 0; j < row.Length; j++){
                 CameraScript.Element element = CameraScript.getElement(row[j]);
                 if (element == CameraScript.Element.PLAYER1
-                    || element == CameraScript.Element.PLAYER2)
+                    || element == CameraScript.Element.PLAYER2
+                    || element == CameraScript.Element.CRATE)
                 {
                     grid[j, (lines.Length - 1) - i] = new Cell(CameraScript.Element.FLOOR,
                                                                CameraScript.getElement(row[j]));
                 }
-                else grid [j, (lines.Length-1)-i] = new Cell(CameraScript.getElement(row[j]));
+                else grid[j, (lines.Length - 1) - i] = new Cell(CameraScript.getElement(row[j]));
 			}
 		}
 	}
