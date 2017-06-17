@@ -14,7 +14,6 @@ public class CrateScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        Debug.Log(crateAudio.isPlaying);
         destroying = false;
     }
 
@@ -22,7 +21,7 @@ public class CrateScript : MonoBehaviour {
     void Update () {
 
         int x = (int) transform.position.x;
-        int z = (int)transform.position.z;
+        int z = (int) transform.position.z;
 
         if (grid[x, z].getEntity() != CameraScript.Element.CRATE && !destroying)
         {

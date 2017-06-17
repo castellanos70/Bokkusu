@@ -87,11 +87,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Resources\Audio\Credits.txt" />
-    <None Include="Assets\Resources\Maps\0Starter.txt" />
     <None Include="Assets\Resources\Maps\MapLevel1.txt" />
+    <None Include="Assets\Resources\Maps\Starter.txt" />
+    <None Include="Assets\Resources\Maps\_fun.txt" />
+    <None Include="Assets\Resources\Maps\complicated.txt" />
     <None Include="Assets\Resources\Maps\fullMap.txt" />
+    <None Include="Assets\Resources\Maps\harder.txt" />
     <None Include="Assets\Resources\Maps\map2.txt" />
     <None Include="Assets\Resources\Maps\map3.txt" />
+    <None Include="Assets\Resources\Maps\maybehard.txt" />
+    <None Include="Assets\Resources\Maps\moderate.txt" />
+    <None Include="Assets\Resources\Maps\simple.txt" />
     <None Include="Assets\Resources\Maps\superLarge.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
