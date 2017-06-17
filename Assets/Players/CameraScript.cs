@@ -146,11 +146,7 @@ public class CameraScript : MonoBehaviour
                 {
                     playerScript2.setPosition(x, z);
                 }
-<<<<<<< HEAD
-                else if (grid[x, z].getEnvironment() == Element.GOAL)
-=======
 				else if (grid[x, z].getEntity() == Element.GOAL)
->>>>>>> 46567d5715457437c7b7d2736414a3c70b024268
                 {
                     goalBlock.transform.position = new Vector3(x, 1, z);
                 }
