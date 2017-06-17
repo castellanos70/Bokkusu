@@ -5,6 +5,7 @@
 [Oo]bj/
 [Bb]uild
 /[Bb]uilds/
+/[Bb]uild_[Dd]ata/
 /[Ll]ibrary/
 sysinfo.txt
 *.stackdump
@@ -12,9 +13,10 @@ sysinfo.txt
 *.apk
 *.unitypackage
 .vs/
+*.exe
 
 
 # =================#
 # Vim generated    #
 # =================#
-*.~
+*~
