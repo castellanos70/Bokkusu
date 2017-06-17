@@ -2,25 +2,35 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameMap{
-	public int width, height;
+public class GameMap
+{
+    private string mapString;
+
+    public int width, height;
 	public int[] moves = {0, 0};
 	public Cell[,] grid;
 
-    public GameMap(int width, int height, int[] moves){
-		this.width = width;
-		this.height = height;
-		this.moves = moves;
-		grid = new Cell[width,height];
-	}
+    //public GameMap(int width, int height, int[] moves){
+    //	this.width = width;
+    //	this.height = height;
+    //	this.moves = moves;
+    //	grid = new Cell[width,height];
+    //}
 
-	public GameMap(Cell[,] grid){
-		width = grid.GetLength (0);
-		height = grid.GetLength (1);
-		this.grid = grid;
-	}
+    //public GameMap(Cell[,] grid){
+    //	width = grid.GetLength (0);
+    //	height = grid.GetLength (1);
+    //	this.grid = grid;
+    //}
 
-	public GameMap(string mapString){
+    public GameMap(string mapString)
+    {
+        this.mapString = mapString;
+        initMap();
+    }
+
+    public void initMap()
+    { 
 		string[] lines = mapString.Split(new string[] { "\r\n", "\n" }, System.StringSplitOptions.None);
 
 		string[] movesString = (lines[0]).Split (new string[] { ", " }, System.StringSplitOptions.None);
@@ -45,7 +55,7 @@ public class GameMap{
 			}
 		}
 
-		Debug.Log ("width: " + width + ", height: " + height); 
+		//Debug.Log ("width: " + width + ", height: " + height); 
 
 		for (int i = 1; i < lines.Length; i++){
 			string row = lines[i];
