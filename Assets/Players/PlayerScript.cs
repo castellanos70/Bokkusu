@@ -285,6 +285,8 @@ public class PlayerScript : MonoBehaviour
             else return CameraScript.Element.WALL;
         }
 
+        else if (grid[x1, z1].getEntity() == CameraScript.Element.GOAL) return CameraScript.Element.GOAL;
+
         else if ((grid[x1, z1].getEntity() == CameraScript.Element.NOTHING
             || grid[x1, z1].getEntity() == myPlayer)
             && grid[x1, z1].getEnvironment() != CameraScript.Element.WALL) { return CameraScript.Element.NOTHING; }
@@ -309,6 +311,8 @@ public class PlayerScript : MonoBehaviour
             }
             else return CameraScript.Element.WALL;
         }
+
+        else if (grid[x1, z1].getEntity() == CameraScript.Element.GOAL) return CameraScript.Element.GOAL;
 
         else if ((grid[x1, z1].getEntity() == CameraScript.Element.NOTHING
             || grid[x1, z1].getEntity() == myPlayer)
