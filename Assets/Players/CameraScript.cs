@@ -26,6 +26,7 @@ public class CameraScript : MonoBehaviour
     private GameMap[] gameMaps;
     private GameMap gameMap;
     private Cell[,] grid;
+    private List<GameObject> entityList = new List<GameObject>();
 
     private PlayerScript playerScript1, playerScript2;
 
@@ -39,6 +40,9 @@ public class CameraScript : MonoBehaviour
     {
         playerScript1 = player1.GetComponent<PlayerScript>();
         playerScript2 = player2.GetComponent<PlayerScript>();
+
+        entityList.Add(player1);
+        entityList.Add(player2);
 
         elementValues = (Element[])System.Enum.GetValues(typeof(Element));
 
@@ -111,8 +115,8 @@ public class CameraScript : MonoBehaviour
         playerScript1.setMaxLevelMoves(gameMap.moves[0]);
         playerScript2.setMaxLevelMoves(gameMap.moves[1]);
 
-        playerScript1.setBoard(this, grid);
-        playerScript2.setBoard(this, grid);
+        playerScript1.setBoard(this, grid, entityList);
+        playerScript2.setBoard(this, grid, entityList);
 
         Vector3 cameraPosition = transform.position;
 
@@ -147,6 +151,8 @@ public class CameraScript : MonoBehaviour
                     crateClone.GetComponent<CrateScript>().setBoard(this, grid);
 
                     block.transform.Rotate(new Vector3(180, 180, 180));
+
+                    entityList.Add(crateClone);
                 }
                 else if (grid[x, z].getEntity() == Element.PLAYER1)
                 {
@@ -161,6 +167,7 @@ public class CameraScript : MonoBehaviour
 				else if (grid[x, z].getEntity() == Element.GOAL)
                 {
                     goalBlock.transform.position = new Vector3(x, 1, z);
+                    entityList.Add(goalBlock);
                 }
 
                 if (grid[x, z].getEnvironment() == Element.FLOOR)
