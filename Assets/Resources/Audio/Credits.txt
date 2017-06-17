@@ -4,3 +4,5 @@
 	dropping-3.wav
 	glass_breaking-1.wav
 	glass_breaking-2.wav
+	window-ice-scraper-1.wav
+	window-ice-scraper-2.wav
