@@ -116,21 +116,6 @@ public class PlayerScript : MonoBehaviour
 
             CameraScript.Element hit = checkMove(x0, z0);
 
-            // These extra conditions stop the players from jerking against the wall
-            /*if (hit && ((speedX >= 0 || Math.Abs(x - x0) < 0.2) && (speedZ >= 0 || Math.Abs(z - z0) < 0.2)))
-            //if (hit)
-            {
-                if (grid[(int)x, (int)z].getEnvironment() == CameraScript.Element.GOAL)
-                {
-                    cameraScript.setGameState(CameraScript.GameState.WON);
-                }
-
-                x = x0; z = z0;
-                speedX = 0;
-                speedZ = 0;
-                moving = false;
-            }*/
-
             float speed = (speedX + speedZ);
             float buff = 0.05f + floatToUnit(speed) * (speed / (speedMax / 0.15f));
             if (hit == CameraScript.Element.WALL && ((speedX >= 0 || Math.Abs(x - x0) < buff) && (speedZ >= 0 || Math.Abs(z - z0) < buff)))
@@ -300,6 +285,8 @@ public class PlayerScript : MonoBehaviour
             else return CameraScript.Element.WALL;
         }
 
+        else if (grid[x1, z1].getEntity() == CameraScript.Element.GOAL) return CameraScript.Element.GOAL;
+
         else if ((grid[x1, z1].getEntity() == CameraScript.Element.NOTHING
             || grid[x1, z1].getEntity() == myPlayer)
             && grid[x1, z1].getEnvironment() != CameraScript.Element.WALL) { return CameraScript.Element.NOTHING; }
@@ -324,6 +311,8 @@ public class PlayerScript : MonoBehaviour
             }
             else return CameraScript.Element.WALL;
         }
+
+        else if (grid[x1, z1].getEntity() == CameraScript.Element.GOAL) return CameraScript.Element.GOAL;
 
         else if ((grid[x1, z1].getEntity() == CameraScript.Element.NOTHING
             || grid[x1, z1].getEntity() == myPlayer)
