@@ -6,6 +6,7 @@ public class PlayerScript : MonoBehaviour
 {
 	public GameObject arrow;
 	public Material arrowMaterial;
+    public AudioSource playerAudio;
 
     public int playerNumber;
     public TextMesh levelMovesTextMesh;
@@ -96,7 +97,7 @@ public class PlayerScript : MonoBehaviour
 		
 	
 	// Update is called once per
-	void FixedUpdate ()
+	void Update ()
     {
         int x0; // current position (rounded down)
         int z0;
@@ -104,21 +105,26 @@ public class PlayerScript : MonoBehaviour
         x0 = (int)(transform.position.x);
         z0 = (int)(transform.position.z);
 
+        float speed = (speedX + speedZ);
+
+        playerAudio.pitch = 0.5f + floatToUnit(speed) * (speed / (speedMax / 2.5f));
+
+        displayArrows();
+
         if (moving)
         {
 
 			//arrows:
-			for (int i = 0; i < 4; i++){
+			/*for (int i = 0; i < 4; i++){
 				arrows[i].SetActive(false);
-			}
-
+			}*/
 
             float x = transform.position.x + speedX * Time.deltaTime;
             float z = transform.position.z + speedZ * Time.deltaTime;
 
             CameraScript.Element hit = checkMove(x0, z0);
 
-            float speed = (speedX + speedZ);
+            
             float buff = 0.05f + floatToUnit(speed) * (speed / (speedMax / 0.15f));
             if (hit == CameraScript.Element.WALL && ((speedX >= 0 || Math.Abs(x - x0) < buff) && (speedZ >= 0 || Math.Abs(z - z0) < buff)))
             {
@@ -126,11 +132,13 @@ public class PlayerScript : MonoBehaviour
                 speedX = 0;
                 speedZ = 0;
                 moving = false;
+                playerAudio.Stop();
             }
 
             else if (hit == CameraScript.Element.GOAL)
             {
                 cameraScript.setGameState(CameraScript.GameState.WON);
+                playerAudio.Stop();
             }
 
             else if (hit == CameraScript.Element.PLAYER1)
@@ -139,6 +147,7 @@ public class PlayerScript : MonoBehaviour
                 speedX = 0;
                 speedZ = 0;
                 moving = false;
+                playerAudio.Stop();
             }
 
             else if (Input.GetKey(keycode[0]) && speedX == 0)
@@ -179,6 +188,8 @@ public class PlayerScript : MonoBehaviour
                     speedZ = acceleration * Time.deltaTime;
                     speedX = 0;
                     z1 += 1;
+                    if (!moving) playerAudio.Play();
+                    Debug.Log(playerAudio.isPlaying);
                     moving = true;
                 }
                 else if (Input.GetKey(keycode[2]))
@@ -186,6 +197,9 @@ public class PlayerScript : MonoBehaviour
                     speedZ = -acceleration * Time.deltaTime;
                     speedX = 0;
                     z1 -= 1;
+                    
+                    if (!moving) playerAudio.Play();
+                    Debug.Log(playerAudio.isPlaying);
                     moving = true;
                 }
                 else if (Input.GetKey(keycode[1]))
@@ -193,6 +207,8 @@ public class PlayerScript : MonoBehaviour
                     speedZ = 0;
                     speedX = acceleration * Time.deltaTime;
                     x1 += 1;
+                    if (!moving) playerAudio.Play();
+                    Debug.Log(playerAudio.isPlaying);
                     moving = true;
                 }
                 else if (Input.GetKey(keycode[3]))
@@ -200,6 +216,8 @@ public class PlayerScript : MonoBehaviour
                     speedZ = 0;
                     speedX = -acceleration * Time.deltaTime;
                     x1 -= 1;
+                    if (!moving) playerAudio.Play();
+                    
                     moving = true;
                 }
 
@@ -212,27 +230,14 @@ public class PlayerScript : MonoBehaviour
                         speedX = 0;
                         speedZ = 0;
                         moving = false;
-                        
+                        playerAudio.Stop();
                     }
                     else
                     {
                         movesRemaining--;
                         levelMovesTextMesh.text = movesRemaining.ToString();
-                        
                     }
                 }
-
-				int[] dists = getDistances();
-
-				//arrows:
-				for (int i = 0; i < 4; i++){
-					arrows[i].SetActive(true);
-					arrows[i].transform.position = transform.position + new Vector3(arrowDirs[i, 0]*.5f, 0, arrowDirs[i, 1]*.5f);
-					float width = Mathf.Sin((Time.frameCount + timingOffset)/15f)*.2f + .8f; //ocelation
-					arrows[i].transform.localScale = new Vector3((dists[i]), width, 1); //this works because of relative rotation
-					//Debug.Log(dists[i]);
-				}
-
                 //else grid[prevX, prevZ].setEntity(myPlayer, true);
             }
         }
@@ -341,7 +346,14 @@ public class PlayerScript : MonoBehaviour
         return 0;
     }
 
-	public int[] getDistances(){
+    private int floatToUnit(float n)
+    {
+        if (n < 0) return -1;
+        else if (n > 0) return 1;
+        return 0;
+    }
+
+    private int[] getDistances(){
 		int[] dists = new int[4];
 		float x = transform.position.x;
 		float z = transform.position.z;
@@ -366,10 +378,23 @@ public class PlayerScript : MonoBehaviour
 		return dists;
 	}
 
-    private int floatToUnit(float n)
+    private void displayArrows()
     {
-        if (n < 0) return -1;
-        else if (n > 0) return 1;
-        return 0;
+        int[] dists = getDistances();
+        //arrows:
+        if (speedX == 0) { arrows[1].SetActive(true); arrows[3].SetActive(true); }
+        else { arrows[1].SetActive(false); arrows[3].SetActive(false); }
+        if (speedZ == 0) { arrows[0].SetActive(true); arrows[2].SetActive(true); }
+        else { arrows[0].SetActive(false); arrows[2].SetActive(false); }
+        // I know this could've gone in the loop, but I couldn't get it to work there
+
+        for (int i = 0; i < 4; i++)
+        {
+            dists[i] = 1; // This just makes the arrows 1 block long
+            arrows[i].transform.position = transform.position + new Vector3(arrowDirs[i, 0] * .5f, 0, arrowDirs[i, 1] * .5f);
+            float width = Mathf.Sin((Time.frameCount + timingOffset) / 15f) * .2f + .8f; //ocelation
+            arrows[i].transform.localScale = new Vector3((dists[i]), width, 1); //this works because of relative rotation
+                                                                                //Debug.Log(dists[i]);
+        }
     }
 }
