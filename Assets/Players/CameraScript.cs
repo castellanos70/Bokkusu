@@ -121,9 +121,13 @@ public class CameraScript : MonoBehaviour
                 if (grid[x, z].getEnvironment() == Element.NOTHING) continue;
 
                 GameObject block = Instantiate(boardBlock, new Vector3(x, 0, z), Quaternion.identity);
+                grid[x, z].setEnvironmentObj(block);
+
                 GameObject crateClone;
+
                 if (grid[x, z].getEnvironment() == Element.WALL)
                 {
+                    
                     Renderer renderer = block.GetComponent<Renderer>();
                     renderer.material = wallMat[Random.Range(0, wallMat.Length)];
                     block.transform.Rotate(new Vector3(0, 90 * Random.Range(0, 4), 0));

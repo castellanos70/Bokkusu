@@ -20,7 +20,7 @@ public class Cell
         entity = CameraScript.Element.NOTHING;
     }
 
-    public void setEnvironment(GameObject obj)
+    public void setEnvironmentObj(GameObject obj)
     {
         this.environmentObj = obj;
     }
