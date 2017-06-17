@@ -40,41 +40,21 @@ public class PlayerScript : MonoBehaviour
     private KeyCode[] keycode = new KeyCode[4];
     private HashSet<GameObject> entities;
 
-
-    public void setMaxLevelMoves(int moveCount)
+    void Awake()
     {
-        movesRemaining = moveCount;
-    }
+        Debug.Log("PlayerScript.Start(): creating Arrows.");
+        arrows = new GameObject[4];
 
-    public void setBoard(CameraScript cameraScript, Cell[,] myGrid, List<GameObject> entityList)
-    {
-        this.cameraScript = cameraScript;
-        grid = myGrid;
-        this.entityList = entityList;
-        //boardWidth = grid.GetLength(0);
-        //boardHeight = grid.GetLength(1);
-    }
-
-	public void setPosition(int x, int z)
-    {
-		transform.position = new Vector3(x, 1, z);
-		//prevX = x;
-		//prevZ = z;
-		arrows = new GameObject[4];
-
-		for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
-			arrows[i] = Instantiate(arrow, arrow.transform.position, Quaternion.identity);
-			arrows[i].GetComponent<Renderer>().material = arrowMaterial;
-			arrows[i].SetActive(true);
-			arrows[i].transform.position = transform.position + new Vector3(arrowDirs[i, 0]*.5f, 0, arrowDirs[i, 1]*.5f);
-			arrows[i].transform.Rotate(new Vector3(90, 90*i, 0));
-		}
-		arrow.SetActive(false);
-	}
+            arrows[i] = Instantiate(arrow, arrow.transform.position, Quaternion.identity);
+            arrows[i].GetComponent<Renderer>().material = arrowMaterial;
+            arrows[i].SetActive(true);
+        }
+        arrow.SetActive(false);
+    }
 
-
-    void Start ()
+    void Start()
     {
         levelMovesTextMesh.text = movesRemaining.ToString();
 
@@ -84,7 +64,7 @@ public class PlayerScript : MonoBehaviour
             keycode[1] = KeyCode.D;
             keycode[2] = KeyCode.S;
             keycode[3] = KeyCode.A;
-			myPlayer = CameraScript.Element.PLAYER1;
+            myPlayer = CameraScript.Element.PLAYER1;
         }
         else
         {
@@ -92,14 +72,14 @@ public class PlayerScript : MonoBehaviour
             keycode[1] = KeyCode.RightArrow;
             keycode[2] = KeyCode.DownArrow;
             keycode[3] = KeyCode.LeftArrow;
-			myPlayer = CameraScript.Element.PLAYER2;
-			timingOffset = 50;
+            myPlayer = CameraScript.Element.PLAYER2;
+            timingOffset = 50;
         }
     }
-		
-	
-	// Update is called once per
-	void Update ()
+
+
+    // Update is called once per
+    void Update()
     {
         int x0; // current position (rounded down)
         int z0;
@@ -115,18 +95,12 @@ public class PlayerScript : MonoBehaviour
 
         if (moving)
         {
-
-			//arrows:
-			/*for (int i = 0; i < 4; i++){
-				arrows[i].SetActive(false);
-			}*/
-
             float x = transform.position.x + speedX * Time.deltaTime;
             float z = transform.position.z + speedZ * Time.deltaTime;
 
             CameraScript.Element hit = checkMove(x0, z0);
 
-            
+
             float buff = 0.05f + floatToUnit(speed) * (speed / (speedMax / 0.15f));
             if (hit == CameraScript.Element.WALL && ((speedX >= 0 || Math.Abs(x - x0) < buff) && (speedZ >= 0 || Math.Abs(z - z0) < buff)))
             {
@@ -155,25 +129,25 @@ public class PlayerScript : MonoBehaviour
             else if (Input.GetKey(keycode[0]) && speedX == 0)
             {
                 speedZ += acceleration * Time.deltaTime;
-				speedZ = toSpeedBounds(speedZ);
+                speedZ = toSpeedBounds(speedZ);
             }
 
             else if (Input.GetKey(keycode[2]) && speedX == 0)
             {
                 speedZ -= acceleration * Time.deltaTime;
-				speedZ = toSpeedBounds(speedZ);
+                speedZ = toSpeedBounds(speedZ);
             }
 
             else if (Input.GetKey(keycode[1]) && speedZ == 0)
             {
                 speedX += acceleration * Time.deltaTime;
-				speedX = toSpeedBounds(speedX);
+                speedX = toSpeedBounds(speedX);
             }
 
             else if (Input.GetKey(keycode[3]) && speedZ == 0)
             {
                 speedX -= acceleration * Time.deltaTime;
-				speedX = toSpeedBounds(speedX);
+                speedX = toSpeedBounds(speedX);
             }
 
             transform.position = new Vector3(x, 1, z);
@@ -199,7 +173,7 @@ public class PlayerScript : MonoBehaviour
                     speedZ = -acceleration * Time.deltaTime;
                     speedX = 0;
                     z1 -= 1;
-                    
+
                     if (!moving) playerAudio.Play();
                     Debug.Log(playerAudio.isPlaying);
                     moving = true;
@@ -219,7 +193,7 @@ public class PlayerScript : MonoBehaviour
                     speedX = -acceleration * Time.deltaTime;
                     x1 -= 1;
                     if (!moving) playerAudio.Play();
-                    
+
                     moving = true;
                 }
 
@@ -244,6 +218,36 @@ public class PlayerScript : MonoBehaviour
             }
         }
     }
+
+    public void setMaxLevelMoves(int moveCount)
+    {
+        movesRemaining = moveCount;
+    }
+
+    public void setBoard(CameraScript cameraScript, Cell[,] myGrid, List<GameObject> entityList)
+    {
+        this.cameraScript = cameraScript;
+        grid = myGrid;
+        this.entityList = entityList;
+        //boardWidth = grid.GetLength(0);
+        //boardHeight = grid.GetLength(1);
+    }
+
+	public void setPosition(int x, int z)
+    {
+		transform.position = new Vector3(x, 1, z);
+		//prevX = x;
+		//prevZ = z;
+		for (int i = 0; i < 4; i++)
+        {
+			arrows[i].SetActive(true);
+			arrows[i].transform.position = transform.position + new Vector3(arrowDirs[i, 0]*.5f, 0, arrowDirs[i, 1]*.5f);
+			arrows[i].transform.Rotate(new Vector3(90, 90*i, 0));
+		}
+	}
+
+
+   
 
     public void setEntities(HashSet<GameObject> entities)
     {

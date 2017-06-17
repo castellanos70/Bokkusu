@@ -19,7 +19,7 @@ public class CameraScript : MonoBehaviour
     private GameState gameState;
 
     public enum Element                  { FLOOR, WALL, GOAL, CRATE, PLAYER1, PLAYER2, PORTALA, PORTALB, PORTALC, NOTHING };
-    public static char[] ELEMENT_ASCII = { '.'  , '#' , '=',  '&',    '1'    , '2'    , 'A',     'B',     'C',     ' '     };
+    public static char[] ELEMENT_ASCII = { '.'  , '#' , '=',  '&',    '1'    , '2'    , 'A',     'B',     'C',     ' '    };
 
 
     private static Element[] elementValues;
@@ -47,6 +47,12 @@ public class CameraScript : MonoBehaviour
         elementValues = (Element[])System.Enum.GetValues(typeof(Element));
 
         gameMaps = MapLoader.loadAllMaps ();
+    }
+
+
+
+    void Start()
+    {
         newGame(0);
 
         boardBlock.SetActive(false);
@@ -102,6 +108,15 @@ public class CameraScript : MonoBehaviour
                     grid[x, z].destroyEnvironment();
                 }
             }
+            foreach (GameObject obj in entityList)
+            {
+                if (obj == null) continue;
+                if (obj.tag != "Player" && obj.tag != "Finish")
+                {
+                    Destroy(obj);
+                }
+            }
+            entityList.Clear();
         }
 
 
