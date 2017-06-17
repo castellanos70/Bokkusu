@@ -52,8 +52,8 @@
      <Compile Include="Assets\Board\Scripts\MapLoader.cs" />
      <Compile Include="Assets\Players\CameraScript.cs" />
      <Compile Include="Assets\Players\PlayerScript.cs" />
-     <None Include="Assets\Resources\Maps\_simple.txt" />
-     <None Include="Assets\Resources\Maps\_complicated.txt" />
+     <None Include="Assets\Resources\Maps\simple.txt" />
+     <None Include="Assets\Resources\Maps\complicated.txt" />
      <None Include="Assets\Resources\Maps\fullMap.txt" />
      <None Include="Assets\Resources\Maps\moderate.txt" />
      <None Include="Assets\Resources\Maps\maybehard.txt" />
@@ -63,6 +63,7 @@
      <None Include="Assets\Resources\Audio\Credits.txt" />
      <None Include="Assets\Resources\Maps\harder.txt" />
      <None Include="Assets\Resources\Maps\Starter.txt" />
+     <None Include="Assets\Resources\Maps\_fun.txt" />
      <None Include="Assets\Resources\Maps\MapLevel1.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
