@@ -53,6 +53,7 @@
      <Compile Include="Assets\Players\CameraScript.cs" />
      <Compile Include="Assets\Players\PlayerScript.cs" />
      <None Include="Assets\Resources\Maps\_simple.txt" />
+     <None Include="Assets\Resources\Maps\_complicated.txt" />
      <None Include="Assets\Resources\Maps\fullMap.txt" />
      <None Include="Assets\Resources\Maps\moderate.txt" />
      <None Include="Assets\Resources\Maps\maybehard.txt" />
