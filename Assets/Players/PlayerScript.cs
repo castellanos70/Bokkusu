@@ -84,11 +84,39 @@ public class PlayerScript : MonoBehaviour
             float x = transform.position.x + speedX * Time.deltaTime;
             float z = transform.position.z + speedZ * Time.deltaTime;
 
-            bool hit = checkMove(x0, z0);
+            CameraScript.Element hit = checkMove(x0, z0);
 
             // These extra conditions stop the players from jerking against the wall
-            if (hit && ((speedX >= 0 || Math.Abs(x - x0) < 0.2) && (speedZ >= 0 || Math.Abs(z - z0) < 0.2)))
+            /*if (hit && ((speedX >= 0 || Math.Abs(x - x0) < 0.2) && (speedZ >= 0 || Math.Abs(z - z0) < 0.2)))
             //if (hit)
+            {
+                if (grid[(int)x, (int)z].getEnvironment() == CameraScript.Element.GOAL)
+                {
+                    cameraScript.setGameState(CameraScript.GameState.WON);
+                }
+
+                x = x0; z = z0;
+                speedX = 0;
+                speedZ = 0;
+                moving = false;
+            }*/
+
+            float speed = (speedX + speedZ);
+            float buff = 0.05f + floatToUnit(speed) * (speed / (speedMax / 0.15f));
+            if (hit == CameraScript.Element.WALL && ((speedX >= 0 || Math.Abs(x - x0) < buff) && (speedZ >= 0 || Math.Abs(z - z0) < buff)))
+            {
+                x = x0; z = z0;
+                speedX = 0;
+                speedZ = 0;
+                moving = false;
+            }
+
+            else if (hit == CameraScript.Element.GOAL)
+            {
+                cameraScript.setGameState(CameraScript.GameState.WON);
+            }
+
+            else if (hit == CameraScript.Element.PLAYER1)
             {
                 x = x0; z = z0;
                 speedX = 0;
@@ -118,11 +146,6 @@ public class PlayerScript : MonoBehaviour
             {
                 speedX -= acceleration * Time.deltaTime;
 				speedX = toSpeedBounds(speedX);
-            }
-
-            if (grid[(int)x, (int)z].getEnvironment() == CameraScript.Element.GOAL)
-            {
-                cameraScript.setGameState(CameraScript.GameState.WON);
             }
 
             transform.position = new Vector3(x, 1, z);
@@ -166,18 +189,19 @@ public class PlayerScript : MonoBehaviour
 
                 if (moving)
                 {
-                    
-                    bool hit = checkSpot(x1, z1);
-                    if (hit)
+                    CameraScript.Element hit = checkSpot(x1, z1);
+                    if (hit != CameraScript.Element.NOTHING)
                     {
                         speedX = 0;
                         speedZ = 0;
                         moving = false;
+                        
                     }
                     else
                     {
                         movesRemaining--;
                         levelMovesTextMesh.text = movesRemaining.ToString();
+                        
                     }
                 }
                 //else grid[prevX, prevZ].setEntity(myPlayer, true);
@@ -200,8 +224,10 @@ public class PlayerScript : MonoBehaviour
         return floatToUnit(speedZ);
     }
 
-    private bool checkMove(int x0, int z0)
+    private CameraScript.Element checkMove(int x0, int z0)
     {
+        
+
         int x1 = x0;
         int z1 = z0;
 
@@ -221,24 +247,27 @@ public class PlayerScript : MonoBehaviour
 		if (grid[x1, z1].getEnvironment() == CameraScript.Element.GOAL) return false;
         if (grid[x1, z1].getEntity() == myPlayer) return false;*/
 
-        if (grid[x1, z1].getEntity() == CameraScript.Element.CRATE)
+        if (grid[x1, z1].getEntity() == CameraScript.Element.CRATE) // returning NOTHING is like returning false
         {
+
             if (speedX > CrateScript.getStrength() || speedX < -CrateScript.getStrength()
                 || speedZ > CrateScript.getStrength() || speedZ < -CrateScript.getStrength())
             {
-                return false;
+                return CameraScript.Element.NOTHING;
             }
-            else return true;
+            else return CameraScript.Element.WALL;
         }
 
         else if ((grid[x1, z1].getEntity() == CameraScript.Element.NOTHING
             || grid[x1, z1].getEntity() == myPlayer)
-            && grid[x1, z1].getEnvironment() != CameraScript.Element.WALL) return false;
+            && grid[x1, z1].getEnvironment() != CameraScript.Element.WALL) { return CameraScript.Element.NOTHING; }
 
-        return true;
+        else if (grid[x1, z1].getEnvironment() == CameraScript.Element.WALL) { return CameraScript.Element.WALL; }
+
+        return CameraScript.Element.PLAYER1; // Collision detection will only use PLAYER1 regardless of which player it is
     }
 		
-    private bool checkSpot(int x1, int z1)
+    private CameraScript.Element checkSpot(int x1, int z1) // returning NOTHING is like returning false
     {
         /*if (grid[x1, z1].getEnvironment() == CameraScript.Element.FLOOR) return false;
         if (grid[x1, z1].getEnvironment() == CameraScript.Element.GOAL) return false;
@@ -249,16 +278,18 @@ public class PlayerScript : MonoBehaviour
             if (speedX > CrateScript.getStrength() || speedX < -CrateScript.getStrength()
                 || speedZ > CrateScript.getStrength() || speedZ < -CrateScript.getStrength())
             {
-                return false;
+                return CameraScript.Element.NOTHING;
             }
-            else return true;
+            else return CameraScript.Element.WALL;
         }
 
         else if ((grid[x1, z1].getEntity() == CameraScript.Element.NOTHING
             || grid[x1, z1].getEntity() == myPlayer)
-            && grid[x1, z1].getEnvironment() != CameraScript.Element.WALL) return false;
+            && grid[x1, z1].getEnvironment() != CameraScript.Element.WALL) { return CameraScript.Element.NOTHING; }
 
-        return true;
+        else if (grid[x1, z1].getEnvironment() == CameraScript.Element.WALL) { return CameraScript.Element.WALL; }
+
+        return CameraScript.Element.PLAYER1; // Collision detection will only use PLAYER1 regardless of which player it is
     }
 
 	private float toSpeedBounds(float n){

@@ -52,7 +52,8 @@ public class GameMap{
                 CameraScript.Element element = CameraScript.getElement(row[j]);
                 if (element == CameraScript.Element.PLAYER1
                     || element == CameraScript.Element.PLAYER2
-                    || element == CameraScript.Element.CRATE)
+                    || element == CameraScript.Element.CRATE
+                    || element == CameraScript.Element.GOAL)
                 {
                     grid[j, (lines.Length - 1) - i] = new Cell(CameraScript.Element.FLOOR,
                                                                CameraScript.getElement(row[j]));
