@@ -53,11 +53,12 @@
      <Compile Include="Assets\Players\CameraScript.cs" />
      <Compile Include="Assets\Players\PlayerScript.cs" />
      <None Include="Assets\Resources\Maps\fullMap.txt" />
+     <None Include="Assets\Resources\Maps\_moderate.txt" />
      <None Include="Assets\Resources\Maps\map3.txt" />
      <None Include="Assets\Resources\Maps\superLarge.txt" />
      <None Include="Assets\Resources\Maps\map2.txt" />
      <None Include="Assets\Resources\Audio\Credits.txt" />
-     <None Include="Assets\Resources\Maps\_harder.txt" />
+     <None Include="Assets\Resources\Maps\harder.txt" />
      <None Include="Assets\Resources\Maps\Starter.txt" />
      <None Include="Assets\Resources\Maps\MapLevel1.txt" />
  <Reference Include="UnityEngine.UI">
