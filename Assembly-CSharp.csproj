@@ -52,8 +52,10 @@
      <Compile Include="Assets\Board\Scripts\MapLoader.cs" />
      <Compile Include="Assets\Players\CameraScript.cs" />
      <Compile Include="Assets\Players\PlayerScript.cs" />
+     <None Include="Assets\Resources\Maps\_simple.txt" />
      <None Include="Assets\Resources\Maps\fullMap.txt" />
-     <None Include="Assets\Resources\Maps\_moderate.txt" />
+     <None Include="Assets\Resources\Maps\moderate.txt" />
+     <None Include="Assets\Resources\Maps\maybehard.txt" />
      <None Include="Assets\Resources\Maps\map3.txt" />
      <None Include="Assets\Resources\Maps\superLarge.txt" />
      <None Include="Assets\Resources\Maps\map2.txt" />
