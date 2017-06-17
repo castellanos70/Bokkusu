@@ -6,6 +6,7 @@ public class Cell
 {
     private CameraScript.Element environment;
     private CameraScript.Element entity;
+    private GameObject environmentObj;
 
     public Cell(CameraScript.Element environment, CameraScript.Element entity)
     {
@@ -17,6 +18,11 @@ public class Cell
     {
         this.environment = environment;
         entity = CameraScript.Element.NOTHING;
+    }
+
+    public void setEnvironment(GameObject obj)
+    {
+        this.environmentObj = obj;
     }
 
     public bool setEntity(CameraScript.Element entity, bool prejudice)
@@ -45,6 +51,11 @@ public class Cell
     {
         if (this.environment == environment) return true;
         return false;
+    }
+
+    public void destroyEnvironment()
+    {
+        if (environmentObj != null) Object.Destroy(environmentObj);
     }
 
     public CameraScript.Element getEntity()

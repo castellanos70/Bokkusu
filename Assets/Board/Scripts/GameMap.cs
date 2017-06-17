@@ -37,8 +37,10 @@ public class GameMap{
 		grid = new Cell[width, height];
 
 		//fill wih empty
-		for (var i = 0; i < width; i++) {
-			for (var j = 0; j < height; j++) {
+		for (var i = 0; i < width; i++)
+        {
+			for (var j = 0; j < height; j++)
+            {
 				grid [i, j] = new Cell(CameraScript.Element.NOTHING);
 			}
 		}
@@ -52,7 +54,8 @@ public class GameMap{
                 CameraScript.Element element = CameraScript.getElement(row[j]);
                 if (element == CameraScript.Element.PLAYER1
                     || element == CameraScript.Element.PLAYER2
-                    || element == CameraScript.Element.CRATE)
+                    || element == CameraScript.Element.CRATE
+                    || element == CameraScript.Element.GOAL)
                 {
                     grid[j, (lines.Length - 1) - i] = new Cell(CameraScript.Element.FLOOR,
                                                                CameraScript.getElement(row[j]));
