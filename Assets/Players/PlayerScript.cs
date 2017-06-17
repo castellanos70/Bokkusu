@@ -23,7 +23,8 @@ public class PlayerScript : MonoBehaviour
 	//private int prevZ = 0;
 
 	private GameObject[] arrows; //up down left right
-	private float[,] arrowDirs = new float[4,2]{
+	private float[,] arrowDirs = new float[4,2]
+    {
 		{-1, 0},
 		{0, 1},
 		{1, 0},
@@ -54,20 +55,21 @@ public class PlayerScript : MonoBehaviour
         //boardHeight = grid.GetLength(1);
     }
 
-	public void setPosition(int x, int z){
-		transform.Translate(new Vector3(x, 1, z));
+	public void setPosition(int x, int z)
+    {
+		transform.position = new Vector3(x, 1, z);
 		//prevX = x;
 		//prevZ = z;
 		arrows = new GameObject[4];
 
-		for (int i = 0; i < 4; i++){
+		for (int i = 0; i < 4; i++)
+        {
 			arrows[i] = Instantiate(arrow, arrow.transform.position, Quaternion.identity);
 			arrows[i].GetComponent<Renderer>().material = arrowMaterial;
 			arrows[i].SetActive(true);
 			arrows[i].transform.position = transform.position + new Vector3(arrowDirs[i, 0]*.5f, 0, arrowDirs[i, 1]*.5f);
 			arrows[i].transform.Rotate(new Vector3(90, 90*i, 0));
 		}
-
 		arrow.SetActive(false);
 	}
 
@@ -237,7 +239,6 @@ public class PlayerScript : MonoBehaviour
                         movesRemaining--;
                         levelMovesTextMesh.text = movesRemaining.ToString();
                     }
-
                 }
                 //else grid[prevX, prevZ].setEntity(myPlayer, true);
             }

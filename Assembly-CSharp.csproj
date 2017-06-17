@@ -63,7 +63,6 @@
      <None Include="Assets\Resources\Audio\Credits.txt" />
      <None Include="Assets\Resources\Maps\_big&amp;dumb.txt" />
      <None Include="Assets\Resources\Maps\harder.txt" />
-     <None Include="Assets\Resources\Maps\big&amp;dumb.txt" />
      <None Include="Assets\Resources\Maps\Starter.txt" />
      <None Include="Assets\Resources\Maps\fun.txt" />
      <None Include="Assets\Resources\Maps\MapLevel1.txt" />
