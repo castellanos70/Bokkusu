@@ -86,11 +86,8 @@
     <Compile Include="Assets\Players\PlayerScript.cs" />
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
-    <None Include="Assets\Resources\Maps\0Starter.txt" />
-=======
     <None Include="Assets\Resources\Audio\Credits.txt" />
->>>>>>> 5ca1f7b946fe02cf60f0510b0b49f6856e5d1414
+    <None Include="Assets\Resources\Maps\0Starter.txt" />
     <None Include="Assets\Resources\Maps\MapLevel1.txt" />
     <None Include="Assets\Resources\Maps\fullMap.txt" />
     <None Include="Assets\Resources\Maps\map2.txt" />
