@@ -52,6 +52,7 @@
      <Compile Include="Assets\Board\Scripts\MapLoader.cs" />
      <Compile Include="Assets\Players\CameraScript.cs" />
      <Compile Include="Assets\Players\PlayerScript.cs" />
+     <Compile Include="Assets\Splash_Script.cs" />
      <None Include="Assets\Resources\Maps\simple.txt" />
      <None Include="Assets\Resources\Maps\complicated.txt" />
      <None Include="Assets\Resources\Maps\fullMap.txt" />
