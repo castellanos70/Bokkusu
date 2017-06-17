@@ -32,6 +32,7 @@ public class PlayerScript : MonoBehaviour
 
 	private int timingOffset = 0;
     private Cell[,] grid;
+    private List<GameObject> entityList;
     private CameraScript.Element myPlayer;
     private CameraScript cameraScript;
 
@@ -44,10 +45,11 @@ public class PlayerScript : MonoBehaviour
         movesRemaining = moveCount;
     }
 
-    public void setBoard(CameraScript cameraScript, Cell[,] myGrid)
+    public void setBoard(CameraScript cameraScript, Cell[,] myGrid, List<GameObject> entityList)
     {
         this.cameraScript = cameraScript;
         grid = myGrid;
+        this.entityList = entityList;
         //boardWidth = grid.GetLength(0);
         //boardHeight = grid.GetLength(1);
     }
