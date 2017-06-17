@@ -44,6 +44,9 @@ public class CameraScript : MonoBehaviour
 
         gameMaps = MapLoader.loadAllMaps ();
         newGame(0);
+
+        boardBlock.SetActive(false);
+        crateBlock.SetActive(false);
     }
 
     // Update is called once per frame
@@ -65,7 +68,7 @@ public class CameraScript : MonoBehaviour
                 float dx = (goalBlock.transform.position.x - transform.position.x) * Time.deltaTime * 3;
                 float dz = (goalBlock.transform.position.z - transform.position.z) * Time.deltaTime * 3;
                 float dy = (transform.position.y - 2) * Time.deltaTime;
-                Debug.Log("transform.position=" + transform.position);
+                //Debug.Log("transform.position=" + transform.position);
                 transform.Translate(dx, dz, dy);
                 //if (dist > 2)
                 //{
@@ -78,14 +81,13 @@ public class CameraScript : MonoBehaviour
             {   int level = Random.Range(0, gameMaps.Length);
                 newGame(level);
             }
-
         }
     }
 
 
     private void newGame(int level)
     {
-
+        Time.timeScale = 0;
         // destroy old board
         if (gameMap != null)
         {
@@ -102,6 +104,7 @@ public class CameraScript : MonoBehaviour
 
 
         gameMap = gameMaps[level];
+        gameMap.initMap();
         grid = gameMap.grid;
 
 
@@ -114,6 +117,8 @@ public class CameraScript : MonoBehaviour
         Vector3 cameraPosition = transform.position;
 
         // Spawn board blocks
+        Debug.Log("NEW GAME[" + level + "]:" + grid.GetLength(0) + "(" + gameMap.width + ") x " + grid.GetLength(1) + 
+            "("+ gameMap.height+")");
         for (int x = 0; x < gameMap.width; x++)
         {
             for (int z = 0; z < gameMap.height; z++)
@@ -121,6 +126,7 @@ public class CameraScript : MonoBehaviour
                 if (grid[x, z].getEnvironment() == Element.NOTHING) continue;
 
                 GameObject block = Instantiate(boardBlock, new Vector3(x, 0, z), Quaternion.identity);
+                block.SetActive(true);
                 grid[x, z].setEnvironmentObj(block);
 
                 GameObject crateClone;
@@ -144,10 +150,12 @@ public class CameraScript : MonoBehaviour
                 }
                 else if (grid[x, z].getEntity() == Element.PLAYER1)
                 {
+                    Debug.Log("CameraScript.newGame(" + level + ") player 1: (" + x + "," + z + ")");
                     playerScript1.setPosition(x, z);
                 }
                 else if (grid[x, z].getEntity() == Element.PLAYER2)
                 {
+                    Debug.Log("CameraScript.newGame(" + level + ") player 2: (" + x + "," + z + ")");
                     playerScript2.setPosition(x, z);
                 }
 				else if (grid[x, z].getEntity() == Element.GOAL)
@@ -165,21 +173,16 @@ public class CameraScript : MonoBehaviour
             }
         }
 
-        boardBlock.SetActive(false);
-        crateBlock.SetActive(false);
-
-        gameState = GameState.PLAYING;
 
         float height = cameraPosition.y;
         float widthDiff = gameMap.width / fullWidth;
         float heightDiff = gameMap.height / fullHeight;
         float heightMod = Mathf.Max(widthDiff, heightDiff);
 
-        Debug.Log(widthDiff + ", " + heightDiff);
-
         transform.position = new Vector3(gameMap.width / 2.0f - .5f, height * heightMod, gameMap.height / 2.0f - .5f);
 
-
+        gameState = GameState.PLAYING;
+        Time.timeScale = 1;
     }
 
     public void setGameState(GameState state)
@@ -233,6 +236,7 @@ public class CameraScript : MonoBehaviour
         int z2 = (int)player2.transform.position.z;
         //grid[(int)player1.transform.position.x, (int)player1.transform.position.z].setEntity(Element.PLAYER1, false);
         //grid[(int)player2.transform.position.x, (int)player2.transform.position.z].setEntity(Element.PLAYER2, false);
+        Debug.Log("x1=" + x1 + ", z1=" + z1);
         grid[x1, z1].setEntity(Element.PLAYER1, true);
         grid[x2, z2].setEntity(Element.PLAYER2, true);
         grid[x1 + playerScript1.getDirectionX(), z1 + playerScript1.getDirectionZ()].setEntity(Element.PLAYER1, false);

@@ -14,7 +14,7 @@ public class CrateScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        Debug.Log(crateAudio.isPlaying);
+        //Debug.Log(crateAudio.isPlaying);
         destroying = false;
     }
 
