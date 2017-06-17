@@ -57,7 +57,8 @@
      <None Include="Assets\Resources\Maps\superLarge.txt" />
      <None Include="Assets\Resources\Maps\map2.txt" />
      <None Include="Assets\Resources\Audio\Credits.txt" />
-     <None Include="Assets\Resources\Maps\0Starter.txt" />
+     <None Include="Assets\Resources\Maps\_harder.txt" />
+     <None Include="Assets\Resources\Maps\Starter.txt" />
      <None Include="Assets\Resources\Maps\MapLevel1.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
