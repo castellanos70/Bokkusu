@@ -390,7 +390,7 @@ public class PlayerScript : MonoBehaviour
 
         for (int i = 0; i < 4; i++)
         {
-            dists[i] = 1; // This just makes the arrows 1 block long
+            //dists[i] = 1; // This just makes the arrows 1 block long
             arrows[i].transform.position = transform.position + new Vector3(arrowDirs[i, 0] * .5f, 0, arrowDirs[i, 1] * .5f);
             float width = Mathf.Sin((Time.frameCount + timingOffset) / 15f) * .2f + .8f; //ocelation
             arrows[i].transform.localScale = new Vector3((dists[i]), width, 1); //this works because of relative rotation
