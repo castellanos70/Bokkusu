@@ -37,8 +37,10 @@ public class GameMap{
 		grid = new Cell[width, height];
 
 		//fill wih empty
-		for (var i = 0; i < width; i++) {
-			for (var j = 0; j < height; j++) {
+		for (var i = 0; i < width; i++)
+        {
+			for (var j = 0; j < height; j++)
+            {
 				grid [i, j] = new Cell(CameraScript.Element.NOTHING);
 			}
 		}

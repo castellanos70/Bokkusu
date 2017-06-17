@@ -13,8 +13,11 @@ public static class MapLoader : object{
         }
 		GameMap[] gameMaps = new GameMap[mapTexts.Length];
 
-		for (int i = 0; i < mapTexts.Length; i++){
-			gameMaps [i] = new GameMap (((TextAsset)mapTexts[i]).text);
+		for (int i = 0; i < mapTexts.Length; i++)
+        {
+            string text = ((TextAsset)mapTexts[i]).text;
+            //Debug.Log("Loading map: " + filename);
+			gameMaps [i] = new GameMap (text);
 		}
 
 		return gameMaps;
