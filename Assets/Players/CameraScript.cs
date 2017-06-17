@@ -174,7 +174,7 @@ public class CameraScript : MonoBehaviour
         }
 
 
-        float height = cameraPosition.y;
+        float height = 35;//cameraPosition.y;
         float widthDiff = gameMap.width / fullWidth;
         float heightDiff = gameMap.height / fullHeight;
         float heightMod = Mathf.Max(widthDiff, heightDiff);
@@ -236,7 +236,7 @@ public class CameraScript : MonoBehaviour
         int z2 = (int)player2.transform.position.z;
         //grid[(int)player1.transform.position.x, (int)player1.transform.position.z].setEntity(Element.PLAYER1, false);
         //grid[(int)player2.transform.position.x, (int)player2.transform.position.z].setEntity(Element.PLAYER2, false);
-        Debug.Log("x1=" + x1 + ", z1=" + z1);
+        //Debug.Log("x1=" + x1 + ", z1=" + z1);
         grid[x1, z1].setEntity(Element.PLAYER1, true);
         grid[x2, z2].setEntity(Element.PLAYER2, true);
         grid[x1 + playerScript1.getDirectionX(), z1 + playerScript1.getDirectionZ()].setEntity(Element.PLAYER1, false);

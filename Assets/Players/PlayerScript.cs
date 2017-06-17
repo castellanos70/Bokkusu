@@ -55,7 +55,7 @@ public class PlayerScript : MonoBehaviour
 
 	public void setPosition(int x, int z)
     {
-		transform.Translate(new Vector3(x, 1, z));
+		transform.position = new Vector3(x, 1, z);
 		//prevX = x;
 		//prevZ = z;
 		arrows = new GameObject[4];
