@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Resources\Audio\Credits.txt" />
+    <None Include="Assets\Resources\LogoMap.txt" />
     <None Include="Assets\Resources\Maps\0Starter.txt" />
     <None Include="Assets\Resources\Maps\MapLevel1.txt" />
     <None Include="Assets\Resources\Maps\big&amp;dumb.txt" />
