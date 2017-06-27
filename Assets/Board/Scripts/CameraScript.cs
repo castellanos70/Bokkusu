@@ -104,7 +104,8 @@ public class CameraScript : MonoBehaviour
             }
             else
             {
-                int level = Random.Range(0, gameMapList.Length);
+                //Never spawn level 0 board except at start up
+                int level = Random.Range(1, gameMapList.Length);
                 spawnBoard(level);
                 initGame();
             }
