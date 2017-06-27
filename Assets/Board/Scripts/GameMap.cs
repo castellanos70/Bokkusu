@@ -4,74 +4,60 @@ using UnityEngine;
 
 public class GameMap
 {
-    private string mapString;
-
-    public int width, height;
-	public int[] moves = {0, 0};
-	public Cell[,] grid;
-
-    //public GameMap(int width, int height, int[] moves){
-    //	this.width = width;
-    //	this.height = height;
-    //	this.moves = moves;
-    //	grid = new Cell[width,height];
-    //}
-
-    //public GameMap(Cell[,] grid){
-    //	width = grid.GetLength (0);
-    //	height = grid.GetLength (1);
-    //	this.grid = grid;
-    //}
+    private int width, height;
+    private int maxMovesPlayer1 = 0;
+    private int maxMovesPlayer2 = 0;
+    private CameraScript.Element [,] map;
 
     public GameMap(string mapString)
     {
-        this.mapString = mapString;
-        initMap();
-    }
-
-    public void initMap()
-    { 
+        
 		string[] lines = mapString.Split(new string[] { "\r\n", "\n" }, System.StringSplitOptions.None);
 
 		string[] movesString = (lines[0]).Split (new string[] { ", " }, System.StringSplitOptions.None);
 
-		moves[0] = int.Parse(movesString[0]);
-		moves[1] = int.Parse (movesString [1]);
+
+        maxMovesPlayer1 = int.Parse(movesString[0]);
+        maxMovesPlayer2 = int.Parse (movesString [1]);
 		height = lines.Length-1;
 		width = 0;
 
-		for (int i = 1; i < lines.Length; i++){
+		for (int i = 1; i < lines.Length; i++)
+        {
 			if (lines[i].Length > width) width = lines[i].Length;
 		}
 
-		grid = new Cell[width, height];
+        map = new CameraScript.Element[width, height];
 
 		//fill wih empty
 		for (var i = 0; i < width; i++)
         {
 			for (var j = 0; j < height; j++)
             {
-				grid [i, j] = new Cell(CameraScript.Element.NOTHING);
+                map[i, j] = CameraScript.Element.NOTHING;
 			}
 		}
 
 		//Debug.Log ("width: " + width + ", height: " + height); 
 
-		for (int i = 1; i < lines.Length; i++){
-			string row = lines[i];
-            //Debug.Log(row+", idx="+ ((lines.Length - 1) - i));
-            for (int j = 0; j < row.Length; j++){
-                CameraScript.Element element = CameraScript.getElement(row[j]);
-                if (element == CameraScript.Element.PLAYER1
-                    || element == CameraScript.Element.PLAYER2
-                    || element == CameraScript.Element.CRATE
-                    || element == CameraScript.Element.GOAL)
-                {
-                    grid[j, (lines.Length - 1) - i] = new Cell(CameraScript.Element.FLOOR,
-                                                               CameraScript.getElement(row[j]));
-                }
-                else grid[j, (lines.Length - 1) - i] = new Cell(CameraScript.getElement(row[j]));
+		for (int j = 1; j < lines.Length; j++)
+        {
+			string row = lines[j];
+            //Debug.Log(row+", idx="+ ((lines.Length - 1) - j));
+            for (int i = 0; i < row.Length; i++)
+            {
+                //Debug.Log(i + "=i" + ",    j="+j + "   width: " + width + ", height: " + height);
+                map[i, (lines.Length - 1) - j] = CameraScript.getElement(row[i]);
 			}
 		}
 	}
+
+    public CameraScript.Element[,] getMap() { return map; }
+
+    public int getMaxMoves(CameraScript.Element player)
+    {
+        if (player == CameraScript.Element.PLAYER1) return maxMovesPlayer1;
+        if (player == CameraScript.Element.PLAYER2) return maxMovesPlayer2;
+        return 0;
+    }
 }

@@ -4,69 +4,57 @@ using UnityEngine;
 
 public class Cell
 {
-    private CameraScript.Element environment;
-    private CameraScript.Element entity;
-    private GameObject environmentObj;
+    private CameraScript.Element type = CameraScript.Element.NOTHING;
+    private GameObject baseObj = null;
+    private GameObject overlayObj = null;
 
-    public Cell(CameraScript.Element environment, CameraScript.Element entity)
+    public Cell(CameraScript.Element element, GameObject block, Material mat)
     {
-        this.environment = environment;
-        this.entity = entity;
+        this.type = element;
+        this.baseObj = block;
+        Renderer renderer = block.GetComponent<Renderer>();
+        renderer.material = mat;
+        block.transform.Rotate(new Vector3(0, 90 * Random.Range(0, 4), 0));
     }
 
-    public Cell(CameraScript.Element environment)
+
+    public void addOverlay(GameObject obj)
     {
-        this.environment = environment;
-        entity = CameraScript.Element.NOTHING;
+        this.overlayObj = obj;
+        //obj.transform.Rotate(new Vector3(0, 90 * Random.Range(0, 4), 0));
     }
 
-    public void setEnvironmentObj(GameObject obj)
+
+
+    public CameraScript.Element getType()
     {
-        this.environmentObj = obj;
+        return type;
     }
 
-    public bool setEntity(CameraScript.Element entity, bool prejudice)
+
+    public void setType(CameraScript.Element type)
     {
-        if (this.entity == CameraScript.Element.NOTHING || prejudice)
+        this.type = type;
+    }
+
+    public void smashCrate()
+    {
+        if (type != CameraScript.Element.CRATE) return;
+        if (overlayObj == null) return;
+
+        CrateScript crate = (CrateScript)overlayObj.GetComponent(typeof(CrateScript));
+        crate.detonate();
+        type = CameraScript.Element.FLOOR;
+        overlayObj = null;
+    }
+
+
+    public void destroyObjects()
+    {
+        if (baseObj != null) Object.Destroy(baseObj);
+        if (overlayObj != null)
         {
-            this.entity = entity;
-            return true;
+            if (!overlayObj.CompareTag("Finish")) Object.Destroy(overlayObj);
         }
-        else return false;
     }
-
-    public bool removeEntity(CameraScript.Element remover)
-    {
-        if (entity != remover && entity != CameraScript.Element.NOTHING) return false;
-        entity = CameraScript.Element.NOTHING;
-        return true;
-    }
-
-    public CameraScript.Element getEnvironment()
-    {
-        return environment;
-    }
-
-    public bool hasEnvironment(CameraScript.Element environment)
-    {
-        if (this.environment == environment) return true;
-        return false;
-    }
-
-    public void destroyEnvironment()
-    {
-        if (environmentObj != null) Object.Destroy(environmentObj);
-    }
-
-    public CameraScript.Element getEntity()
-    {
-        return entity;
-    }
-
-    public bool hasEntity(CameraScript.Element entity)
-    {
-        if (this.entity == entity) return true;
-        return false;
-    }
-
 }
