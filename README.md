@@ -14,7 +14,7 @@ Albuquerque Game Developers Guild Arcade Cabinet: https://agdg.co/arcade-submiss
    The arcade machine will have **2 player controller** layouts each with a joystick and 8 buttons for your game. 
 
 
-<h2>Media Requirements<h2>
+<h2>Media Requirements</h2>
 <b>Game Title:</b> Bokkusu<br><br>
 
 <b>Description (200 words or less):</b> Bokkusu is a real-time, single player or cooperative puzzle game wherein the goal is to maneuver either the red or blue block to the spinning portal sphere in the number of fewest moves. Once a block is set in motion, it continues in a straight line until it hits a wall or some other object. A powerful mechanic is move both player blocks at the same time so that they collide and stop in a desired location. Some blocks, crates, can be smashed through with a high speed collision.<br><br>
