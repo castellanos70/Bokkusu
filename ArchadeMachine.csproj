@@ -88,7 +88,6 @@
   <ItemGroup>
     <None Include="Assets\Resources\Audio\Credits.txt" />
     <None Include="Assets\Resources\LogoMap.txt" />
-    <None Include="Assets\Resources\Maps\00superLarge.txt" />
     <None Include="Assets\Resources\Maps\0Starter.txt" />
     <None Include="Assets\Resources\Maps\MapLevel1.txt" />
     <None Include="Assets\Resources\Maps\big&amp;dumb.txt" />
@@ -100,6 +99,7 @@
     <None Include="Assets\Resources\Maps\maybehard.txt" />
     <None Include="Assets\Resources\Maps\moderate.txt" />
     <None Include="Assets\Resources\Maps\simple.txt" />
+    <None Include="Assets\Resources\Maps\superLarge.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

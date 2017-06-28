@@ -133,32 +133,28 @@ public class PlayerScript : MonoBehaviour
         int toZ = gridZ;
 
         bool userIsPressingMove = false;
-        if (Input.GetKey(keycode[0]))
+        if (Input.GetKey(keycode[0]) && speedX == 0)
         {
             userIsPressingMove = true;
             speedZ += acceleration * Time.deltaTime;
-            speedX = 0;
             toZ = gridZ + 1;
             
         }
-        else if (Input.GetKey(keycode[2]))
+        else if (Input.GetKey(keycode[2]) && speedX == 0)
         {
             userIsPressingMove = true;
             speedZ -= acceleration * Time.deltaTime;
-            speedX = 0;
             toZ = gridZ - 1;
         }
-        else if (Input.GetKey(keycode[1]))
+        else if (Input.GetKey(keycode[1]) && speedZ == 0)
         {
             userIsPressingMove = true;
-            speedZ = 0;
             speedX += acceleration * Time.deltaTime;
             toX = gridX + 1;
         }
-        else if (Input.GetKey(keycode[3]))
+        else if (Input.GetKey(keycode[3]) && speedZ == 0)
         {
             userIsPressingMove = true;
-            speedZ = 0;
             speedX -= acceleration * Time.deltaTime;
             toX = gridX - 1;
         }

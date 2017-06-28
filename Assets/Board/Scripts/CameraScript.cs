@@ -28,7 +28,8 @@ public class CameraScript : MonoBehaviour
     private static Element[] elementValues;
     private GameMap[] gameMapList;
     private Cell[,] grid;
-
+    private int curLevel = 0;
+    
 
     //Needed when have have more objects moving than just the players
     //private List<GameObject> entityList = new List<GameObject>();
@@ -104,8 +105,13 @@ public class CameraScript : MonoBehaviour
             }
             else
             {
-                //Never spawn level 0 board except at start up
-                int level = Random.Range(1, gameMapList.Length);
+                //Never spawn level 0 board except at start up. Also, make sure
+                // not to spawn a board that is the same as the current board.
+                int level = curLevel;
+                while (level == curLevel)
+                {
+                    level = Random.Range(1, gameMapList.Length);
+                }
                 spawnBoard(level);
                 initGame();
             }
@@ -160,6 +166,7 @@ public class CameraScript : MonoBehaviour
 
     private void spawnBoard(int level)
     {
+        curLevel = level;
         destroyOldBoard();
 
         gameMap = gameMapList[level];
