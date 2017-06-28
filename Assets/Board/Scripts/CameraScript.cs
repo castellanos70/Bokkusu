@@ -201,7 +201,7 @@ public class CameraScript : MonoBehaviour
                     if (foundGoal)
                     {
                         Debug.Log("Each level must have Exactly ONE goal.");
-                        UnityEditor.EditorApplication.isPlaying = false;
+                        //UnityEditor.EditorApplication.isPlaying = false;
                     }
                     foundGoal = true;
                     goalBlock.transform.position = new Vector3(x, 1, z);
@@ -213,7 +213,7 @@ public class CameraScript : MonoBehaviour
         if (!foundGoal)
         {
             Debug.Log("Each level must have Exactly ONE goal.");
-            UnityEditor.EditorApplication.isPlaying = false;
+            //UnityEditor.EditorApplication.isPlaying = false;
         }
     }
 
