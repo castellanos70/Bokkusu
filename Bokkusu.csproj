@@ -95,9 +95,9 @@
     <None Include="Assets\Resources\Maps\fun.txt" />
     <None Include="Assets\Resources\Maps\harder.txt" />
     <None Include="Assets\Resources\Maps\map2.txt" />
-    <None Include="Assets\Resources\Maps\map3.txt" />
     <None Include="Assets\Resources\Maps\maybehard.txt" />
     <None Include="Assets\Resources\Maps\moderate.txt" />
+    <None Include="Assets\Resources\Maps\rhombus.txt" />
     <None Include="Assets\Resources\Maps\simple.txt" />
     <None Include="Assets\Resources\Maps\superLarge.txt" />
   </ItemGroup>

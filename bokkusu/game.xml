@@ -4,14 +4,14 @@
     <title>Bokkusu</title>
     <gameStudio>Storylab</gameStudio>
     <playerCount>1-2</playerCount>
-    <genre>Real-time Puzzle</genre>
-    <description> Bokkusu is a real-time, single player or cooperative 
-            puzzle game wherein the goal is to maneuver either the red or 
-            blue block to the spinning portal sphere in the fewest 
-            moves. Once a block is set in motion, it continues in a straight 
-            line until it hits a wall or some other object. A powerful 
-            mechanic is move both player blocks at the same time so that 
-            they collide and stop in a desired location. Some blocks, 
-            crates, can be smashed through with a high speed collision.
+    <genre>Real-time PvP Puzzle</genre>
+    <description> 
+            Bokkusu is a real-time, single or two player puzzle game wherein 
+            the goal is to maneuver your block to the spinning portal sphere 
+            in as few moves a possible (solo) or before your opponent 
+            (two player). Once a block is set in motion, it continues in a 
+            straight line until it hits a wall or some other object. 
+            Either player can drop a crate by pressing button (1) or (4).  
+            Crates can be smashed through with a high speed collision.
     </description>
 </game>
