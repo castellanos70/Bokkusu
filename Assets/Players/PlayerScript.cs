@@ -134,7 +134,7 @@ public class PlayerScript : MonoBehaviour
 
         if (!moving && (movesRemaining <= 0)) return;
 
-        int toX = gridX;
+        int toX  = gridX;
         int toZ = gridZ;
 
         bool userIsPressingMove = false;
