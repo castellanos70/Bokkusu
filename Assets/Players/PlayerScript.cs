@@ -6,24 +6,23 @@ public class PlayerScript : MonoBehaviour
 {
 	public GameObject arrow;
 	public Material arrowMaterial;
-    public Material inactiveMaterial;
     private Material playerMaterial;
     public AudioSource playerAudio;
 
     public int playerNumber;
-    public TextMesh levelMovesTextMesh;
     public int speedMax;
     public int speedMin;
     public int acceleration;
 
-    private int movesRemaining;
     private bool moving = false;
     private float speedX = 0;
     private float speedZ = 0;
+    private int startX, startZ;
     private int gridX, gridZ;
-    
+    private bool readyToSpawnCrate;
 
-	private GameObject[] arrows; //up down left right
+
+    private GameObject[] arrows; //up down left right
 	private float[,] arrowDirs = new float[4,2]
     {
 		{-1, 0},
@@ -40,7 +39,7 @@ public class PlayerScript : MonoBehaviour
     private PlayerScript otherPlayerScript;
     private int libertyCount;
 
-    private KeyCode[] keycode = new KeyCode[4];
+    private KeyCode[] keycode = new KeyCode[5];
     private String axisHorizontal, axisVertical;
 
     void Start()
@@ -68,6 +67,7 @@ public class PlayerScript : MonoBehaviour
             keycode[1] = KeyCode.D;
             keycode[2] = KeyCode.S;
             keycode[3] = KeyCode.A;
+            keycode[4] = KeyCode.X;
             axisHorizontal = "ArcadeOneHorizontal";
             axisVertical = "ArcadeOneVertical";
             myPlayerEnum = CameraScript.Element.PLAYER1;
@@ -78,6 +78,7 @@ public class PlayerScript : MonoBehaviour
             keycode[1] = KeyCode.RightArrow;
             keycode[2] = KeyCode.DownArrow;
             keycode[3] = KeyCode.LeftArrow;
+            keycode[4] = KeyCode.Slash;
             axisHorizontal = "ArcadeTwoHorizontal";
             axisVertical = "ArcadeTwoVertical";
             myPlayerEnum = CameraScript.Element.PLAYER2;
@@ -87,15 +88,13 @@ public class PlayerScript : MonoBehaviour
     }
 
 
-    public void setBoard(CameraScript cameraScript, Cell[,] myGrid, int moveCount)
+    public void setBoard(CameraScript cameraScript, Cell[,] myGrid)
     {
         this.cameraScript = cameraScript;
         grid = myGrid;
-        movesRemaining = moveCount;
         CameraScript.Element otherPlayerEnum = CameraScript.Element.PLAYER1;
         if (otherPlayerEnum == myPlayerEnum) otherPlayerEnum = CameraScript.Element.PLAYER2;
         otherPlayerScript = cameraScript.getPlayerObject(otherPlayerEnum);
-        levelMovesTextMesh.text = movesRemaining.ToString();
 
         gameObject.GetComponent<Renderer>().material = playerMaterial;
 }
@@ -103,9 +102,12 @@ public class PlayerScript : MonoBehaviour
     public void setStartPosition(int x, int z)
     {
         transform.position = new Vector3(x, 1, z);
+        startX = x;
+        startZ = z;
         gridX = x;
         gridZ = z;
 
+        readyToSpawnCrate = false;
         moving = false;
         speedX = 0;
         speedZ = 0;
@@ -118,6 +120,7 @@ public class PlayerScript : MonoBehaviour
     {
         if (cameraScript.getGameState() != CameraScript.GameState.PLAYING) return;
 
+        updateSpawnCrate();
         updateSpeed();
         updateArrows();
     }
@@ -132,27 +135,24 @@ public class PlayerScript : MonoBehaviour
             speedZ = 0;
         }
 
-        if (!moving && (movesRemaining <= 0)) return;
-
         int toX  = gridX;
         int toZ = gridZ;
 
-        bool userIsPressingMove = false;
+        bool playerIsPressingMove = false;
         int joystickX = readJoystickX();
         int joystickZ = readJoystickZ();
         
 
         if (joystickZ != 0 && speedX == 0)
         {
-            userIsPressingMove = true;
+            playerIsPressingMove = true;
             speedZ += joystickZ * acceleration * Time.deltaTime;
             toZ = gridZ + joystickZ;
-            
         }
         
         else if (joystickX != 0 && speedZ == 0)
         {
-            userIsPressingMove = true;
+            playerIsPressingMove = true;
             speedX += joystickX * acceleration * Time.deltaTime;
             toX = gridX + joystickX;
         }
@@ -162,16 +162,12 @@ public class PlayerScript : MonoBehaviour
         //Debug.Log("Player["+playerNumber+"] speed=(" + tmpx+", "+tmpz+") === > (" + speedX+", "+speedZ+")");
 
 
-        if ((!moving) && userIsPressingMove)
+        if ((!moving) && playerIsPressingMove)
         {
-            if (cameraScript.isEnterable(toX, toZ, false))
+            if (cameraScript.isEnterable(toX, toZ, true))
             {
                 moving = true;
                 playerAudio.Play();
-
-                movesRemaining--;
-                levelMovesTextMesh.text = movesRemaining.ToString();
-
             }
             else
             {
@@ -193,6 +189,7 @@ public class PlayerScript : MonoBehaviour
         return moving;
     }
 
+
     public void hit()
     {
         playerAudio.Stop();
@@ -200,19 +197,8 @@ public class PlayerScript : MonoBehaviour
         moving = false;
         speedX = 0;
         speedZ= 0;
-        if (movesRemaining <= 0)
-        {
-            gameObject.GetComponent<Renderer>().material = inactiveMaterial;
-        }
     }
 
-    public bool canMove()
-    {
-        if ((movesRemaining > 0) && (libertyCount > 0)) return true;
-        return false;
-    }
-
-   
 
     public int getGridX() { return gridX; }
     public int getGridZ() { return gridZ; }
@@ -223,37 +209,78 @@ public class PlayerScript : MonoBehaviour
     public void updateLocation(float x, float z)
     {
         transform.position = new Vector3(x, 1, z);
+        bool moved = false;
         if (speedX > 0)
         {
-            if (x - gridX > 0.5f) gridX++;
+            if (x - gridX > 0.5f)
+            {
+                moved = true; gridX++;
+            }
         }
         else if (speedX < 0)
         {
-            if (gridX -x > 0.5f) gridX--;
+            if (gridX -x > 0.5f)
+            {
+                moved = true; gridX--;
+            }
         }
         else if (speedZ > 0)
         {
-            if (z - gridZ > 0.5f) gridZ++;
+            if (z - gridZ > 0.5f)
+            {
+                moved = true; gridZ++;
+            }
         }
         else if (speedZ < 0)
         {
-            if (gridZ - z> 0.5f) gridZ--;
+            if (gridZ - z > 0.5f)
+            {
+                moved = true; gridZ--;
+            }
         }
 
+       
         if (grid[gridX, gridZ].getType() == CameraScript.Element.GOAL)
         {
             playerAudio.Stop();
             cameraScript.setGameState(CameraScript.GameState.WON);
         }
+        else if (grid[gridX, gridZ].getType() == CameraScript.Element.CRATE)
+        {
+            grid[gridX, gridZ].smashCrate();
+
+        }
+        else if (moved)
+        {
+            readyToSpawnCrate = true;
+        }
         //Debug.Log("PlayerScript.updateLocation(" + x + ", " + z + "):  grid[" + gridX + ", " + gridZ + "]");
 
+    }
+
+    private void updateSpawnCrate()
+    {
+        if (moving) return;
+        if (!readyToSpawnCrate) return;
+        if (Input.GetKey(keycode[4]))
+        {
+            cameraScript.spawnCrate(gridX, gridZ);
+            gridX = startX;
+            gridZ = startZ;
+            hit();
+            readyToSpawnCrate = false;
+            if (grid[gridX, gridZ].getType() == CameraScript.Element.CRATE)
+            {
+                grid[gridX, gridZ].smashCrate();
+
+            }
+        }
+  
     }
 
 
     private int readJoystickX()
     {
-
-        
         if (Input.GetKey(keycode[1])) return 1;
         if (Input.GetKey(keycode[3])) return -1;
 
@@ -337,7 +364,7 @@ public class PlayerScript : MonoBehaviour
 
     private void updateArrows()
     {
-        if (moving || movesRemaining <= 0)
+        if (moving)
         {
             for (int i = 0; i < 4; i++)
             {

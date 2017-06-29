@@ -18,9 +18,10 @@ public class Cell
     }
 
 
-    public void addOverlay(GameObject obj)
+    public void addCrate(GameObject obj)
     {
         this.overlayObj = obj;
+        type = CameraScript.Element.CRATE;
         //obj.transform.Rotate(new Vector3(0, 90 * Random.Range(0, 4), 0));
     }
 

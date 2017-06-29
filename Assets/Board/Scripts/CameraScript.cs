@@ -75,14 +75,6 @@ public class CameraScript : MonoBehaviour
         {
             movePlayer(player1, playerScript1);
             movePlayer(player2, playerScript2);
-
-            if (!playerScript1.isMoving() && !playerScript2.isMoving())
-            {
-                if (!playerScript1.canMove() && !playerScript2.canMove())
-                {
-                    setGameState(GameState.LOST);
-                }
-            }
         }
 
         else if (gameState == GameState.LOST)
@@ -217,7 +209,7 @@ public class CameraScript : MonoBehaviour
                     }
                     foundGoal = true;
                     goalBlock.transform.position = new Vector3(x, 1, z);
-                    grid[x, z].addOverlay(goalBlock);
+                    //grid[x, z].addOverlay(goalBlock);
                 }
             }
         }
@@ -235,8 +227,8 @@ public class CameraScript : MonoBehaviour
     private void initGame()
     {
        
-        playerScript1.setBoard(this, grid, gameMap.getMaxMoves(Element.PLAYER1));
-        playerScript2.setBoard(this, grid, gameMap.getMaxMoves(Element.PLAYER2));
+        playerScript1.setBoard(this, grid);
+        playerScript2.setBoard(this, grid);
 
         //Needed when have have more objects moving than just the players
         //entityList.Add(player1);
@@ -265,7 +257,7 @@ public class CameraScript : MonoBehaviour
                 {
                     GameObject crateClone = Instantiate(crateBlock, new Vector3(x, 1, z), Quaternion.identity);
                     crateClone.SetActive(true);
-                    grid[x, z].addOverlay(crateClone);
+                    grid[x, z].addCrate(crateClone);
                     //block.transform.Rotate(new Vector3(180, 180, 180));
                 }
             }
@@ -312,6 +304,14 @@ public class CameraScript : MonoBehaviour
         if (playerEnum == Element.PLAYER1) return playerScript1;
         if (playerEnum == Element.PLAYER2) return playerScript2;
         return null;
+    }
+
+    public void spawnCrate(int x, int z)
+    {
+        Debug.Log("CameraScript.spawnCrate(" + x + "," + z + ")");
+        GameObject crateClone = Instantiate(crateBlock, new Vector3(x, 1, z), Quaternion.identity);
+        crateClone.SetActive(true);
+        grid[x, z].addCrate(crateClone);
     }
 
     public void setGameState(GameState state)
