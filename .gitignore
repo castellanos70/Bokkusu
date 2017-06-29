@@ -6,6 +6,7 @@
 [Bb]uild
 /[Bb]uilds/
 /[Bb]uild_[Dd]ata/
+#/bokkusu/bokkusu_Data/
 /[Ll]ibrary/
 sysinfo.txt
 *.stackdump

@@ -41,7 +41,7 @@ public class PlayerScript : MonoBehaviour
     private int libertyCount;
 
     private KeyCode[] keycode = new KeyCode[4];
-
+    private String axisHorizontal, axisVertical;
 
     void Start()
     {
@@ -61,12 +61,15 @@ public class PlayerScript : MonoBehaviour
         arrow.SetActive(false);
         playerMaterial = gameObject.GetComponent<Renderer>().material;
 
+        
         if (playerNumber == 1)
         {
             keycode[0] = KeyCode.W;
             keycode[1] = KeyCode.D;
             keycode[2] = KeyCode.S;
             keycode[3] = KeyCode.A;
+            axisHorizontal = "ArcadeOneHorizontal";
+            axisVertical = "ArcadeOneVertical";
             myPlayerEnum = CameraScript.Element.PLAYER1;
         }
         else
@@ -75,6 +78,8 @@ public class PlayerScript : MonoBehaviour
             keycode[1] = KeyCode.RightArrow;
             keycode[2] = KeyCode.DownArrow;
             keycode[3] = KeyCode.LeftArrow;
+            axisHorizontal = "ArcadeTwoHorizontal";
+            axisVertical = "ArcadeTwoVertical";
             myPlayerEnum = CameraScript.Element.PLAYER2;
             timingOffset = 50;
         }
@@ -133,30 +138,23 @@ public class PlayerScript : MonoBehaviour
         int toZ = gridZ;
 
         bool userIsPressingMove = false;
-        if (Input.GetKey(keycode[0]) && speedX == 0)
+        int joystickX = readJoystickX();
+        int joystickZ = readJoystickZ();
+        
+
+        if (joystickZ != 0 && speedX == 0)
         {
             userIsPressingMove = true;
-            speedZ += acceleration * Time.deltaTime;
-            toZ = gridZ + 1;
+            speedZ += joystickZ * acceleration * Time.deltaTime;
+            toZ = gridZ + joystickZ;
             
         }
-        else if (Input.GetKey(keycode[2]) && speedX == 0)
+        
+        else if (joystickX != 0 && speedZ == 0)
         {
             userIsPressingMove = true;
-            speedZ -= acceleration * Time.deltaTime;
-            toZ = gridZ - 1;
-        }
-        else if (Input.GetKey(keycode[1]) && speedZ == 0)
-        {
-            userIsPressingMove = true;
-            speedX += acceleration * Time.deltaTime;
-            toX = gridX + 1;
-        }
-        else if (Input.GetKey(keycode[3]) && speedZ == 0)
-        {
-            userIsPressingMove = true;
-            speedX -= acceleration * Time.deltaTime;
-            toX = gridX - 1;
+            speedX += joystickX * acceleration * Time.deltaTime;
+            toX = gridX + joystickX;
         }
 
         float tmpx = speedX;
@@ -173,7 +171,6 @@ public class PlayerScript : MonoBehaviour
                 moving = true;
                 playerAudio.Play();
 
-                //updateArrows();
                 movesRemaining--;
                 levelMovesTextMesh.text = movesRemaining.ToString();
 
@@ -254,6 +251,32 @@ public class PlayerScript : MonoBehaviour
 
     }
 
+
+    private int readJoystickX()
+    {
+
+        
+        if (Input.GetKey(keycode[1])) return 1;
+        if (Input.GetKey(keycode[3])) return -1;
+
+        float value = Input.GetAxis(axisHorizontal);
+        //Debug.Log("PlayerScript.readJoystick[" + playerNumber + "]:  value=" + value);
+        if (value >  0.5f) return 1;
+        if (value < -0.5f) return -1;
+        return 0;
+    }
+
+
+    private int readJoystickZ()
+    {
+        if (Input.GetKey(keycode[0])) return 1;
+        if (Input.GetKey(keycode[2])) return -1;
+
+        float value = Input.GetAxis(axisHorizontal);
+        if (value > 0.5f) return 1;
+        if (value < -0.5f) return -1;
+        return 0;
+    }
 
     private float toSpeedBounds(float speed)
     {
