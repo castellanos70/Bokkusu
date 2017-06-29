@@ -6,19 +6,11 @@ public class CrateScript : MonoBehaviour
 {
 
     private static int strength = 15;
-    private GameObject crateObject;
     public ParticleSystem crateParticles;
     public AudioSource crateAudio;
-    private bool destroying;
+    
 
-	// Use this for initialization
-	void Start ()
-    {
-        //Debug.Log(crateAudio.isPlaying);
-        destroying = false;
-    }
-
-    public void detonate()
+    public void detonate(GameObject crateObject)
     {
         //ParticleSystem.MainModule settings = GetComponent<ParticleSystem>().main;
         //settings.startColor = new ParticleSystem.MinMaxGradient(new Color(1, 0, 1));
@@ -30,8 +22,6 @@ public class CrateScript : MonoBehaviour
         //crateObject.GetComponent<Renderer>().enabled = false;
         //crateObject.SetActive(false);
         Destroy(crateObject, 1);
-        destroying = true;
-
     }
 
 

@@ -157,8 +157,6 @@ public class PlayerScript : MonoBehaviour
             toX = gridX + joystickX;
         }
 
-        float tmpx = speedX;
-        float tmpz = speedZ;
         speedX = toSpeedBounds(speedX);
         speedZ = toSpeedBounds(speedZ);
         //Debug.Log("Player["+playerNumber+"] speed=(" + tmpx+", "+tmpz+") === > (" + speedX+", "+speedZ+")");
@@ -272,7 +270,7 @@ public class PlayerScript : MonoBehaviour
         if (Input.GetKey(keycode[0])) return 1;
         if (Input.GetKey(keycode[2])) return -1;
 
-        float value = Input.GetAxis(axisHorizontal);
+        float value = Input.GetAxis(axisVertical);
         if (value > 0.5f) return 1;
         if (value < -0.5f) return -1;
         return 0;

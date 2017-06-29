@@ -43,7 +43,7 @@ public class Cell
         if (overlayObj == null) return;
 
         CrateScript crate = (CrateScript)overlayObj.GetComponent(typeof(CrateScript));
-        crate.detonate();
+        crate.detonate(overlayObj);
         type = CameraScript.Element.FLOOR;
         overlayObj = null;
     }
