@@ -15,6 +15,7 @@ public class CameraScript : MonoBehaviour
     public Material[] wallMat = new Material[10];
     public Material[] floorMat = new Material[5];
     public GameObject goalBlock;
+    
 
     public enum GameState { INTRO, INITIALIZING, PLAYING, LOST, WON };
     private GameState gameState;
@@ -36,7 +37,6 @@ public class CameraScript : MonoBehaviour
 
     private PlayerScript playerScript1, playerScript2;
     private float winTime = 0;
-
 
 
     void Awake()
@@ -75,6 +75,21 @@ public class CameraScript : MonoBehaviour
         {
             movePlayer(player1, playerScript1);
             movePlayer(player2, playerScript2);
+
+            //float midX = (player1.transform.position.x + player2.transform.position.x)/2;
+            //float midZ = (player1.transform.position.z + player2.transform.position.z) / 2;
+
+            //find the vector pointing from our position to the target
+            //Vector3 lookDir = (new Vector3(midX, 1, midZ) - new Vector3(0,20,0)).normalized;
+            //Vector3 lookDir = (new Vector3(midX, 1, midZ) - transform.position).normalized;
+            //Vector3 lookDir = new Vector3(midX, 1, midZ);
+
+            //create the rotation we need to be in to look at the target
+            //Quaternion lookRotation = Quaternion.LookRotation(lookDir);
+
+            //rotate us over time according to speed until we are in the required rotation
+            //transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 1);
+
         }
 
         else if (gameState == GameState.LOST)
@@ -102,12 +117,12 @@ public class CameraScript : MonoBehaviour
             }
             else
             {
-                //Never spawn level 0 board except at start up. Also, make sure
-                // not to spawn a board that is the same as the current board.
+                
+                //Do not spawn a board that is the same as the current board.
                 int level = curLevel;
                 while (level == curLevel)
                 {
-                    level = Random.Range(1, gameMapList.Length);
+                    level = Random.Range(0, gameMapList.Length);
                 }
                 spawnBoard(level);
                 initGame();
@@ -226,7 +241,6 @@ public class CameraScript : MonoBehaviour
 
     private void initGame()
     {
-       
         playerScript1.setBoard(this, grid);
         playerScript2.setBoard(this, grid);
 

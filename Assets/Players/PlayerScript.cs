@@ -20,6 +20,7 @@ public class PlayerScript : MonoBehaviour
     private int startX, startZ;
     private int gridX, gridZ;
     private bool readyToSpawnCrate;
+    private bool iHaveWon;
 
 
     private GameObject[] arrows; //up down left right
@@ -91,6 +92,7 @@ public class PlayerScript : MonoBehaviour
     public void setBoard(CameraScript cameraScript, Cell[,] myGrid)
     {
         this.cameraScript = cameraScript;
+        iHaveWon = false;
         grid = myGrid;
         CameraScript.Element otherPlayerEnum = CameraScript.Element.PLAYER1;
         if (otherPlayerEnum == myPlayerEnum) otherPlayerEnum = CameraScript.Element.PLAYER2;
@@ -101,6 +103,8 @@ public class PlayerScript : MonoBehaviour
 
     public void setStartPosition(int x, int z)
     {
+        transform.localScale = Vector3.one;
+        transform.rotation = Quaternion.identity;
         transform.position = new Vector3(x, 1, z);
         startX = x;
         startZ = z;
@@ -118,11 +122,21 @@ public class PlayerScript : MonoBehaviour
     // Update is called once per main game loop iteration
     void Update()
     {
-        if (cameraScript.getGameState() != CameraScript.GameState.PLAYING) return;
+        if (cameraScript.getGameState() == CameraScript.GameState.WON && iHaveWon)
+        {
+            transform.localScale *= 0.995f;
+            transform.Rotate(Vector3.up * Time.deltaTime * 90);
+            float x = transform.position.x + (gridX - transform.position.x) / 4;
+            float z = transform.position.z + (gridZ - transform.position.z) / 4;
+            transform.position = new Vector3(x, 1, z);
 
-        updateSpawnCrate();
-        updateSpeed();
-        updateArrows();
+        }
+        else if (cameraScript.getGameState() == CameraScript.GameState.PLAYING)
+        {
+            updateSpawnCrate();
+            updateSpeed();
+            updateArrows();
+        }
     }
 
     
@@ -243,6 +257,7 @@ public class PlayerScript : MonoBehaviour
         if (grid[gridX, gridZ].getType() == CameraScript.Element.GOAL)
         {
             playerAudio.Stop();
+            iHaveWon = true;
             cameraScript.setGameState(CameraScript.GameState.WON);
         }
         else if (grid[gridX, gridZ].getType() == CameraScript.Element.CRATE)
