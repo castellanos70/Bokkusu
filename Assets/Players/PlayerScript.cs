@@ -6,14 +6,17 @@ public class PlayerScript : MonoBehaviour
 {
 	public GameObject arrow;
 	public Material arrowMaterial;
-    private Material playerMaterial;
     public AudioSource playerAudio;
 
     public int playerNumber;
     public int speedMax;
     public int speedMin;
     public int acceleration;
+    public GameObject spawnSpotObj;
 
+    private float spawnSpotDeltaTransparency;
+
+    private Material playerMaterial;
     private bool moving = false;
     private float speedX = 0;
     private float speedZ = 0;
@@ -116,6 +119,9 @@ public class PlayerScript : MonoBehaviour
         speedX = 0;
         speedZ = 0;
 
+        spawnSpotDeltaTransparency = -1;
+        spawnSpotObj.transform.position = transform.position;
+
     }
 
 
@@ -136,6 +142,22 @@ public class PlayerScript : MonoBehaviour
             updateSpawnCrate();
             updateSpeed();
             updateArrows();
+
+            
+            Color color = spawnSpotObj.GetComponent<Renderer>().material.color;
+            
+            color.a = color.a + spawnSpotDeltaTransparency*Time.deltaTime;
+            if (color.a < 0)
+            {
+                color.a = 0;
+                spawnSpotDeltaTransparency = 1;
+            }
+            if (color.a > 1)
+            {
+                color.a = 1;
+                spawnSpotDeltaTransparency = -1;
+            }
+            spawnSpotObj.GetComponent<Renderer>().material.SetColor("_Color", color);
         }
     }
 

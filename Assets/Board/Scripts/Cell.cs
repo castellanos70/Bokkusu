@@ -12,10 +12,12 @@ public class Cell
     {
         this.type = element;
         this.baseObj = block;
-        Renderer renderer = block.GetComponent<Renderer>();
+        Renderer renderer = baseObj.GetComponent<Renderer>();
         renderer.material = mat;
         block.transform.Rotate(new Vector3(0, 90 * Random.Range(0, 4), 0));
     }
+
+
 
 
     public void addCrate(GameObject obj)
