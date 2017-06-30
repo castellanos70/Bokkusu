@@ -88,7 +88,6 @@
   <ItemGroup>
     <None Include="Assets\Resources\Audio\Credits.txt" />
     <None Include="Assets\Resources\LogoMap.txt" />
-    <None Include="Assets\Resources\Maps\00rhombus.txt" />
     <None Include="Assets\Resources\Maps\0Plus.txt" />
     <None Include="Assets\Resources\Maps\castle.txt" />
     <None Include="Assets\Resources\Maps\celticknot.txt" />
@@ -96,6 +95,7 @@
     <None Include="Assets\Resources\Maps\dotDash.txt" />
     <None Include="Assets\Resources\Maps\innerChamber.txt" />
     <None Include="Assets\Resources\Maps\maze.txt" />
+    <None Include="Assets\Resources\Maps\rhombus.txt" />
     <None Include="Assets\Resources\Maps\simple.txt" />
     <None Include="Assets\Resources\Maps\speckeledRect.txt" />
     <None Include="Assets\Resources\Maps\switch.txt" />
