@@ -295,11 +295,33 @@ public class PlayerScript : MonoBehaviour
 
     }
 
+
+    private bool isButtonPressed()
+    {
+        if (Input.GetKey(keycode[4])) return true;
+        if (myPlayerEnum == CameraScript.Element.PLAYER1)
+        {
+            if (Input.GetButtonDown("ArcadeOne0")) return true;
+            if (Input.GetButtonDown("ArcadeOne1")) return true;
+            if (Input.GetButtonDown("ArcadeOne2")) return true;
+            if (Input.GetButtonDown("ArcadeOne3")) return true;
+        }
+        else
+        {
+            if (Input.GetButtonDown("ArcadeTwo0")) return true;
+            if (Input.GetButtonDown("ArcadeTwo1")) return true;
+            if (Input.GetButtonDown("ArcadeTwo2")) return true;
+            if (Input.GetButtonDown("ArcadeTwo3")) return true;
+        }
+        return false;
+    }
+
+
     private void updateSpawnCrate()
     {
         if (moving) return;
         if (!readyToSpawnCrate) return;
-        if (Input.GetKey(keycode[4]))
+        if (isButtonPressed())
         {
             cameraScript.spawnCrate(gridX, gridZ);
             gridX = startX;
