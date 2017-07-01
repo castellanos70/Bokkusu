@@ -17,7 +17,7 @@ public class CameraScript : MonoBehaviour
     public GameObject goalBlock;
     
 
-    public enum GameState { INTRO, INITIALIZING, PLAYING, LOST, WON };
+    public enum GameState { INTRO, INITIALIZING, PLAYING, WON };
     private GameState gameState;
     private GameMap gameMap;
     private Element[,] startMap;
@@ -71,7 +71,36 @@ public class CameraScript : MonoBehaviour
         //float scale = 1 + 0.2f*Mathf.Abs(Mathf.Sin(2*Mathf.PI*goalBlock.transform.eulerAngles.y/180f));
         //goalBlock.transform.localScale = new Vector3(scale,1, scale);
 
-        if (gameState == GameState.PLAYING)
+        if (gameState == GameState.INITIALIZING)
+        {
+            bool fallingDone = true;
+
+            for (int x = 0; x < gridWidth; x++)
+            {
+                for (int z = 0; z < gridHeight; z++)
+                {
+                    if (startMap[x, z] == Element.NOTHING) continue;
+
+                    float fallSpeed = grid[x, z].getFallSpeed();
+                    if (fallSpeed == 0f) continue;
+
+                    float bottomY = 0f;
+                    if (grid[x, z].getType() == CameraScript.Element.WALL) bottomY = 1f;
+
+                    float y = grid[x, z].getY() - fallSpeed * Time.deltaTime;
+                    if (y < bottomY)
+                    {
+                        y = bottomY;
+                        grid[x, z].setHitGround();
+                    }
+                    grid[x, z].setY(y);
+                    fallingDone = false;
+                }
+            }
+            if (fallingDone) gameState = GameState.PLAYING;
+        }
+
+        else if (gameState == GameState.PLAYING)
         {
             movePlayer(player1, playerScript1);
             movePlayer(player2, playerScript2);
@@ -92,10 +121,6 @@ public class CameraScript : MonoBehaviour
 
         }
 
-        else if (gameState == GameState.LOST)
-        {
-            initGame();
-        }
         else if (gameState == GameState.WON)
         {
             if (winTime > 0)
@@ -117,7 +142,7 @@ public class CameraScript : MonoBehaviour
             }
             else
             {
-                
+
                 //Do not spawn a board that is the same as the current board.
                 int level = curLevel;
                 while (level == curLevel)
@@ -198,13 +223,14 @@ public class CameraScript : MonoBehaviour
             {
                 if (startMap[x, z] == Element.NOTHING) continue;
 
-                GameObject block = Instantiate(boardBlock, new Vector3(x, 0, z), Quaternion.identity);
+                int y = Random.Range(2, 20);
+                GameObject block = Instantiate(boardBlock, new Vector3(x, y, z), Quaternion.identity);
                 block.SetActive(true);
 
                 Material mat = null;
                 if (startMap[x, z] == CameraScript.Element.WALL)
                 {
-                    block.transform.Translate(Vector3.up);
+                    //block.transform.Translate(Vector3.up);
                     mat = wallMat[Random.Range(0, wallMat.Length)];
                 }
                 else
@@ -241,6 +267,7 @@ public class CameraScript : MonoBehaviour
 
     private void initGame()
     {
+        gameState = GameState.INITIALIZING;
         playerScript1.setBoard(this, grid);
         playerScript2.setBoard(this, grid);
 
@@ -285,7 +312,7 @@ public class CameraScript : MonoBehaviour
 
         transform.position = new Vector3(gridWidth / 2.0f - .5f, height * heightMod, gridHeight / 2.0f - .5f);
 
-        gameState = GameState.PLAYING;
+
     }
 
 

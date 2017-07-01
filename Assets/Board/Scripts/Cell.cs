@@ -7,6 +7,7 @@ public class Cell
     private CameraScript.Element type = CameraScript.Element.NOTHING;
     private GameObject baseObj = null;
     private GameObject overlayObj = null;
+    private float fallSpeed;
 
     public Cell(CameraScript.Element element, GameObject block, Material mat)
     {
@@ -15,10 +16,20 @@ public class Cell
         Renderer renderer = baseObj.GetComponent<Renderer>();
         renderer.material = mat;
         block.transform.Rotate(new Vector3(0, 90 * Random.Range(0, 4), 0));
+
+        fallSpeed = 8 + Random.value * 15;
     }
 
 
+    public float getFallSpeed() { return fallSpeed; }
 
+    public void setHitGround() { fallSpeed = 0f; }
+
+    public float getY() { return baseObj.transform.position.y; }
+    public void setY(float y)
+    {
+        baseObj.transform.Translate(0, y-getY(), 0);
+    }
 
     public void addCrate(GameObject obj)
     {
