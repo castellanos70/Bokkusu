@@ -55,7 +55,7 @@ public class PlayerScript : MonoBehaviour
         {
             arrows[i] = Instantiate(arrow, arrow.transform.position, Quaternion.identity);
             arrows[i].GetComponent<Renderer>().material = arrowMaterial;
-            arrows[i].SetActive(true);
+            arrows[i].SetActive(false);
             arrows[i].transform.position = transform.position + new Vector3(arrowDirs[i, 0] * .5f, 0, arrowDirs[i, 1] * .5f);
             arrows[i].transform.Rotate(new Vector3(90, 90 * i, 0));
         }
@@ -159,6 +159,7 @@ public class PlayerScript : MonoBehaviour
             }
             spawnSpotObj.GetComponent<Renderer>().material.SetColor("_Color", color);
         }
+        updateArrows();
     }
 
     
@@ -423,7 +424,7 @@ public class PlayerScript : MonoBehaviour
 
     private void updateArrows()
     {
-        if (moving)
+        if (moving || (cameraScript.getGameState() != CameraScript.GameState.PLAYING))
         {
             for (int i = 0; i < 4; i++)
             {
