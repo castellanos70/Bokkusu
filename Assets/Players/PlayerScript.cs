@@ -157,6 +157,10 @@ public class PlayerScript : MonoBehaviour
                 color.a = 1;
                 spawnSpotDeltaTransparency = -1;
             }
+            Vector3 scale = spawnSpotObj.transform.localScale;
+            scale.x = 0.1f + 0.9f * color.a;
+            scale.z = scale.x;
+            spawnSpotObj.transform.localScale = scale;
             spawnSpotObj.GetComponent<Renderer>().material.SetColor("_Color", color);
         }
         updateArrows();
