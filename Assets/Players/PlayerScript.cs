@@ -100,8 +100,6 @@ public class PlayerScript : MonoBehaviour
         CameraScript.Element otherPlayerEnum = CameraScript.Element.PLAYER1;
         if (otherPlayerEnum == myPlayerEnum) otherPlayerEnum = CameraScript.Element.PLAYER2;
         otherPlayerScript = cameraScript.getPlayerObject(otherPlayerEnum);
-
-        gameObject.GetComponent<Renderer>().material = playerMaterial;
 }
 
     public void setStartPosition(int x, int z)
@@ -328,7 +326,7 @@ public class PlayerScript : MonoBehaviour
         if (!readyToSpawnCrate) return;
         if (isButtonPressed())
         {
-            cameraScript.spawnCrate(gridX, gridZ);
+            cameraScript.spawnCrate(gridX, gridZ, gameObject);
             gridX = startX;
             gridZ = startZ;
             hit();

@@ -7,8 +7,16 @@ public class CrateScript : MonoBehaviour
 
     private static int strength = 15;
     public ParticleSystem crateParticles;
+    public ParticleSystem player1Particles;
+    public ParticleSystem player2Particles;
     public AudioSource crateAudio;
-    
+    public Material crateMaterial;
+
+    public void spawnAnimation(bool player1)
+    {
+        if (player1) player1Particles.Emit(10);
+        else player2Particles.Emit(10);
+    }
 
     public void detonate(GameObject crateObject)
     {

@@ -347,12 +347,15 @@ public class CameraScript : MonoBehaviour
         return null;
     }
 
-    public void spawnCrate(int x, int z)
+    public void spawnCrate(int x, int z, GameObject player)
     {
         Debug.Log("CameraScript.spawnCrate(" + x + "," + z + ")");
         GameObject crateClone = Instantiate(crateBlock, new Vector3(x, 1, z), Quaternion.identity);
         crateClone.SetActive(true);
         grid[x, z].addCrate(crateClone);
+
+        if (player == player1) crateClone.GetComponent<CrateScript>().spawnAnimation(true);
+        else crateClone.GetComponent<CrateScript>().spawnAnimation(false);
     }
 
     public void setGameState(GameState state)
