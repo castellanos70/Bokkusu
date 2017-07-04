@@ -68,7 +68,7 @@ public class CameraScript : MonoBehaviour
         }
 
         goalBlock.transform.Rotate(Vector3.up * Time.deltaTime*40);
-        backgroundImage.transform.Rotate(Vector3.up * Time.deltaTime*.3f);
+        backgroundImage.transform.Rotate(Vector3.up * Time.deltaTime*.5f);
         //goalBlock.transform.Rotate(Vector3.right * Time.deltaTime * 5);
         //float scale = 1 + 0.2f*Mathf.Abs(Mathf.Sin(2*Mathf.PI*goalBlock.transform.eulerAngles.y/180f));
         //goalBlock.transform.localScale = new Vector3(scale,1, scale);
@@ -312,8 +312,11 @@ public class CameraScript : MonoBehaviour
         float heightDiff = gridHeight / fullHeight;
         float heightMod = Mathf.Max(widthDiff, heightDiff);
 
+        float scale = Mathf.Max(gridWidth, gridHeight) * 0.25f;
+
         transform.position = new Vector3(gridWidth / 2.0f - .5f, height * heightMod, gridHeight / 2.0f - .5f);
         backgroundImage.transform.position = new Vector3(gridWidth / 2, 0, gridHeight / 2);
+        backgroundImage.transform.localScale = new Vector3(scale, 1, scale);
 
     }
 
