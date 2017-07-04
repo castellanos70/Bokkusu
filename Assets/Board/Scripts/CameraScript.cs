@@ -15,6 +15,7 @@ public class CameraScript : MonoBehaviour
     public Material[] wallMat = new Material[10];
     public Material[] floorMat = new Material[5];
     public GameObject goalBlock;
+    public GameObject backgroundImage;
     
 
     public enum GameState { INTRO, INITIALIZING, PLAYING, WON };
@@ -67,6 +68,7 @@ public class CameraScript : MonoBehaviour
         }
 
         goalBlock.transform.Rotate(Vector3.up * Time.deltaTime*40);
+        backgroundImage.transform.Rotate(Vector3.up * Time.deltaTime*.3f);
         //goalBlock.transform.Rotate(Vector3.right * Time.deltaTime * 5);
         //float scale = 1 + 0.2f*Mathf.Abs(Mathf.Sin(2*Mathf.PI*goalBlock.transform.eulerAngles.y/180f));
         //goalBlock.transform.localScale = new Vector3(scale,1, scale);
@@ -311,7 +313,7 @@ public class CameraScript : MonoBehaviour
         float heightMod = Mathf.Max(widthDiff, heightDiff);
 
         transform.position = new Vector3(gridWidth / 2.0f - .5f, height * heightMod, gridHeight / 2.0f - .5f);
-
+        backgroundImage.transform.position = new Vector3(gridWidth / 2, 0, gridHeight / 2);
 
     }
 
