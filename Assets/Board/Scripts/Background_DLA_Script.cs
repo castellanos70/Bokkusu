@@ -6,12 +6,22 @@ public class Background_DLA_Script : Background_AbstractScript
 {
     
     private static int POINT_COUNT = 1000;
-    private static int ATTRACTOR_COUNT = 50;
+    private static int ATTRACTOR_COUNT = 13;
     private Particle[] pointList = new Particle[POINT_COUNT];
 
     private Particle[] attractorList = new Particle[ATTRACTOR_COUNT];
 
-    //hexColor = { 0xa8a8a8, 0xc0c090, 0x789078, 0xc09048, 0x603000};
+    private int crystalCount;
+
+    private Color[] palette =
+    {
+        new Color(0.404f,0.549f, 0.427f),
+        new Color(0.804f,0.686f, 0.451f),
+        new Color(0.667f,0.412f, 0.341f),
+        new Color(0.737f,0.522f, 0.208f),
+        new Color(0.820f,0.741f, 0.612f),
+        new Color(0.686f,0.749f, 0.710f)
+    };
 
 
     override public Texture2D create()
@@ -22,16 +32,14 @@ public class Background_DLA_Script : Background_AbstractScript
 
         for (int i = 0; i < ATTRACTOR_COUNT; i++)
         {
-            attractorList[i] = new Particle(texture, Color.green);
+            attractorList[i] = new Particle(texture, palette[0]);
             
         }
 
         for (int i = 0; i < POINT_COUNT; i++)
         {
             pointList[i] = new Particle(texture, Color.white);
-            int goalIdx = Random.Range(0, ATTRACTOR_COUNT - 1);
-            pointList[i].goalx = attractorList[goalIdx].x;
-            pointList[i].goaly = attractorList[goalIdx].y;
+            pointList[i].setAttractor(attractorList);
         }
         
 
@@ -58,19 +66,20 @@ public class Background_DLA_Script : Background_AbstractScript
 
     override public void next()
     {
-        for (int i = 0; i < POINT_COUNT; i++)
-        {
-            int x = pointList[i].x;
-            int y = pointList[i].y;
-            if (pointList[i].x < 0) continue;
-            texture.SetPixel(x, y, Color.black);
-        }
+        //for (int i = 0; i < POINT_COUNT; i++)
+        //{
+        //    int x = pointList[i].x;
+        //    int y = pointList[i].y;
+        //    if (pointList[i].x < 0) continue;
+        //    texture.SetPixel(x, y, Color.black);
+        //}
 
         for (int i = 0; i < POINT_COUNT; i++)
         {
             int x = pointList[i].x;
             int y = pointList[i].y;
             if (pointList[i].x < 0) continue;
+
 
             bool crystalize = false;
             if (isCrystal(x - 1, y)) crystalize = true;
@@ -85,13 +94,18 @@ public class Background_DLA_Script : Background_AbstractScript
 
             if (crystalize)
             {
-                texture.SetPixel(x, y, Color.red);
+                crystalCount++;
+
+                int colorIdx = (crystalCount / 2000) % palette.Length;
+                texture.SetPixel(x, y, palette[colorIdx]);
                 pointList[i].spawn(texture, Color.white);
+                pointList[i].setAttractor(attractorList);
             }
             else
             {
                 if (Random.value < 0.2f)
                 {
+                    texture.SetPixel(x, y, Color.black);
                     if (Random.value < 0.2f)
                     {
                         int r = Random.Range(0, 3);
@@ -102,22 +116,27 @@ public class Background_DLA_Script : Background_AbstractScript
                     }
                     else
                     {
-                        if (Random.value > 0.5f)
+                        if (i % 2 == 0)
                         {
                             if (x < pointList[i].goalx) x++;
                             else if (x > pointList[i].goalx) x--;
+                            else if (y < pointList[i].goaly) y++;
+                            else if (y > pointList[i].goaly) y--;
                         }
                         else
                         {
                             if (y < pointList[i].goaly) y++;
                             else if (y > pointList[i].goaly) y--;
+                            else if (x < pointList[i].goalx) x++;
+                            else if (x > pointList[i].goalx) x--;
+
                         }
                     }
 
                     pointList[i].x = x;
                     pointList[i].y = y;
+                    texture.SetPixel(x, y, Color.white);
                 }
-                texture.SetPixel(x, y, Color.white);
             }
         }
         texture.Apply();
@@ -161,6 +180,13 @@ public class Background_DLA_Script : Background_AbstractScript
             {
                 texture.SetPixel(x, y, color);
             }
+        }
+
+        public void setAttractor(Particle[] attractorList)
+        {
+            int goalIdx = Random.Range(0, ATTRACTOR_COUNT - 1);
+            goalx = attractorList[goalIdx].x;
+            goaly = attractorList[goalIdx].y;
         }
     }
 }

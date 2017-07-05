@@ -14,7 +14,6 @@ public class CameraScript : MonoBehaviour
     public GameObject player1, player2;
     public Material[] wallMat = new Material[10];
     public Material[] floorMat = new Material[5];
-    //public Material[] backgroundMat = new Material[3];
     public GameObject goalBlock;
     public GameObject backgroundImage;
     private Background_AbstractScript backgroundScript;
