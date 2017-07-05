@@ -16,7 +16,7 @@ public class PlayerScript : MonoBehaviour
 
     private float spawnSpotDeltaTransparency;
 
-    private Material playerMaterial;
+    //private Material playerMaterial;
     private bool moving = false;
     private float speedX = 0;
     private float speedZ = 0;
@@ -62,7 +62,7 @@ public class PlayerScript : MonoBehaviour
 
 
         arrow.SetActive(false);
-        playerMaterial = gameObject.GetComponent<Renderer>().material;
+        //playerMaterial = gameObject.GetComponent<Renderer>().material;
 
         
         if (playerNumber == 1)

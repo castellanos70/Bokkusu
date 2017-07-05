@@ -78,6 +78,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Board\Scripts\Background_AbstractScript.cs" />
+    <Compile Include="Assets\Board\Scripts\Background_DLA_Script.cs" />
     <Compile Include="Assets\Board\Scripts\CameraScript.cs" />
     <Compile Include="Assets\Board\Scripts\Cell.cs" />
     <Compile Include="Assets\Board\Scripts\CrateScript.cs" />

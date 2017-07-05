@@ -14,7 +14,7 @@ public class CameraScript : MonoBehaviour
     public GameObject player1, player2;
     public Material[] wallMat = new Material[10];
     public Material[] floorMat = new Material[5];
-    public Material[] backgroundMat = new Material[3];
+    //public Material[] backgroundMat = new Material[3];
     public GameObject goalBlock;
     public GameObject backgroundImage;
     
@@ -56,8 +56,16 @@ public class CameraScript : MonoBehaviour
 
     void Start()
     {
+        
+
         spawnBoard(0);
         initGame();
+
+        Background_DLA_Script script = GetComponent<Background_DLA_Script>();
+        Texture2D texture = script.create();
+        Renderer renderer = backgroundImage.GetComponent<Renderer>();
+        renderer.material.mainTexture = texture;
+
     }
 
     // Update is called once per frame
@@ -316,13 +324,7 @@ public class CameraScript : MonoBehaviour
         float scale = Mathf.Max(gridWidth, gridHeight) * 0.25f;
 
         transform.position = new Vector3(gridWidth / 2.0f - .5f, height * heightMod, gridHeight / 2.0f - .5f);
-        int backgroundIdx = 0;
-        if (curLevel > 0)
-        {
-            if (curLevel < gameMapList.Length / 2) backgroundIdx = 1; else backgroundIdx = 2;
-        }
-        Renderer renderer = backgroundImage.GetComponent<Renderer>();
-        renderer.material = backgroundMat[backgroundIdx];
+
         backgroundImage.transform.position = new Vector3(gridWidth / 2, 0, gridHeight / 2);
         backgroundImage.transform.localScale = new Vector3(scale, 1, scale);
 
