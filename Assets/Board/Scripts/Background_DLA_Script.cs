@@ -11,7 +11,7 @@ public class Background_DLA_Script : Background_AbstractScript
 
     private Particle[] attractorList = new Particle[ATTRACTOR_COUNT];
 
-
+    //hexColor = { 0xa8a8a8, 0xc0c090, 0x789078, 0xc09048, 0x603000};
 
 
     override public Texture2D create()
