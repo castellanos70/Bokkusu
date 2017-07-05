@@ -5,8 +5,9 @@ using UnityEngine;
 public class Background_DLA_Script : Background_AbstractScript
 {
     
-    private static int POINT_COUNT = 1000;
+    private static int POINT_COUNT = 3000;
     private static int ATTRACTOR_COUNT = 13;
+    private static int STAR_POINTS = 1000;
     private Particle[] pointList = new Particle[POINT_COUNT];
 
     private Particle[] attractorList = new Particle[ATTRACTOR_COUNT];
@@ -96,46 +97,45 @@ public class Background_DLA_Script : Background_AbstractScript
             {
                 crystalCount++;
 
-                int colorIdx = (crystalCount / 2000) % palette.Length;
+                int colorIdx = (crystalCount / 4000) % palette.Length;
                 texture.SetPixel(x, y, palette[colorIdx]);
-                pointList[i].spawn(texture, Color.white);
-                pointList[i].setAttractor(attractorList);
+                if (i < STAR_POINTS) pointList[i].spawn(texture, Color.white);
+                else
+                {
+                    pointList[i].spawn(texture);
+                    pointList[i].setAttractor(attractorList);
+                }
             }
             else
             {
-                if (Random.value < 0.2f)
+                if (i < STAR_POINTS)
                 {
-                    texture.SetPixel(x, y, Color.black);
-                    if (Random.value < 0.2f)
-                    {
-                        int r = Random.Range(0, 3);
-                        if (r == 0) x++;
-                        else if (r == 1) x--;
-                        else if (r == 2) y++;
-                        else y--;
-                    }
-                    else
-                    {
-                        if (i % 2 == 0)
-                        {
-                            if (x < pointList[i].goalx) x++;
-                            else if (x > pointList[i].goalx) x--;
-                            else if (y < pointList[i].goaly) y++;
-                            else if (y > pointList[i].goaly) y--;
-                        }
-                        else
-                        {
-                            if (y < pointList[i].goaly) y++;
-                            else if (y > pointList[i].goaly) y--;
-                            else if (x < pointList[i].goalx) x++;
-                            else if (x > pointList[i].goalx) x--;
+                    if (Random.value > 0.05f) continue;
 
-                        }
-                    }
+                    texture.SetPixel(x, y, Color.black);
+
+                    int r = Random.Range(0, 3);
+                    if (r == 0) x++;
+                    else if (r == 1) x--;
+                    else if (r == 2) y++;
+                    else y--;
 
                     pointList[i].x = x;
                     pointList[i].y = y;
                     texture.SetPixel(x, y, Color.white);
+
+                }
+                else
+                {
+                    if (x < pointList[i].goalx) x++;
+                    else if (x > pointList[i].goalx) x--;
+
+                    if (y < pointList[i].goaly) y++;
+                    else if (y > pointList[i].goaly) y--;
+
+                    pointList[i].x = x;
+                    pointList[i].y = y;
+
                 }
             }
         }
@@ -162,19 +162,24 @@ public class Background_DLA_Script : Background_AbstractScript
             spawn(texture, color);
         }
 
-        public void spawn(Texture2D texture, Color color)
+        public void spawn(Texture2D texture)
         {
             int n = 0;
             while (true)
             {
                 n++;
-                x = Random.Range(2, textureSize-3);
+                x = Random.Range(2, textureSize - 3);
                 y = Random.Range(2, textureSize - 3);
                 if (texture.GetPixel(x, y).Equals(Color.black)) break;
 
                 if (n > 100) break;
 
             }
+        }
+
+        public void spawn(Texture2D texture, Color color)
+        {
+            spawn(texture);
 
             if (x > 0)
             {
