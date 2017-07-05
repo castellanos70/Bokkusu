@@ -6,7 +6,7 @@ public class Background_DLA_Script : Background_AbstractScript
 {
     
     private static int POINT_COUNT = 1000;
-    private static int ATTRACTOR_COUNT = 12;
+    private static int ATTRACTOR_COUNT = 50;
     private Particle[] pointList = new Particle[POINT_COUNT];
 
     private Particle[] attractorList = new Particle[ATTRACTOR_COUNT];
@@ -56,7 +56,7 @@ public class Background_DLA_Script : Background_AbstractScript
         }
     }
 
-    override public void update()
+    override public void next()
     {
         for (int i = 0; i < POINT_COUNT; i++)
         {
@@ -90,23 +90,33 @@ public class Background_DLA_Script : Background_AbstractScript
             }
             else
             {
-                if (Random.value > 0.75)
+                if (Random.value < 0.2f)
                 {
-                    int r = Random.Range(0, 3);
-                    if (r == 0) x++;
-                    else if (r == 1) x--;
-                    else if (r == 2) y++;
-                    else y--;
-                }
-                else
-                {
-                    if (x < pointList[i].goalx) x++;
-                    else if (y < pointList[i].goaly) y++;
-                    else if (x > pointList[i].goalx) x--;
-                    else if (y > pointList[i].goaly) y--;
+                    if (Random.value < 0.2f)
+                    {
+                        int r = Random.Range(0, 3);
+                        if (r == 0) x++;
+                        else if (r == 1) x--;
+                        else if (r == 2) y++;
+                        else y--;
+                    }
+                    else
+                    {
+                        if (Random.value > 0.5f)
+                        {
+                            if (x < pointList[i].goalx) x++;
+                            else if (x > pointList[i].goalx) x--;
+                        }
+                        else
+                        {
+                            if (y < pointList[i].goaly) y++;
+                            else if (y > pointList[i].goaly) y--;
+                        }
+                    }
 
+                    pointList[i].x = x;
+                    pointList[i].y = y;
                 }
-
                 texture.SetPixel(x, y, Color.white);
             }
         }
@@ -118,7 +128,7 @@ public class Background_DLA_Script : Background_AbstractScript
     {
         Color color = texture.GetPixel(x, y);
         if (color.Equals(Color.black)) return false;
-        //if (color.Equals(Color.white)) return false;
+        if (color.Equals(Color.white)) return false;
         return true;
     }
 

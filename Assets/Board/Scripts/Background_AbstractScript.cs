@@ -8,5 +8,5 @@ public abstract class Background_AbstractScript : MonoBehaviour
     protected Texture2D texture;
 
     public abstract Texture2D create();
-    public abstract void update();
+    public abstract void next();
 }

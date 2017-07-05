@@ -17,7 +17,9 @@ public class CameraScript : MonoBehaviour
     //public Material[] backgroundMat = new Material[3];
     public GameObject goalBlock;
     public GameObject backgroundImage;
-    
+    private Background_AbstractScript backgroundScript;
+
+
 
     public enum GameState { INTRO, INITIALIZING, PLAYING, WON };
     private GameState gameState;
@@ -56,16 +58,16 @@ public class CameraScript : MonoBehaviour
 
     void Start()
     {
-        
+
+        backgroundScript = GetComponent<Background_AbstractScript>();
+        Texture2D texture = backgroundScript.create();
+        Renderer renderer = backgroundImage.GetComponent<Renderer>();
+        renderer.material.mainTexture = texture;
 
         spawnBoard(0);
         initGame();
 
-        Background_DLA_Script script = GetComponent<Background_DLA_Script>();
-        Texture2D texture = script.create();
-        Renderer renderer = backgroundImage.GetComponent<Renderer>();
-        renderer.material.mainTexture = texture;
-
+        
     }
 
     // Update is called once per frame
@@ -76,6 +78,7 @@ public class CameraScript : MonoBehaviour
             Application.Quit();
         }
 
+        backgroundScript.next();
         goalBlock.transform.Rotate(Vector3.up * Time.deltaTime*40);
         backgroundImage.transform.Rotate(Vector3.up * Time.deltaTime*.5f);
         //goalBlock.transform.Rotate(Vector3.right * Time.deltaTime * 5);
