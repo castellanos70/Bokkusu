@@ -118,7 +118,7 @@ public class PlayerScript : MonoBehaviour
         speedZ = 0;
 
         spawnSpotDeltaTransparency = -1;
-        spawnSpotObj.transform.position = transform.position;
+        spawnSpotObj.transform.position =  new Vector3(transform.position.x, 0.51f, transform.position.z);
 
     }
 

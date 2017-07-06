@@ -329,7 +329,7 @@ public class CameraScript : MonoBehaviour
 
         backgroundImage.transform.position = new Vector3(gridWidth / 2, 0, gridHeight / 2);
         backgroundImage.transform.localScale = new Vector3(scale, 1, scale);
-        backgroundScript.clear();
+        backgroundScript.clear(curLevel);
 
     }
 

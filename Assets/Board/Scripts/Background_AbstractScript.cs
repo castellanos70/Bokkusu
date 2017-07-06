@@ -8,6 +8,6 @@ public abstract class Background_AbstractScript : MonoBehaviour
     protected Texture2D texture;
 
     public abstract Texture2D create();
-    public abstract void clear();
+    public abstract void clear(int level);
     public abstract void next();
 }
