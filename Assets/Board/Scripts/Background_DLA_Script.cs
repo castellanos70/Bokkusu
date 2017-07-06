@@ -24,34 +24,33 @@ public class Background_DLA_Script : Background_AbstractScript
         new Color(0.686f,0.749f, 0.710f)
     };
 
+    private float totalSec;
+
 
     override public Texture2D create()
     {
         // Create a texture ARGB32 (32 bit with alpha) and no mipmaps
         texture = new Texture2D(textureSize, textureSize, TextureFormat.ARGB32, false);
-        clear();
 
         for (int i = 0; i < ATTRACTOR_COUNT; i++)
         {
-            attractorList[i] = new Particle(texture, palette[0]);
-            
+            attractorList[i] = new Particle();
+
         }
 
         for (int i = 0; i < POINT_COUNT; i++)
         {
-            pointList[i] = new Particle(texture, Color.white);
-            pointList[i].setAttractor(attractorList);
+            pointList[i] = new Particle();
         }
-        
 
-        // Apply all SetPixel calls
-        texture.Apply();
+
         return texture;
     }
 
 
-    private void clear()
+    override public void clear()
     {
+        totalSec = 0;
         for (int x = 0; x < textureSize; x++)
         {
             for (int y = 0; y < textureSize; y++)
@@ -63,10 +62,27 @@ public class Background_DLA_Script : Background_AbstractScript
                 else texture.SetPixel(x, y, Color.black);
             }
         }
+
+        for (int i = 0; i < ATTRACTOR_COUNT; i++)
+        {
+            attractorList[i].spawn(texture, palette[0]);
+
+        }
+
+        for (int i = 0; i < POINT_COUNT; i++)
+        {
+            pointList[i].spawn(texture, Color.white);
+            pointList[i].setAttractor(attractorList);
+        }
+
+
+        // Apply all SetPixel calls
+        texture.Apply();
     }
 
     override public void next()
     {
+        totalSec += Time.deltaTime;
         //for (int i = 0; i < POINT_COUNT; i++)
         //{
         //    int x = pointList[i].x;
@@ -97,7 +113,7 @@ public class Background_DLA_Script : Background_AbstractScript
             {
                 crystalCount++;
 
-                int colorIdx = (crystalCount / 4000) % palette.Length;
+                int colorIdx = (((int)totalSec) / 20) % palette.Length;
                 texture.SetPixel(x, y, palette[colorIdx]);
                 if (i < STAR_POINTS) pointList[i].spawn(texture, Color.white);
                 else
@@ -155,12 +171,7 @@ public class Background_DLA_Script : Background_AbstractScript
     {
         public int x = -1;
         public int y = -1;
-
         public int goalx, goaly;
-        public Particle(Texture2D texture, Color color)
-        {
-            spawn(texture, color);
-        }
 
         public void spawn(Texture2D texture)
         {
@@ -173,7 +184,6 @@ public class Background_DLA_Script : Background_AbstractScript
                 if (texture.GetPixel(x, y).Equals(Color.black)) break;
 
                 if (n > 100) break;
-
             }
         }
 
