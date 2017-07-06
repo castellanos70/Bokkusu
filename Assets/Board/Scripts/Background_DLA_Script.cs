@@ -175,7 +175,7 @@ public class Background_DLA_Script : Background_AbstractScript
                         pointList[i].x = x;
                         pointList[i].y = y;
                     }
-                    texture.SetPixel(x, y, Color.white);
+                    if (Random.value < 0.85f) texture.SetPixel(x, y, Color.white);
                 }
                 else
                 {
