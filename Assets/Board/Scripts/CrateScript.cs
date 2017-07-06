@@ -12,24 +12,34 @@ public class CrateScript : MonoBehaviour
     public AudioSource crateAudio;
     public Material crateMaterial;
 
+    public AudioClip detonateClipSoft;
+    public AudioClip detonateClipHard;
+    public AudioClip[] spawnClip;
+
     public void spawnAnimation(bool player1)
     {
         if (player1) player1Particles.Emit(10);
         else player2Particles.Emit(10);
+
+        crateAudio.clip = spawnClip[Random.Range(0, spawnClip.Length)];
+        crateAudio.Play();
     }
 
-    public void detonate(GameObject crateObject)
+    public void detonate(int speed)
     {
         //ParticleSystem.MainModule settings = GetComponent<ParticleSystem>().main;
         //settings.startColor = new ParticleSystem.MinMaxGradient(new Color(1, 0, 1));
         crateParticles.Emit(10);
         //crateAudio.Stop();
+        if (speed >= strength) crateAudio.clip = detonateClipHard;
+        else crateAudio.clip = detonateClipSoft;
         crateAudio.Play();
+        //crateAudio.clip = clipsDetonate[Random.Range(0, clipsDetonate.Length)];
         GetComponent<Renderer>().enabled = false;
 
         //crateObject.GetComponent<Renderer>().enabled = false;
         //crateObject.SetActive(false);
-        Destroy(crateObject, 1);
+        Destroy(gameObject, 1);
     }
 
 

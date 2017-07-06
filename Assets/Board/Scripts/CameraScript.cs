@@ -199,10 +199,10 @@ public class CameraScript : MonoBehaviour
 
         if ((toX != gridX) || (toZ != gridZ))
         {
-            float speed = Mathf.Max(Mathf.Abs(script.getSpeedX()), Mathf.Abs(script.getSpeedZ()));
+            int speed = script.getSpeed();
             bool smashCrate = false;
             if (speed >= CrateScript.getStrength()) smashCrate = true;
-            if (!isEnterable(toX, toZ, smashCrate))
+            if (!isEnterable(toX, toZ, smashCrate, speed))
             {
                 script.hit();
                 return;
@@ -393,7 +393,7 @@ public class CameraScript : MonoBehaviour
         return gameState;
     }
 
-    public bool isEnterable(int x, int z, bool smashCrate)
+    public bool isEnterable(int x, int z, bool smashCrate, int speed)
     {
         Element type = grid[x, z].getType();
         if ((x == playerScript1.getGridX()) && (z == playerScript1.getGridZ()))
@@ -409,7 +409,7 @@ public class CameraScript : MonoBehaviour
 
         if (type == Element.CRATE && smashCrate)
         {
-            grid[x, z].smashCrate();
+            grid[x, z].smashCrate(speed);
             return true;
         }
 

@@ -7,4 +7,8 @@
 	window-ice-scraper-1.wav
 	window-ice-scraper-2.wav
 
+From freesound.org
+	"wooden_door_smash_open.wav" by Eneasz
+	"light_crate_smash2.wav" by Srehpog
+
 Music by 

@@ -51,13 +51,13 @@ public class Cell
         this.type = type;
     }
 
-    public void smashCrate()
+    public void smashCrate(int speed)
     {
         if (type != CameraScript.Element.CRATE) return;
         if (overlayObj == null) return;
 
         CrateScript crate = (CrateScript)overlayObj.GetComponent(typeof(CrateScript));
-        crate.detonate(overlayObj);
+        crate.detonate(speed);
         type = CameraScript.Element.FLOOR;
         overlayObj = null;
     }
