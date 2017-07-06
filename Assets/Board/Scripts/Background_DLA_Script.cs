@@ -126,20 +126,22 @@ public class Background_DLA_Script : Background_AbstractScript
             {
                 if (i < STAR_POINTS)
                 {
-                    if (Random.value > 0.05f) continue;
-
+                    //By erasing and drawing each frame, even when the 
+                    //   point does not move, it gives a twinkling effect.
                     texture.SetPixel(x, y, Color.black);
 
-                    int r = Random.Range(0, 3);
-                    if (r == 0) x++;
-                    else if (r == 1) x--;
-                    else if (r == 2) y++;
-                    else y--;
+                    if (Random.value < 0.05f)
+                    {
+                        int r = Random.Range(0, 3);
+                        if (r == 0) x++;
+                        else if (r == 1) x--;
+                        else if (r == 2) y++;
+                        else y--;
 
-                    pointList[i].x = x;
-                    pointList[i].y = y;
+                        pointList[i].x = x;
+                        pointList[i].y = y;
+                    }
                     texture.SetPixel(x, y, Color.white);
-
                 }
                 else
                 {
