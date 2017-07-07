@@ -34,23 +34,25 @@ public class Background_DLA_Script : Background_AbstractScript
         //Palette from Paul Cezanne's La Montagne Saint Victoire Barnes
         {
            new Color(0.306f, 0.376f, 0.275f),
+           new Color(0.349f, 0.475f, 0.369f),
            new Color(0.404f, 0.549f, 0.427f),
-           new Color(0.804f, 0.686f, 0.451f),
-           new Color(0.667f, 0.412f, 0.341f),
-           new Color(0.737f, 0.522f, 0.208f),
-           new Color(0.820f, 0.741f, 0.612f),
-           new Color(0.686f, 0.749f, 0.710f)
+           new Color(0.486f, 0.541f, 0.388f),
+           new Color(0.624f, 0.529f, 0.322f),
+           new Color(0.678f, 0.592f, 0.322f),
+           new Color(0.753f, 0.647f, 0.443f),
+           new Color(0.804f, 0.686f, 0.451f)
         },
 
         //Palette from Vincent Van Gogh's Starry Night
         {
            new Color(0.082f, 0.235f, 0.600f),
            new Color(0.231f, 0.400f, 0.808f),
-           new Color(0.290f, 0.498f, 0.757f),
-           new Color(0.573f, 0.808f, 0.941f),
-           new Color(0.835f, 0.914f, 0.867f),
-           new Color(1.000f, 0.820f, 0.310f),
+           new Color(0.357f, 0.525f, 0.902f),
+           new Color(0.478f, 0.647f, 1.000f),
+           new Color(0.827f, 0.812f, 0.769f),
+           new Color(0.502f, 0.788f, 0.580f),
            new Color(0.898f, 0.686f, 0.271f),
+           new Color(1.000f, 0.820f, 0.310f)
         }
     };
     private int paletteSize, paletteCount;
