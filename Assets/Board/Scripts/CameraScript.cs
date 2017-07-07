@@ -72,6 +72,9 @@ public class CameraScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+       
+
         if (Input.GetKey(KeyCode.Escape))
         {
             Application.Quit();
@@ -160,7 +163,7 @@ public class CameraScript : MonoBehaviour
                 int level = curLevel;
                 while (level == curLevel)
                 {
-                    level = Random.Range(0, gameMapList.Length);
+                    level = Random.Range(1, gameMapList.Length);
                 }
                 spawnBoard(level);
                 initGame();
@@ -236,7 +239,7 @@ public class CameraScript : MonoBehaviour
             {
                 if (startMap[x, z] == Element.NOTHING) continue;
 
-                int y = Random.Range(2, 20);
+                int y = Random.Range(2, 40);
                 GameObject block = Instantiate(boardBlock, new Vector3(x, y, z), Quaternion.identity);
                 block.SetActive(true);
 
