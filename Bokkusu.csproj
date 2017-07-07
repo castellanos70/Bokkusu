@@ -90,14 +90,14 @@
   <ItemGroup>
     <None Include="Assets\Resources\Audio\Credits.txt" />
     <None Include="Assets\Resources\LogoMap.txt" />
-    <None Include="Assets\Resources\Maps\0Cross.txt" />
+    <None Include="Assets\Resources\Maps\0Rhombus.txt" />
+    <None Include="Assets\Resources\Maps\Cross.txt" />
     <None Include="Assets\Resources\Maps\castle.txt" />
     <None Include="Assets\Resources\Maps\celticknot.txt" />
     <None Include="Assets\Resources\Maps\crossRoads.txt" />
     <None Include="Assets\Resources\Maps\dotDash.txt" />
     <None Include="Assets\Resources\Maps\innerChamber.txt" />
     <None Include="Assets\Resources\Maps\maze.txt" />
-    <None Include="Assets\Resources\Maps\rhombus.txt" />
     <None Include="Assets\Resources\Maps\soccerField.txt" />
     <None Include="Assets\Resources\Maps\switch.txt" />
   </ItemGroup>
