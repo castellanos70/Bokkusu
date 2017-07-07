@@ -25,8 +25,8 @@ public class CameraScript : MonoBehaviour
     private GameMap gameMap;
     private Element[,] startMap;
 
-    public enum Element                  { FLOOR, WALL, GOAL, CRATE, PLAYER1, PLAYER2, PORTALA, PORTALB, PORTALC, NOTHING };
-    public static char[] ELEMENT_ASCII = { '.'  , '#' , '=',  '&',    '1'    , '2'    , 'A',     'B',     'C',     ' '    };
+    public enum Element                  { FLOOR, WALL, GOAL, CRATE, PLAYER1, PLAYER2, DOOR_1A, DOOR_1B, NOTHING };
+    public static char[] ELEMENT_ASCII = { '.'  , '#' , '=',  '&',    '1'    , '2'    , 'A',     'B',     ' '    };
 
 
     private static Element[] elementValues;
@@ -120,21 +120,6 @@ public class CameraScript : MonoBehaviour
         {
             movePlayer(player1, playerScript1);
             movePlayer(player2, playerScript2);
-
-            //float midX = (player1.transform.position.x + player2.transform.position.x)/2;
-            //float midZ = (player1.transform.position.z + player2.transform.position.z) / 2;
-
-            //find the vector pointing from our position to the target
-            //Vector3 lookDir = (new Vector3(midX, 1, midZ) - new Vector3(0,20,0)).normalized;
-            //Vector3 lookDir = (new Vector3(midX, 1, midZ) - transform.position).normalized;
-            //Vector3 lookDir = new Vector3(midX, 1, midZ);
-
-            //create the rotation we need to be in to look at the target
-            //Quaternion lookRotation = Quaternion.LookRotation(lookDir);
-
-            //rotate us over time according to speed until we are in the required rotation
-            //transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 1);
-
         }
 
         else if (gameState == GameState.WON)
@@ -147,14 +132,7 @@ public class CameraScript : MonoBehaviour
                 float dx = (goalBlock.transform.position.x - transform.position.x) * Time.deltaTime * 3;
                 float dz = (goalBlock.transform.position.z - transform.position.z) * Time.deltaTime * 3;
                 float dy = (transform.position.y - 2) * Time.deltaTime;
-                //Debug.Log("transform.position=" + transform.position);
                 transform.Translate(dx, dz, dy);
-                //if (dist > 2)
-                //{
-                //    transform.LookAt(goalBlock.transform);
-                //    transform.position += Vector3.forward * Time.deltaTime * 1;
-                //}
-                //transform.Rotate(Vector3.up * Time.deltaTime * 25);
             }
             else
             {
@@ -202,7 +180,7 @@ public class CameraScript : MonoBehaviour
 
         if ((toX != gridX) || (toZ != gridZ))
         {
-            int speed = script.getSpeed();
+            float speed = script.getMagSpeed();
             bool smashCrate = false;
             if (speed >= CrateScript.getStrength()) smashCrate = true;
             if (!isEnterable(toX, toZ, smashCrate, speed))
@@ -266,7 +244,6 @@ public class CameraScript : MonoBehaviour
                     }
                     foundGoal = true;
                     goalBlock.transform.position = new Vector3(x, 1, z);
-                    //grid[x, z].addOverlay(goalBlock);
                 }
             }
         }
@@ -396,7 +373,7 @@ public class CameraScript : MonoBehaviour
         return gameState;
     }
 
-    public bool isEnterable(int x, int z, bool smashCrate, int speed)
+    public bool isEnterable(int x, int z, bool smashCrate, float speed)
     {
         Element type = grid[x, z].getType();
         if ((x == playerScript1.getGridX()) && (z == playerScript1.getGridZ()))
@@ -435,9 +412,8 @@ public class CameraScript : MonoBehaviour
         else if (c == '&') return Element.CRATE;
         else if (c == '1') return Element.PLAYER1;
         else if (c == '2') return Element.PLAYER2;
-        else if (c == 'A') return Element.PORTALA;
-        else if (c == 'B') return Element.PORTALB;
-        else if (c == 'C') return Element.PORTALC;
+        else if (c == 'A') return Element.DOOR_1A;
+        else if (c == 'B') return Element.DOOR_1B;
 		else if (c == ' ') return Element.NOTHING;
         return Element.FLOOR;
     }

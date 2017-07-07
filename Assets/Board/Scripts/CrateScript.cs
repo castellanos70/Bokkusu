@@ -25,7 +25,7 @@ public class CrateScript : MonoBehaviour
         crateAudio.Play();
     }
 
-    public void detonate(int speed)
+    public void detonate(float speed)
     {
         //ParticleSystem.MainModule settings = GetComponent<ParticleSystem>().main;
         //settings.startColor = new ParticleSystem.MinMaxGradient(new Color(1, 0, 1));

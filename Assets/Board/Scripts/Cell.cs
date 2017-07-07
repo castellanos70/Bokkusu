@@ -51,7 +51,7 @@ public class Cell
         this.type = type;
     }
 
-    public void smashCrate(int speed)
+    public void smashCrate(float speed)
     {
         if (type != CameraScript.Element.CRATE) return;
         if (overlayObj == null) return;
