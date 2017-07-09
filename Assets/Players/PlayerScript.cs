@@ -203,7 +203,7 @@ public class PlayerScript : MonoBehaviour
 
         if ((!moving) && playerIsPressingMove)
         {
-            if (cameraScript.isEnterable(toX, toZ, true, getMagSpeed()))
+            if (cameraScript.isEnterable(toX, toZ, true, getSpeedMagnitude()))
             {
                 moving = true;
                 playerAudio.Play();
@@ -244,9 +244,8 @@ public class PlayerScript : MonoBehaviour
 
     public float getSpeedX() {return speedX; }
     public float getSpeedZ() { return speedZ; }
-    //public int getMagSpeed() { return Mathf.Abs((int)Mathf.Max(speedX, speedZ)); }
 
-    public float getMagSpeed() { return Mathf.Max(Mathf.Abs(speedX), Mathf.Abs(speedZ)); }
+    public float getSpeedMagnitude() { return Mathf.Max(Mathf.Abs(speedX), Mathf.Abs(speedZ)); }
 
     public void updateLocation(float x, float z)
     {
@@ -290,7 +289,7 @@ public class PlayerScript : MonoBehaviour
         }
         else if (grid[gridX, gridZ].getType() == CameraScript.Element.CRATE)
         {
-            grid[gridX, gridZ].smashCrate(getMagSpeed());
+            grid[gridX, gridZ].smashCrate(getSpeedMagnitude());
 
         }
         else if (moved)
@@ -336,7 +335,7 @@ public class PlayerScript : MonoBehaviour
             readyToSpawnCrate = false;
             if (grid[gridX, gridZ].getType() == CameraScript.Element.CRATE)
             {
-                grid[gridX, gridZ].smashCrate(getMagSpeed());
+                grid[gridX, gridZ].smashCrate(getSpeedMagnitude());
 
             }
         }

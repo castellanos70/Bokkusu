@@ -180,7 +180,7 @@ public class CameraScript : MonoBehaviour
 
         if ((toX != gridX) || (toZ != gridZ))
         {
-            float speed = script.getMagSpeed();
+            float speed = script.getSpeedMagnitude();
             bool smashCrate = false;
             if (speed >= CrateScript.getStrength()) smashCrate = true;
             if (!isEnterable(toX, toZ, smashCrate, speed))
