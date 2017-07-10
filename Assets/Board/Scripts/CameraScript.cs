@@ -8,12 +8,15 @@ public class CameraScript : MonoBehaviour
 	private static float fullWidth = 32;
 	private static float fullHeight = 14;
     private int gridWidth, gridHeight;
+    private float doorToggleSeconds;
 
     public GameObject boardBlock;
     public GameObject crateBlock;
     public GameObject player1, player2;
     public Material[] wallMat = new Material[10];
     public Material[] floorMat = new Material[5];
+    public Material Door1Mat;
+
     public GameObject goalBlock;
     public GameObject backgroundImage;
     private Background_AbstractScript backgroundScript;
@@ -25,7 +28,7 @@ public class CameraScript : MonoBehaviour
     private GameMap gameMap;
     private Element[,] startMap;
 
-    public enum Element                  { FLOOR, WALL, GOAL, CRATE, PLAYER1, PLAYER2, DOOR_1A, DOOR_1B, NOTHING };
+    public enum Element                  { FLOOR, WALL, GOAL, CRATE, PLAYER1, PLAYER2, DOOR_A, DOOR_B, NOTHING };
     public static char[] ELEMENT_ASCII = { '.'  , '#' , '=',  '&',    '1'    , '2'    , 'A',     'B',     ' '    };
 
 
@@ -64,17 +67,130 @@ public class CameraScript : MonoBehaviour
         renderer.material.mainTexture = texture;
 
         spawnBoard(0);
-        initGame();
+    }
 
+
+
+
+    private void spawnBoard(int level)
+    {
+        gameState = GameState.INITIALIZING;
+        doorToggleSeconds = -1f;
+        curLevel = level;
+        destroyOldBoard();
+
+        gameMap = gameMapList[level];
+        startMap = gameMap.getMap();
+        gridWidth = startMap.GetLength(0);
+        gridHeight = startMap.GetLength(1);
+
+        grid = new Cell[gridWidth, gridHeight];
+        bool foundGoal = false;
+
+        // Spawn board blocks
+        Debug.Log("Spawn Board(" + level + "): " + grid.GetLength(0) + "(" + gridWidth + ") x " + grid.GetLength(1) +
+            "(" + gridHeight + ")");
+        for (int x = 0; x < gridWidth; x++)
+        {
+            for (int z = 0; z < gridHeight; z++)
+            {
+                if (startMap[x, z] == Element.NOTHING) continue;
+
+                int y = Random.Range(2, 40);
+                GameObject block = Instantiate(boardBlock, new Vector3(x, y, z), Quaternion.identity);
+                block.SetActive(true);
+
+                Material mat = null;
+                if (startMap[x, z] == CameraScript.Element.WALL)
+                {
+                   mat = wallMat[Random.Range(0, wallMat.Length)];
+                }
+                else if (startMap[x, z] == CameraScript.Element.DOOR_A || startMap[x, z] == CameraScript.Element.DOOR_B)
+                {
+                    mat = Door1Mat;
+                }
+                else
+                {
+                    mat = floorMat[Random.Range(0, floorMat.Length)];
+                }
+
+
+                grid[x, z] = new Cell(startMap[x, z], block, mat);
+
+                if (startMap[x, z] == Element.GOAL)
+                {
+                    if (foundGoal)
+                    {
+                        Debug.Log("Each level must have Exactly ONE goal.");
+                        //UnityEditor.EditorApplication.isPlaying = false;
+                    }
+                    foundGoal = true;
+                    goalBlock.transform.position = new Vector3(x, 1, z);
+                }
+            }
+        }
+
+        if (!foundGoal)
+        {
+            Debug.Log("Each level must have Exactly ONE goal.");
+            //UnityEditor.EditorApplication.isPlaying = false;
+        }
+    
         
+        playerScript1.setBoard(this, grid);
+        playerScript2.setBoard(this, grid);
+
+        //Needed when have have more objects moving than just the players
+        //entityList.Add(player1);
+        //entityList.Add(player2);
+
+        for (int x = 0; x < gridWidth; x++)
+        {
+            for (int z = 0; z < gridHeight; z++)
+            {
+                if (startMap[x, z] == Element.NOTHING) continue;
+
+
+                if (startMap[x, z] == Element.PLAYER1)
+                {
+                    Debug.Log("CameraScript.initGame: player 1: (" + x + "," + z + ")");
+                    playerScript1.setStartPosition(x, z);
+                    grid[x, z].setType(Element.FLOOR);
+                }
+                else if (startMap[x, z] == Element.PLAYER2)
+                {
+                    Debug.Log("CameraScript.newGame: player 2: (" + x + "," + z + ")");
+                    playerScript2.setStartPosition(x, z);
+                    grid[x, z].setType(Element.FLOOR);
+                }
+                else if (startMap[x, z] == Element.CRATE)
+                {
+                    GameObject crateClone = Instantiate(crateBlock, new Vector3(x, 1, z), Quaternion.identity);
+                    crateClone.SetActive(true);
+                    grid[x, z].addCrate(crateClone);
+                }
+            }
+        }
+
+
+        float height = 35;//cameraPosition.y;
+        float widthDiff = gridWidth / fullWidth;
+        float heightDiff = gridHeight / fullHeight;
+        float heightMod = Mathf.Max(widthDiff, heightDiff);
+
+        float scale = Mathf.Max(gridWidth, gridHeight) * 0.25f;
+
+        transform.position = new Vector3(gridWidth / 2.0f - .5f, height * heightMod, gridHeight / 2.0f - .5f);
+
+        backgroundImage.transform.position = new Vector3(gridWidth / 2, 0, gridHeight / 2);
+        backgroundImage.transform.localScale = new Vector3(scale, 1, scale);
+        backgroundScript.clear(curLevel);
+
     }
 
     // Update is called once per frame
     void Update()
     {
-
-       
-
         if (Input.GetKey(KeyCode.Escape))
         {
             Application.Quit();
@@ -100,16 +216,9 @@ public class CameraScript : MonoBehaviour
                     float fallSpeed = grid[x, z].getFallSpeed();
                     if (fallSpeed == 0f) continue;
 
-                    float bottomY = 0f;
-                    if (grid[x, z].getType() == CameraScript.Element.WALL) bottomY = 1f;
-
                     float y = grid[x, z].getY() - fallSpeed * Time.deltaTime;
-                    if (y < bottomY)
-                    {
-                        y = bottomY;
-                        grid[x, z].setHitGround();
-                    }
-                    grid[x, z].setY(y);
+
+                    grid[x, z].fallTo(y);
                     fallingDone = false;
                 }
             }
@@ -120,6 +229,26 @@ public class CameraScript : MonoBehaviour
         {
             movePlayer(player1, playerScript1);
             movePlayer(player2, playerScript2);
+
+            if (doorToggleSeconds >= 0f)
+            {
+                doorToggleSeconds -= Time.deltaTime;
+                if (doorToggleSeconds < 0f) doorToggleSeconds = 0f;
+                for (int x = 0; x < gridWidth; x++)
+                {
+                    for (int z = 0; z < gridHeight; z++)
+                    {
+                        if (startMap[x, z] == Element.NOTHING) continue;
+
+                        Element type = grid[x, z].getType();
+                        if (type == Element.DOOR_A || type == Element.DOOR_B)
+                        {
+                            grid[x, z].updateDoor(doorToggleSeconds);
+                        }
+                    }
+                }
+                if (doorToggleSeconds == 0f) doorToggleSeconds = -1f;
+            }
         }
 
         else if (gameState == GameState.WON)
@@ -144,7 +273,6 @@ public class CameraScript : MonoBehaviour
                     level = Random.Range(1, gameMapList.Length);
                 }
                 spawnBoard(level);
-                initGame();
             }
         }
     }
@@ -188,6 +316,13 @@ public class CameraScript : MonoBehaviour
                 script.hit();
                 return;
             }
+
+
+            if (grid[gridX, gridZ].getType() == Element.DOOR_A || grid[gridX, gridZ].getType() == Element.DOOR_B)
+            {
+                toggleDoors();
+            }
+
         }
         //Debug.Log("CameraScript.movePlayer(): speed: ("+ script.getSpeedX() + ", "+ script.getSpeedZ()+")");
 
@@ -195,123 +330,7 @@ public class CameraScript : MonoBehaviour
     }
 
 
-    private void spawnBoard(int level)
-    {
-        curLevel = level;
-        destroyOldBoard();
 
-        gameMap = gameMapList[level];
-        startMap = gameMap.getMap();
-        gridWidth = startMap.GetLength(0);
-        gridHeight = startMap.GetLength(1);
-
-        grid = new Cell[gridWidth, gridHeight];
-        bool foundGoal = false;
-
-        // Spawn board blocks
-        Debug.Log("Spawn Board(" + level + "): " + grid.GetLength(0) + "(" + gridWidth + ") x " + grid.GetLength(1) + 
-            "("+ gridHeight + ")");
-        for (int x = 0; x < gridWidth; x++)
-        {
-            for (int z = 0; z < gridHeight; z++)
-            {
-                if (startMap[x, z] == Element.NOTHING) continue;
-
-                int y = Random.Range(2, 40);
-                GameObject block = Instantiate(boardBlock, new Vector3(x, y, z), Quaternion.identity);
-                block.SetActive(true);
-
-                Material mat = null;
-                if (startMap[x, z] == CameraScript.Element.WALL)
-                {
-                    //block.transform.Translate(Vector3.up);
-                    mat = wallMat[Random.Range(0, wallMat.Length)];
-                }
-                else
-                {
-                    mat = floorMat[Random.Range(0, floorMat.Length)];
-                }
-
-                   
-                grid[x, z] = new Cell(startMap[x, z], block, mat);
-
-                if (startMap[x, z] == Element.GOAL)
-                {
-                    if (foundGoal)
-                    {
-                        Debug.Log("Each level must have Exactly ONE goal.");
-                        //UnityEditor.EditorApplication.isPlaying = false;
-                    }
-                    foundGoal = true;
-                    goalBlock.transform.position = new Vector3(x, 1, z);
-                }
-            }
-        }
-
-        if (!foundGoal)
-        {
-            Debug.Log("Each level must have Exactly ONE goal.");
-            //UnityEditor.EditorApplication.isPlaying = false;
-        }
-    }
-
-
-
-
-    private void initGame()
-    {
-        gameState = GameState.INITIALIZING;
-        playerScript1.setBoard(this, grid);
-        playerScript2.setBoard(this, grid);
-
-        //Needed when have have more objects moving than just the players
-        //entityList.Add(player1);
-        //entityList.Add(player2);
-
-        for (int x = 0; x < gridWidth; x++)
-        {
-            for (int z = 0; z < gridHeight; z++)
-            {
-                if (startMap[x, z] == Element.NOTHING) continue;
-
-                
-                if (startMap[x, z] == Element.PLAYER1)
-                {
-                    Debug.Log("CameraScript.initGame: player 1: (" + x + "," + z + ")");
-                    playerScript1.setStartPosition(x, z);
-                    grid[x, z].setType(Element.FLOOR);
-                }
-                else if (startMap[x, z] == Element.PLAYER2)
-                {
-                    Debug.Log("CameraScript.newGame: player 2: (" + x + "," + z + ")");
-                    playerScript2.setStartPosition(x, z);
-                    grid[x, z].setType(Element.FLOOR);
-                }
-                else if (startMap[x, z] == Element.CRATE)
-                {
-                    GameObject crateClone = Instantiate(crateBlock, new Vector3(x, 1, z), Quaternion.identity);
-                    crateClone.SetActive(true);
-                    grid[x, z].addCrate(crateClone);
-                    //block.transform.Rotate(new Vector3(180, 180, 180));
-                }
-            }
-        }
-
-
-        float height = 35;//cameraPosition.y;
-        float widthDiff = gridWidth / fullWidth;
-        float heightDiff = gridHeight / fullHeight;
-        float heightMod = Mathf.Max(widthDiff, heightDiff);
-
-        float scale = Mathf.Max(gridWidth, gridHeight) * 0.25f;
-
-        transform.position = new Vector3(gridWidth / 2.0f - .5f, height * heightMod, gridHeight / 2.0f - .5f);
-
-        backgroundImage.transform.position = new Vector3(gridWidth / 2, 0, gridHeight / 2);
-        backgroundImage.transform.localScale = new Vector3(scale, 1, scale);
-        backgroundScript.clear(curLevel);
-
-    }
 
 
     private void destroyOldBoard()
@@ -395,14 +414,45 @@ public class CameraScript : MonoBehaviour
 
         if (type == Element.FLOOR) return true;
         if (type == Element.GOAL) return true;
+        if (type == Element.DOOR_A || type == Element.DOOR_B)
+        {
+            if (grid[x, z].getY() == 0) return true;
+        }
+
+
         return false;
     }
+
+
+    private void toggleDoors()
+    {
+        doorToggleSeconds = 1f;
+
+        for (int x = 0; x < gridWidth; x++)
+        {
+            for (int z = 0; z < gridHeight; z++)
+            {
+                if (startMap[x, z] == Element.NOTHING) continue;
+
+                Element type = grid[x, z].getType();
+                if (type == Element.DOOR_A || type == Element.DOOR_B)
+                {
+                    grid[x, z].toggleDoor();
+                }
+            }
+        }
+    }
+
+
 
     public static Element getElement(int idx)
     {
 		if (idx == -1) return elementValues[0];
         return elementValues[idx];
     }
+
+ 
+
 
     public static Element getElement(char c)
     {
@@ -412,8 +462,8 @@ public class CameraScript : MonoBehaviour
         else if (c == '&') return Element.CRATE;
         else if (c == '1') return Element.PLAYER1;
         else if (c == '2') return Element.PLAYER2;
-        else if (c == 'A') return Element.DOOR_1A;
-        else if (c == 'B') return Element.DOOR_1B;
+        else if (c == 'A') return Element.DOOR_A;
+        else if (c == 'B') return Element.DOOR_B;
 		else if (c == ' ') return Element.NOTHING;
         return Element.FLOOR;
     }
