@@ -10,8 +10,12 @@ public class Cell
     private float bottomY = 0;
     private float fallSpeed;
     private int x, z;
+	private bool playedSound = false;
     private bool doorRaising = false;
     private bool doorLowering = false;
+
+	private AudioSource audio;
+	private AudioClip audioClip;
 
     public Cell(CameraScript.Element element, GameObject block, Material mat)
     {
@@ -32,13 +36,30 @@ public class Cell
         if (type == CameraScript.Element.WALL) bottomY = 1f;
         else if (type == CameraScript.Element.DOOR_B) bottomY = 1f;
 
+		audio = baseObj.AddComponent<AudioSource>();
+
         fallSpeed = 8 + Random.value * 15;
     }
+		
+	public void setAudioClip(AudioClip audioClip){
+		this.audioClip = audioClip;
+	}
 
+	public bool hasPlayedAudio(){
+		return playedSound;
+	}
 
+	public void playAudioClip(float priority){
+		audio.priority = (int)priority;
+		audio.PlayOneShot(audioClip, 0.1f);
+		playedSound = true;
+		Debug.Log(priority);
+	}
+		
     public float getFallSpeed() { return fallSpeed; }
 
     public float getY() { return baseObj.transform.position.y; }
+
     public void fallTo(float y)
     {
         if (y <= bottomY)

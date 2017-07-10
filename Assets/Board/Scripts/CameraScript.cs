@@ -8,7 +8,12 @@ public class CameraScript : MonoBehaviour
 	private static float fullWidth = 32;
 	private static float fullHeight = 14;
     private int gridWidth, gridHeight;
+	private float audioPriority = 255;
+	private float audioDecrement = 1;
     private float doorToggleSeconds;
+
+	private AudioSource audio;
+	private AudioClip[] harpAudio;
 
     public GameObject boardBlock;
     public GameObject crateBlock;
@@ -52,6 +57,9 @@ public class CameraScript : MonoBehaviour
         elementValues = (Element[])System.Enum.GetValues(typeof(Element));
 
         gameMapList = MapLoader.loadAllMaps ();
+		audio = gameObject.AddComponent<AudioSource>();
+		harpAudio = Resources.LoadAll<AudioClip>("Audio/harpsichord");
+
         boardBlock.SetActive(false);
         crateBlock.SetActive(false);
     }
@@ -75,6 +83,7 @@ public class CameraScript : MonoBehaviour
 
     private void spawnBoard(int level)
     {
+		audioPriority = 255;
         gameState = GameState.INITIALIZING;
         doorToggleSeconds = -1f;
         curLevel = level;
@@ -85,8 +94,12 @@ public class CameraScript : MonoBehaviour
         gridWidth = startMap.GetLength(0);
         gridHeight = startMap.GetLength(1);
 
+		int numCells = 0;
+
         grid = new Cell[gridWidth, gridHeight];
         bool foundGoal = false;
+
+		int[] pentatonic = {0, 2, 4, 7, 9};
 
         // Spawn board blocks
         Debug.Log("Spawn Board(" + level + "): " + grid.GetLength(0) + "(" + gridWidth + ") x " + grid.GetLength(1) +
@@ -96,6 +109,8 @@ public class CameraScript : MonoBehaviour
             for (int z = 0; z < gridHeight; z++)
             {
                 if (startMap[x, z] == Element.NOTHING) continue;
+
+				numCells++;
 
                 int y = Random.Range(2, 40);
                 GameObject block = Instantiate(boardBlock, new Vector3(x, y, z), Quaternion.identity);
@@ -117,6 +132,8 @@ public class CameraScript : MonoBehaviour
 
 
                 grid[x, z] = new Cell(startMap[x, z], block, mat);
+				int audioIndex = pentatonic[Random.Range(0, 5)] + (Random.Range(0, (harpAudio.Length/12)-1)*12);
+				grid[x, z].setAudioClip(harpAudio[audioIndex]);
 
                 if (startMap[x, z] == Element.GOAL)
                 {
@@ -130,6 +147,8 @@ public class CameraScript : MonoBehaviour
                 }
             }
         }
+
+		audioDecrement = 127.0f/numCells;
 
         if (!foundGoal)
         {
@@ -215,7 +234,14 @@ public class CameraScript : MonoBehaviour
                     if (startMap[x, z] == Element.NOTHING) continue;
 
                     float fallSpeed = grid[x, z].getFallSpeed();
-                    if (fallSpeed == 0f) continue;
+
+					if (fallSpeed == 0f){
+						if (!grid[x,z].hasPlayedAudio()){
+							grid[x, z].playAudioClip(audioPriority);
+							audioPriority -= audioDecrement;
+						}
+						continue;
+					};
 
                     float y = grid[x, z].getY() - fallSpeed * Time.deltaTime;
 
@@ -423,7 +449,6 @@ public class CameraScript : MonoBehaviour
 
         return false;
     }
-
 
     private void toggleDoors()
     {

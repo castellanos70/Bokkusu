@@ -46,27 +46,29 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Board\Scripts\Background_AbstractScript.cs" />
+     <Compile Include="Assets\Board\Scripts\Background_DLA_Script.cs" />
+     <Compile Include="Assets\Board\Scripts\CameraScript.cs" />
      <Compile Include="Assets\Board\Scripts\Cell.cs" />
      <Compile Include="Assets\Board\Scripts\CrateScript.cs" />
      <Compile Include="Assets\Board\Scripts\GameMap.cs" />
      <Compile Include="Assets\Board\Scripts\MapLoader.cs" />
-     <Compile Include="Assets\Players\CameraScript.cs" />
      <Compile Include="Assets\Players\PlayerScript.cs" />
-     <Compile Include="Assets\Splash_Script.cs" />
-     <None Include="Assets\Resources\Maps\simple.txt" />
-     <None Include="Assets\Resources\Maps\complicated.txt" />
-     <None Include="Assets\Resources\Maps\fullMap.txt" />
-     <None Include="Assets\Resources\Maps\moderate.txt" />
-     <None Include="Assets\Resources\Maps\maybehard.txt" />
-     <None Include="Assets\Resources\Maps\map3.txt" />
-     <None Include="Assets\Resources\Maps\superLarge.txt" />
-     <None Include="Assets\Resources\Maps\map2.txt" />
-     <None Include="Assets\Resources\Audio\Credits.txt" />
-     <None Include="Assets\Resources\Maps\_big&amp;dumb.txt" />
-     <None Include="Assets\Resources\Maps\harder.txt" />
+     <None Include="Assets\Resources\Maps\switch.txt" />
+     <None Include="Assets\Resources\Maps\celticknot.txt" />
      <None Include="Assets\Resources\Maps\Starter.txt" />
-     <None Include="Assets\Resources\Maps\fun.txt" />
-     <None Include="Assets\Resources\Maps\MapLevel1.txt" />
+     <None Include="Assets\Resources\Maps\0Rhombus.txt" />
+     <None Include="Assets\Resources\Maps\crossRoads.txt" />
+     <None Include="Assets\Resources\Maps\dotDash.txt" />
+     <None Include="Assets\Resources\Maps\innerChamber.txt" />
+     <None Include="Assets\Resources\Maps\castle.txt" />
+     <None Include="Assets\Resources\Maps\soccerField.txt" />
+     <None Include="Assets\Resources\Maps\donjon.txt" />
+     <None Include="Assets\Resources\LogoMap.txt" />
+     <None Include="Assets\Resources\Audio\Credits.txt" />
+     <None Include="Assets\Resources\Maps\maze.txt" />
+     <None Include="Assets\Resources\Maps\_fun.txt" />
+     <None Include="Assets\Resources\Maps\InkBottle.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
