@@ -53,7 +53,7 @@ public class Cell
 		audio.priority = (int)priority;
 		audio.PlayOneShot(audioClip, 0.1f);
 		playedSound = true;
-		Debug.Log(priority);
+		//Debug.Log(priority);
 	}
 		
     public float getFallSpeed() { return fallSpeed; }

@@ -12,7 +12,7 @@ public class CameraScript : MonoBehaviour
 	private float audioDecrement = 1;
     private float doorToggleSeconds;
 
-	private AudioSource audio;
+	//private AudioSource audio;
 	private AudioClip[] harpAudio;
 
     public GameObject boardBlock;
@@ -57,7 +57,7 @@ public class CameraScript : MonoBehaviour
         elementValues = (Element[])System.Enum.GetValues(typeof(Element));
 
         gameMapList = MapLoader.loadAllMaps ();
-		audio = gameObject.AddComponent<AudioSource>();
+		//audio = gameObject.AddComponent<AudioSource>();
 		harpAudio = Resources.LoadAll<AudioClip>("Audio/harpsichord");
 
         boardBlock.SetActive(false);
@@ -102,8 +102,7 @@ public class CameraScript : MonoBehaviour
 		int[] pentatonic = {0, 2, 4, 7, 9};
 
         // Spawn board blocks
-        Debug.Log("Spawn Board(" + level + "): " + grid.GetLength(0) + "(" + gridWidth + ") x " + grid.GetLength(1) +
-            "(" + gridHeight + ")");
+        //Debug.Log("Spawn Board(" + level + "): " + grid.GetLength(0) + "(" + gridWidth + ") x " + grid.GetLength(1) + "(" + gridHeight + ")");
         for (int x = 0; x < gridWidth; x++)
         {
             for (int z = 0; z < gridHeight; z++)
@@ -173,13 +172,13 @@ public class CameraScript : MonoBehaviour
 
                 if (startMap[x, z] == Element.PLAYER1)
                 {
-                    Debug.Log("CameraScript.initGame: player 1: (" + x + "," + z + ")");
+                    //Debug.Log("CameraScript.initGame: player 1: (" + x + "," + z + ")");
                     playerScript1.setStartPosition(x, z);
                     grid[x, z].setType(Element.FLOOR);
                 }
                 else if (startMap[x, z] == Element.PLAYER2)
                 {
-                    Debug.Log("CameraScript.newGame: player 2: (" + x + "," + z + ")");
+                    //Debug.Log("CameraScript.newGame: player 2: (" + x + "," + z + ")");
                     playerScript2.setStartPosition(x, z);
                     grid[x, z].setType(Element.FLOOR);
                 }
@@ -338,18 +337,11 @@ public class CameraScript : MonoBehaviour
             float speed = script.getSpeedMagnitude();
             bool smashCrate = false;
             if (speed >= CrateScript.getStrength()) smashCrate = true;
-            if (!isEnterable(toX, toZ, smashCrate, speed))
+            if (!enterIfPossible(toX, toZ, smashCrate, speed))
             {
                 script.hit();
                 return;
             }
-
-
-            if (grid[gridX, gridZ].getType() == Element.DOOR_A || grid[gridX, gridZ].getType() == Element.DOOR_B)
-            {
-                toggleDoors();
-            }
-
         }
         //Debug.Log("CameraScript.movePlayer(): speed: ("+ script.getSpeedX() + ", "+ script.getSpeedZ()+")");
 
@@ -393,7 +385,7 @@ public class CameraScript : MonoBehaviour
 
     public void spawnCrate(int x, int z, GameObject player)
     {
-        Debug.Log("CameraScript.spawnCrate(" + x + "," + z + ")");
+        //Debug.Log("CameraScript.spawnCrate(" + x + "," + z + ")");
         GameObject crateClone = Instantiate(crateBlock, new Vector3(x, 1, z), Quaternion.identity);
         crateClone.SetActive(true);
         grid[x, z].addCrate(crateClone);
@@ -419,8 +411,11 @@ public class CameraScript : MonoBehaviour
         return gameState;
     }
 
-    public bool isEnterable(int x, int z, bool smashCrate, float speed)
+
+    public bool enterIfPossible(int x, int z, bool smashCrate, float speed)
     {
+        if (isEnterable(x, z)) return true;
+
         Element type = grid[x, z].getType();
         if ((x == playerScript1.getGridX()) && (z == playerScript1.getGridZ()))
         {
@@ -439,6 +434,21 @@ public class CameraScript : MonoBehaviour
             return true;
         }
 
+        return false;
+    }
+
+    public bool isEnterable(int x, int z)
+    {
+        Element type = grid[x, z].getType();
+        if ((x == playerScript1.getGridX()) && (z == playerScript1.getGridZ()))
+        {
+            return false;
+        }
+        if ((x == playerScript2.getGridX()) && (z == playerScript2.getGridZ()))
+        {
+            return false;
+        }
+
         if (type == Element.FLOOR) return true;
         if (type == Element.GOAL) return true;
         if (type == Element.DOOR_A || type == Element.DOOR_B)
@@ -450,7 +460,7 @@ public class CameraScript : MonoBehaviour
         return false;
     }
 
-    private void toggleDoors()
+    public void toggleDoors()
     {
         doorToggleSeconds = 1f;
 
@@ -463,6 +473,10 @@ public class CameraScript : MonoBehaviour
                 Element type = grid[x, z].getType();
                 if (type == Element.DOOR_A || type == Element.DOOR_B)
                 {
+                    if ((x == playerScript1.getGridX()) && (z == playerScript1.getGridZ())) continue;
+                    
+                    if ((x == playerScript2.getGridX()) && (z == playerScript2.getGridZ())) continue;
+
                     grid[x, z].toggleDoor();
                 }
             }

@@ -40,7 +40,7 @@ public class PlayerScript : MonoBehaviour
     
     private CameraScript.Element myPlayerEnum;
     private CameraScript cameraScript;
-    private PlayerScript otherPlayerScript;
+    //private PlayerScript otherPlayerScript;
     private int libertyCount;
 
     private KeyCode[] keycode = new KeyCode[5];
@@ -48,7 +48,7 @@ public class PlayerScript : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("PlayerScript.Start(): creating Arrows.");
+        //Debug.Log("PlayerScript.Start(): creating Arrows.");
         arrows = new GameObject[4];
 
         for (int i = 0; i < 4; i++)
@@ -99,7 +99,7 @@ public class PlayerScript : MonoBehaviour
         grid = myGrid;
         CameraScript.Element otherPlayerEnum = CameraScript.Element.PLAYER1;
         if (otherPlayerEnum == myPlayerEnum) otherPlayerEnum = CameraScript.Element.PLAYER2;
-        otherPlayerScript = cameraScript.getPlayerObject(otherPlayerEnum);
+        //otherPlayerScript = cameraScript.getPlayerObject(otherPlayerEnum);
 }
 
     public void setStartPosition(int x, int z)
@@ -203,7 +203,7 @@ public class PlayerScript : MonoBehaviour
 
         if ((!moving) && playerIsPressingMove)
         {
-            if (cameraScript.isEnterable(toX, toZ, true, getSpeedMagnitude()))
+            if (cameraScript.enterIfPossible(toX, toZ, true, getSpeedMagnitude()))
             {
                 moving = true;
                 playerAudio.Play();
@@ -251,6 +251,9 @@ public class PlayerScript : MonoBehaviour
     {
         transform.position = new Vector3(x, 1, z);
         bool moved = false;
+        int x0 = gridX;
+        int z0 = gridZ;
+      
         if (speedX > 0)
         {
             if (x - gridX > 0.5f)
@@ -280,14 +283,14 @@ public class PlayerScript : MonoBehaviour
             }
         }
 
-       
-        if (grid[gridX, gridZ].getType() == CameraScript.Element.GOAL)
+        CameraScript.Element type = grid[gridX, gridZ].getType();
+        if (type == CameraScript.Element.GOAL)
         {
             playerAudio.Stop();
             iHaveWon = true;
             cameraScript.setGameState(CameraScript.GameState.WON);
         }
-        else if (grid[gridX, gridZ].getType() == CameraScript.Element.CRATE)
+        else if (type == CameraScript.Element.CRATE)
         {
             grid[gridX, gridZ].smashCrate(getSpeedMagnitude());
 
@@ -295,7 +298,14 @@ public class PlayerScript : MonoBehaviour
         else if (moved)
         {
             readyToSpawnCrate = true;
+
+            type = grid[x0, z0].getType();
+            if (type == CameraScript.Element.DOOR_A || type == CameraScript.Element.DOOR_B)
+            {
+                cameraScript.toggleDoors();
+            }
         }
+
         //Debug.Log("PlayerScript.updateLocation(" + x + ", " + z + "):  grid[" + gridX + ", " + gridZ + "]");
 
     }
@@ -401,8 +411,8 @@ public class PlayerScript : MonoBehaviour
         float x = transform.position.x;
         float z = transform.position.z;
 
-        int otherPlayerX = otherPlayerScript.getGridX();
-        int otherPlayerZ = otherPlayerScript.getGridZ();
+        //int otherPlayerX = otherPlayerScript.getGridX();
+        //int otherPlayerZ = otherPlayerScript.getGridZ();
 
         for (int i = 0; i < 4; i++)
         {
@@ -410,10 +420,13 @@ public class PlayerScript : MonoBehaviour
             bool foundblock = false;
             while (!foundblock)
             {
-                int dx = (int)(x + arrowDirs[i, 0] * (dist + 1));
-                int dz = (int)(z + arrowDirs[i, 1] * (dist + 1));
-                if (grid[dx, dz].getType() != CameraScript.Element.FLOOR) foundblock = true;
-                else if ((dx == otherPlayerX) && (dz == otherPlayerZ)) foundblock = true;
+                int xx = (int)(x + arrowDirs[i, 0] * (dist + 1));
+                int zz = (int)(z + arrowDirs[i, 1] * (dist + 1));
+
+                if (!cameraScript.isEnterable(xx,zz)) foundblock = true;
+
+                //if (grid[xx, zz].getType() != CameraScript.Element.FLOOR) foundblock = true;
+                //else if ((dx == otherPlayerX) && (dz == otherPlayerZ)) foundblock = true;
                 else
                 {
                     dist++;
