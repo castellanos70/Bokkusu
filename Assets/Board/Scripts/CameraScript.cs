@@ -65,6 +65,7 @@ public class CameraScript : MonoBehaviour
         Texture2D texture = backgroundScript.create();
         Renderer renderer = backgroundImage.GetComponent<Renderer>();
         renderer.material.mainTexture = texture;
+        generateDoorTexture();
 
         spawnBoard(0);
     }
@@ -443,6 +444,35 @@ public class CameraScript : MonoBehaviour
         }
     }
 
+
+
+    private void generateDoorTexture()
+    {
+        int doorTextureSize = 64;
+        Texture2D texture = new Texture2D(doorTextureSize, doorTextureSize, TextureFormat.ARGB32, false);
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                Color color = Color.black;
+                if (Random.value < 0.3) color = new Color(0f, 0.624f, 0.376f);
+                for (int x = 0; x < 8; x++)
+                {
+                    int xx = i * 8 + x;
+                    for (int y = 0; y < 8; y++)
+                    {
+                        int yy = j * 8 + y;
+                        texture.SetPixel(xx, yy, color);
+                        texture.SetPixel(63-xx, yy, color);
+                        texture.SetPixel(xx, 63-yy, color);
+                        texture.SetPixel(63-xx, 63-yy, color);
+                    }
+                }
+            }
+        }
+        texture.Apply();
+        Door1Mat.mainTexture = texture;
+    }
 
 
     public static Element getElement(int idx)
