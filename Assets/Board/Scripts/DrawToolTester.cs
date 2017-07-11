@@ -40,9 +40,18 @@ public class DrawToolTester : MonoBehaviour {
 		//td.triangle(new Vector2[]{new Vector2(100, 150), new Vector2(200, 250), new Vector2(50, 300)});
 		td.draw();
 		x = 0; y = 0;
+		x = width/2;
+		y = height/2;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+
+		if (Time.frameCount > 200) td.background(0, .05f);
+		float val = (Time.frameCount%120 - 60)/60.0f;
+		float hue = (Time.frameCount%233)/233.0f;
+		td.setStrokeHSV(hue, 1, 1);
+		td.line(x, y, x + (int)(Mathf.Cos(val*Mathf.PI)*100), y + (int)(Mathf.Sin(val*Mathf.PI)*100));
+		td.draw();
 	}
 }
