@@ -489,6 +489,8 @@ public class CameraScript : MonoBehaviour
     {
         int doorTextureSize = 64;
         Texture2D texture = new Texture2D(doorTextureSize, doorTextureSize, TextureFormat.ARGB32, false);
+
+        /*
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < 4; j++)
@@ -509,6 +511,21 @@ public class CameraScript : MonoBehaviour
                 }
             }
         }
+        */
+
+
+
+        for (int x = 0; x < doorTextureSize; x++)
+        {
+            for (int y = 0; y < doorTextureSize; y++)
+            {
+                texture.SetPixel(x, y, Color.black);
+            }
+        }
+
+        Vector2[] v = { new Vector2(32, 0), new Vector2(63, 63), new Vector2(0, 40) };
+
+        DrawUtilies.drawTriangle(texture, Color.green, v);
         texture.Apply();
         Door1Mat.mainTexture = texture;
     }
@@ -537,3 +554,4 @@ public class CameraScript : MonoBehaviour
         return Element.FLOOR;
     }
 }
+ 

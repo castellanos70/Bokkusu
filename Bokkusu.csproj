@@ -83,6 +83,7 @@
     <Compile Include="Assets\Board\Scripts\CameraScript.cs" />
     <Compile Include="Assets\Board\Scripts\Cell.cs" />
     <Compile Include="Assets\Board\Scripts\CrateScript.cs" />
+    <Compile Include="Assets\Board\Scripts\DrawUtilities.cs" />
     <Compile Include="Assets\Board\Scripts\GameMap.cs" />
     <Compile Include="Assets\Board\Scripts\MapLoader.cs" />
     <Compile Include="Assets\Players\PlayerScript.cs" />
@@ -90,9 +91,9 @@
   <ItemGroup>
     <None Include="Assets\Resources\Audio\Credits.txt" />
     <None Include="Assets\Resources\LogoMap.txt" />
+    <None Include="Assets\Resources\Maps\00InkBottle.txt" />
     <None Include="Assets\Resources\Maps\0Rhombus.txt" />
     <None Include="Assets\Resources\Maps\Donjon.txt" />
-    <None Include="Assets\Resources\Maps\InkBottle.txt" />
     <None Include="Assets\Resources\Maps\Starter.txt" />
     <None Include="Assets\Resources\Maps\castle.txt" />
     <None Include="Assets\Resources\Maps\celticknot.txt" />
