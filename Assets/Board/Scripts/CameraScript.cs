@@ -524,8 +524,37 @@ public class CameraScript : MonoBehaviour
         }
 
         Vector2[] v = { new Vector2(32, 0), new Vector2(63, 63), new Vector2(0, 40) };
+        Vector2[] w = new Vector2[3];
+        for (int n = 0; n < 3; n++)
+        {
+            for (int i = 0; i < v.Length; i++)
+            {
+                v[i].x = Random.Range(0, 63);
+                v[i].y = Random.Range(0, 63);
 
-        DrawUtilies.drawTriangle(texture, Color.green, v);
+                // Confine initial pattern to lower right quadrant
+                if (v[i].x > v[i].y)
+                {
+                    float tmp = v[i].x;
+                    v[i].x = v[i].y;
+                    v[i].y = tmp;
+                }
+                Color color = Background_DLA_Script.palette[0, Random.Range(0, 6)];
+                DrawUtilies.drawTriangle(texture, color, v);
+            }
+        }
+            
+   
+    // Create 7 reflected images 
+    //DO FOR j = 1 to 7
+    //    Flip (x,y) Points as Described in Text
+    //    DrawTriangleAt (x1,y1,x2,y2,x3,y3)
+    //END
+
+
+
+
+        
         texture.Apply();
         Door1Mat.mainTexture = texture;
     }

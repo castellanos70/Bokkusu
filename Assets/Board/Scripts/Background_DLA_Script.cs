@@ -29,7 +29,7 @@ public class Background_DLA_Script : Background_AbstractScript
 
     private int crystalCount;
 
-    private Color[,] palette =
+    public static Color[,] palette =
     {
         //Palette from Paul Cezanne's La Montagne Saint Victoire Barnes
         {

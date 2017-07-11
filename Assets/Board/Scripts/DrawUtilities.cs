@@ -11,30 +11,17 @@ public class DrawUtilies : MonoBehaviour
 
         // here we know that v1.y <= v2.y <= v3.y 
         // check for trivial case of bottom-flat triangle
-        //if (v2.y == v3.y)
         if (v[1].y == v[2].y)
         {
-            Debug.Log("1:   v={ ("+v[0].x+","+v[0].y+"), ("+
-                v[1].x+","+v[1].y+"), (" +
-                v[2].x+","+v[2].y+") }");
-
               fillBottomFlatTriangle(texture, color, v[0], v[1], v[2]);
         }
         // check for trivial case of top-flat triangle 
         else if (v[0].y == v[1].y)
         {
-            Debug.Log("2:   v={ (" + v[0].x + "," + v[0].y + "), (" +
-                v[1].x + "," + v[1].y + "), (" +
-                v[2].x + "," + v[2].y + ") }");
             fillTopFlatTriangle(texture, color, v[0], v[1], v[2]);
         }
         else
         {
-
-            Debug.Log("3:   v={ (" + v[0].x + "," + v[0].y + "), (" +
-                v[1].x + "," + v[1].y + "), (" +
-                v[2].x + "," + v[2].y + ") }");
-            // general case - split the triangle in a topflat and bottom-flat one
             Vector2 v4 = new Vector2();
             v4.x = (int)(v[0].x + ((float)(v[1].y - v[0].y) / (float)(v[2].y - v[0].y)) * (v[2].x - v[0].x));
             v4.y=v[1].y;
@@ -80,36 +67,26 @@ public class DrawUtilies : MonoBehaviour
 
     private static void sortVerticesAscendingByY(Vector2[] v)
     {
-        Debug.Log("sortVerticesAscendingByY(enter)   v={ (" + v[0].x + "," + v[0].y + "), (" +
-                v[1].x + "," + v[1].y + "), (" +
-                v[2].x + "," + v[2].y + ") }");
+        //Debug.Log("sortVerticesAscendingByY(enter)   v={ (" + v[0].x + "," + v[0].y + "), (" +
+        //        v[1].x + "," + v[1].y + "), (" +
+        //        v[2].x + "," + v[2].y + ") }");
 
         if (v[2].y < v[1].y)
         {
-            Debug.Log("sortVerticesAscendingByY: v[1].y="+v[1].y +", v[2].y = "+v[2].y);
-            //swap(v[1], v[2]);
             swap(v, 1,2);
-            Debug.Log("sortVerticesAscendingByY: v[1].y=" + v[1].y + ", v[2].y = " + v[2].y);
         }
-        if (v[1].y < v[0].y) swap(v, 0, 1);//swap(v[0], v[1]);
-        if (v[2].y < v[1].y) swap(v, 1, 2); //swap(v[1], v[2]);
-
-        Debug.Log("sortVerticesAscendingByY(exit)   v={ (" + v[0].x + "," + v[0].y + "), (" +
-        v[1].x + "," + v[1].y + "), (" +
-        v[2].x + "," + v[2].y + ") }");
+        if (v[1].y < v[0].y) swap(v, 0, 1);
+        if (v[2].y < v[1].y) swap(v, 1, 2); 
     }
 
+
+    //===================================================================================
+    //It is totally unclear to me when Unity and or C# pass by reference verses by value
+    //  For example, this swap, passing an array, works by reference, but
+    //  Passing objects: private static void swap(Vector2 v1, Vector2 v2) is passed by value.
+    //===================================================================================
     private static void swap(Vector2[] v, int i, int k)
     {
-        //float tmpx = v1.x;
-        //float tmpy = v1.y;
-
-        //v1.x = v2.x;
-        //v1.y = v2.y;
-
-        //v2.x = tmpx;
-        //v2.y = tmpy;
-
         Vector2 tmp = v[i];
         v[i] = v[k];
         v[k] = tmp;
