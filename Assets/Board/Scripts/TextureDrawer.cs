@@ -76,6 +76,8 @@ public class TextureDrawer {
 	public int getHeight(){return height;}
 	private bool inBounds(int x, int y){return (x >= 0 && y >= 0 && x < width && y < height);}
 
+	private void setPixel(float x, float y, Color color){setPixel((int)Mathf.Round(x), (int)Mathf.Round(y), color);}
+
 	public void setPixel(int x, int y, Color color){
 		if (!inBounds(x, y)) return;
 		Color c = colors[y*width + x];
@@ -213,8 +215,22 @@ public class TextureDrawer {
 	//Rectangle
 	//#########
 	public void rect(int x1, int y1, int width, int height){
-		x1 = Mathf.Clamp(x1, 0, this.width);
-		y1 = Mathf.Clamp(y1, 0, this.height);
+		if (x1 < 0){
+			width += 0 + x1;
+			x1 = 0;
+		}
+		if (y1 < 0){
+			height += 0 + y1;
+			y1 = 0;
+		}
+		if (x1 >= this.width){
+			width += this.width - x1;
+			x1 = this.width;
+		}
+		if (y1 >= this.height){
+			height += this.height - y1;
+			y1 = this.height;
+		}
 		width = Mathf.Clamp(width, 0, this.width);
 		height = Mathf.Clamp(height, 0, this.height);
 
@@ -226,11 +242,27 @@ public class TextureDrawer {
 			}
 		}
 
+		//TODO needs optimization and lineCaps implemented
 		if (strokeShape){
-			line(x1, y1, x1+width, y1);
-			line(x1, y1, x1, y1+height);
-			line(x1+width, y1, x1+width, y1+height);
-			line(x1, y1+height, x1+width, y1+height);
+			int halfWeight = (int)(strokeWeight/2);
+			Color tempFill = fill;
+			bool tempStrokeShape = strokeShape;
+			strokeShape = false;
+			fill = stroke;
+
+			rect(x1 - halfWeight, y1 - halfWeight, (int)strokeWeight, height + (int)strokeWeight);
+			rect(x1 + width - halfWeight, y1 - halfWeight, (int)strokeWeight, height + (int)strokeWeight);
+			rect(x1 + halfWeight, y1 - halfWeight, width - (int)strokeWeight, (int)strokeWeight);
+			rect(x1 + halfWeight, y1 + height - halfWeight, width - (int)strokeWeight, (int)strokeWeight);
+
+			//also an option:
+			//line(x1, y1, x1+width, y1);
+			//line(x1, y1, x1, y1+height);
+			//line(x1+width, y1, x1+width, y1+height);
+			//line(x1, y1+height, x1+width, y1+height);
+
+			strokeShape = tempStrokeShape;
+			fill = tempFill;
 		}
 	}
 
@@ -240,15 +272,14 @@ public class TextureDrawer {
 	public void ellipse(int x1, int y1, int width, int height){
 		float halfWidth = width/2.0f;
 		float halfHeight = height/2.0f;
-		int centerX = (int)Mathf.Round(x1 + halfWidth);
-		int centerY = (int)Mathf.Round(y1 + halfHeight);
 
 		if (fillShape){
+			float thresh = halfWidth*halfWidth*halfHeight*halfHeight;
 			for (int x = 0; x <= halfWidth; x++){
 				for (int y = 0; y <= halfHeight; y++){
 					float dx = halfHeight - y;
 					float dy = halfWidth - x;
-					if (dx*dx*halfWidth*halfWidth + dy*dy*halfHeight*halfHeight <= halfWidth*halfWidth*halfHeight*halfHeight){
+					if (dx*dx*halfWidth*halfWidth + dy*dy*halfHeight*halfHeight <= thresh){
 						setPixel(x1 + x, y1 + y, fill);
 						setPixel(x1 + width - x, y1 + y, fill);
 						setPixel(x1 + x, y1 + height-y, fill);
@@ -260,16 +291,30 @@ public class TextureDrawer {
 
 		//TODO needs significant computation improvement
 		if (strokeShape){
-			int prevX = x1+width;
-			int prevY = centerY;
-			for (int i = 1; i <= 40; i++){
-				float angle = i/40.0f;
-				angle *= Mathf.PI*2;
-				int x = centerX + (int)(Mathf.Cos(angle)*halfWidth);
-				int y = centerY + (int)(Mathf.Sin(angle)*halfHeight);
-				line(x, y, prevX, prevY);
-				prevX = x;
-				prevY = y;
+			float outerWidth = (width + strokeWeight)/2.0f;
+			float innerWidth = (width - strokeWeight)/2.0f;
+			float outerHeight = (height + strokeWeight)/2.0f;
+			float innerHeight = (height - strokeWeight)/2.0f;
+
+			x1 -= (int)strokeWeight/2;
+			y1 -= (int)strokeWeight/2;
+
+			float outerThresh = outerWidth*outerWidth*outerHeight*outerHeight;
+			float innerThresh = innerWidth*innerWidth*innerHeight*innerHeight;
+
+			for (int x = 0; x <= outerWidth; x++){
+				for (int y = 0; y <= outerHeight; y++){
+					float dx = outerHeight - y;
+					float dy = outerWidth - x;
+					float value = dx*dx*outerWidth*outerWidth + dy*dy*outerHeight*outerHeight;
+					float value2 = dx*dx*innerWidth*innerWidth + dy*dy*innerHeight*innerHeight;
+					if (value <= outerThresh && value2 >= innerThresh){
+						setPixel(x1 + x, y1 + y, stroke);
+						setPixel(x1 + outerWidth*2 - x, y1 + y, stroke);
+						setPixel(x1 + x, y1 + outerHeight*2-y, stroke);
+						setPixel(x1 + outerWidth*2 - x, y1 + outerHeight*2 - y, stroke);
+					}
+				}
 			}
 		}
 	}
