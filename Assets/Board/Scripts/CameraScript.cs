@@ -514,7 +514,7 @@ public class CameraScript : MonoBehaviour
         */
 
 
-
+        
         for (int x = 0; x < doorTextureSize; x++)
         {
             for (int y = 0; y < doorTextureSize; y++)
@@ -522,15 +522,15 @@ public class CameraScript : MonoBehaviour
                 texture.SetPixel(x, y, Color.black);
             }
         }
-
-        Vector2[] v = { new Vector2(32, 0), new Vector2(63, 63), new Vector2(0, 40) };
+        
+        Vector2[] v = new Vector2[3];
         Vector2[] w = new Vector2[3];
-        for (int n = 0; n < 3; n++)
+        for (int n = 0; n < 6; n++)
         {
             for (int i = 0; i < v.Length; i++)
             {
-                v[i].x = Random.Range(0, 63);
-                v[i].y = Random.Range(0, 63);
+                v[i].x = Random.Range(0, 31);
+                v[i].y = Random.Range(0, 31);
 
                 // Confine initial pattern to lower right quadrant
                 if (v[i].x > v[i].y)
@@ -539,24 +539,83 @@ public class CameraScript : MonoBehaviour
                     v[i].x = v[i].y;
                     v[i].y = tmp;
                 }
-                Color color = Background_DLA_Script.palette[0, Random.Range(0, 6)];
-                DrawUtilies.drawTriangle(texture, color, v);
+            }
+            Color color = Background_DLA_Script.palette[0, Random.Range(0, 6)];
+
+            for (int k = 0; k < 8; k++)
+            {
+                kaleidoscopicReflect(v, w, k, 32);
+                DrawUtilies.drawTriangle(texture, color, w);
             }
         }
-            
-   
-    // Create 7 reflected images 
-    //DO FOR j = 1 to 7
-    //    Flip (x,y) Points as Described in Text
-    //    DrawTriangleAt (x1,y1,x2,y2,x3,y3)
-    //END
+         
 
 
+        //Vector2[] v = { new Vector2(32, 0), new Vector2(63, 63), new Vector2(0, 40) };
+        //Vector2[] v = { new Vector2(0, 40), new Vector2(63, 63),  new Vector2(32, 0)};
+        //Vector2[] v = { new Vector2(63, 63), new Vector2(0, 40), new Vector2(32, 0)};
+        //Vector2[] v = { new Vector2(32, 0), new Vector2(0, 40), new Vector2(63, 63)};
+        //Vector2[] v = {new Vector2(0, 40), new Vector2(32, 0), new Vector2(63, 63)};
+        //Vector2[] v = { new Vector2(63, 63) , new Vector2(32, 0), new Vector2(0, 40)};
 
+        //Vector2[] v = { new Vector2(32, 0), new Vector2(0, 63), new Vector2(63, 63) };
+        //Vector2[] v = { new Vector2(32, 0), new Vector2(0, 63), new Vector2(63, 63) };
 
-        
+        //Vector2[] v = { new Vector2(0, 0), new Vector2(63, 10), new Vector2(32, 32) };
+        //Vector2[] v = { new Vector2(32, 32) , new Vector2(63, 10), new Vector2(0, 0)};
+
+        //DrawUtilies.drawTriangle(texture, Color.green, v);
         texture.Apply();
         Door1Mat.mainTexture = texture;
+    }
+
+
+    private static void kaleidoscopicReflect(Vector2[] v, Vector2[] w, int n, int offset)
+    {
+        for (int i = 0; i < v.Length; i++)
+        {
+
+            if (n == 0)
+            {
+                w[i].x = v[i].x + offset;
+                w[i].y = v[i].y + offset;
+            }
+            else if (n == 1)
+            {
+                w[i].x = -v[i].x + offset;
+                w[i].y = v[i].y + offset;
+            }
+            else if (n == 2)
+            {
+                w[i].x = v[i].x + offset;
+                w[i].y = -v[i].y + offset;
+            }
+            else if (n == 3)
+            {
+                w[i].x = -v[i].x + offset;
+                w[i].y = -v[i].y + offset;
+            }
+            else if (n == 4)
+            {
+                w[i].x = v[i].y + offset;
+                w[i].y = v[i].x + offset;
+            }
+            else if (n == 5)
+            {
+                w[i].x = -v[i].y + offset;
+                w[i].y = v[i].x + offset;
+            }
+            else if (n == 6)
+            {
+                w[i].x = v[i].y + offset;
+                w[i].y = -v[i].x + offset;
+            }
+            else if (n == 7)
+            {
+                w[i].x = -v[i].y + offset;
+                w[i].y = -v[i].x + offset;
+            }
+        }
     }
 
 

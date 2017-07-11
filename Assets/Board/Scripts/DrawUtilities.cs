@@ -26,6 +26,8 @@ public class DrawUtilies : MonoBehaviour
             v4.x = (int)(v[0].x + ((float)(v[1].y - v[0].y) / (float)(v[2].y - v[0].y)) * (v[2].x - v[0].x));
             v4.y=v[1].y;
 
+           // Debug.Log("v4=(" + v4.x + ", " + v4.y + ")");
+
             fillBottomFlatTriangle(texture, color, v[0], v[1], v4);
             fillTopFlatTriangle(texture, color, v[1], v4, v[2]);
         }
@@ -34,6 +36,10 @@ public class DrawUtilies : MonoBehaviour
 
     private static void fillBottomFlatTriangle(Texture2D texture, Color color, Vector2 v1, Vector2 v2, Vector2 v3)
     {
+        //Debug.Log("fillBottomFlatTriangle   v={ (" + v1.x + "," + v1.y + "), (" +
+        //        v2.x + "," + v2.y + "), (" +
+        //        v3.x + "," + v3.y + ") }");
+
         float invslope1 = (v2.x - v1.x) / (v2.y - v1.y);
         float invslope2 = (v3.x - v1.x) / (v3.y - v1.y);
 
@@ -43,7 +49,8 @@ public class DrawUtilies : MonoBehaviour
         for (int y = (int)v1.y; y <= v2.y; y++)
         {
             drawHorzLine(texture, color, (int)curx1, (int)curx2, y);
-            curx1 += invslope1;
+            //Debug.Log("    curx1=" + curx1 + ", curx2=" + curx2);
+           curx1 += invslope1;
             curx2 += invslope2;
         }
     }
@@ -95,6 +102,12 @@ public class DrawUtilies : MonoBehaviour
 
     private static void drawHorzLine(Texture2D texture, Color color, int x1, int x2, int y)
     {
+        if (x1 > x2)
+        {
+            int tmp = x1;
+            x1 = x2;
+            x2 = tmp;
+        }
         for (int x = x1; x <= x2; x++)
         {
             texture.SetPixel(x, y, color);
