@@ -73,8 +73,6 @@ public class CameraScript : MonoBehaviour
         Texture2D texture = backgroundScript.create();
         Renderer renderer = backgroundImage.GetComponent<Renderer>();
         renderer.material.mainTexture = texture;
-        generateDoorTexture();
-
         spawnBoard(0);
     }
 
@@ -83,8 +81,9 @@ public class CameraScript : MonoBehaviour
 
     private void spawnBoard(int level)
     {
-		audioPriority = 255;
         gameState = GameState.INITIALIZING;
+        generateDoorTexture();
+        audioPriority = 255;
         doorToggleSeconds = -1f;
         curLevel = level;
         destroyOldBoard();
