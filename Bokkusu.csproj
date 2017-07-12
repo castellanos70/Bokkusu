@@ -94,17 +94,18 @@
     <None Include="Assets\Resources\Audio\Credits.txt" />
     <None Include="Assets\Resources\LogoMap.txt" />
     <None Include="Assets\Resources\Maps\0Rhombus.txt" />
+    <None Include="Assets\Resources\Maps\Castle.txt" />
+    <None Include="Assets\Resources\Maps\Celticknot.txt" />
+    <None Include="Assets\Resources\Maps\CircuitBreaker.txt" />
+    <None Include="Assets\Resources\Maps\CrossRoads.txt" />
     <None Include="Assets\Resources\Maps\Donjon.txt" />
+    <None Include="Assets\Resources\Maps\DotDash.txt" />
     <None Include="Assets\Resources\Maps\InkBottle.txt" />
+    <None Include="Assets\Resources\Maps\InnerChamber.txt" />
+    <None Include="Assets\Resources\Maps\Maze.txt" />
+    <None Include="Assets\Resources\Maps\SoccerField.txt" />
+    <None Include="Assets\Resources\Maps\SpaceInvader.txt" />
     <None Include="Assets\Resources\Maps\Z-shape.txt" />
-    <None Include="Assets\Resources\Maps\castle.txt" />
-    <None Include="Assets\Resources\Maps\celticknot.txt" />
-    <None Include="Assets\Resources\Maps\crossRoads.txt" />
-    <None Include="Assets\Resources\Maps\dotDash.txt" />
-    <None Include="Assets\Resources\Maps\innerChamber.txt" />
-    <None Include="Assets\Resources\Maps\maze.txt" />
-    <None Include="Assets\Resources\Maps\soccerField.txt" />
-    <None Include="Assets\Resources\Maps\switch.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
