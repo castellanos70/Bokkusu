@@ -18,15 +18,17 @@ public class CameraScript : MonoBehaviour
     public GameObject boardBlock;
     public GameObject crateBlock;
     public GameObject player1, player2;
-    public Material[] wallMat = new Material[10];
+    private Material[] wallMat = new Material[25];
     public Material[] floorMat = new Material[5];
-    public Material Door1Mat;
+   
 
     public GameObject goalBlock;
     public GameObject backgroundImage;
     private Background_AbstractScript backgroundScript;
 
-
+    private Material doorMat;
+    private int doorTextureSize = 64;
+    private int wallTextureSize = 64;
 
     public enum GameState { INTRO, INITIALIZING, PLAYING, WON };
     private GameState gameState;
@@ -62,6 +64,18 @@ public class CameraScript : MonoBehaviour
 
         boardBlock.SetActive(false);
         crateBlock.SetActive(false);
+
+
+        doorMat = new Material(Shader.Find("Standard"));
+        doorMat.SetFloat("_Glossiness", 0.0f);
+        doorMat.SetFloat("_Metallic", 0.0f);
+
+        for (int i = 0; i < wallMat.Length; i++)
+        {
+            wallMat[i] = new Material(Shader.Find("Standard"));
+            DrawUtilies.generatePeriodicNoiseTexture(wallMat[i], wallTextureSize);
+        }
+
     }
 
 
@@ -82,7 +96,7 @@ public class CameraScript : MonoBehaviour
     private void spawnBoard(int level)
     {
         gameState = GameState.INITIALIZING;
-        generateDoorTexture();
+        DrawUtilies.generateKaleidoscopicTexture(doorMat, doorTextureSize);
         audioPriority = 255;
         doorToggleSeconds = -1f;
         curLevel = level;
@@ -121,7 +135,7 @@ public class CameraScript : MonoBehaviour
                 }
                 else if (startMap[x, z] == CameraScript.Element.DOOR_A || startMap[x, z] == CameraScript.Element.DOOR_B)
                 {
-                    mat = Door1Mat;
+                    mat = doorMat;
                 }
                 else
                 {
@@ -252,6 +266,9 @@ public class CameraScript : MonoBehaviour
 
         else if (gameState == GameState.PLAYING)
         {
+            
+
+
             movePlayer(player1, playerScript1);
             movePlayer(player2, playerScript2);
 
@@ -484,138 +501,7 @@ public class CameraScript : MonoBehaviour
 
 
 
-    private void generateDoorTexture()
-    {
-        int doorTextureSize = 64;
-        Texture2D texture = new Texture2D(doorTextureSize, doorTextureSize, TextureFormat.ARGB32, false);
 
-        /*
-        for (int i = 0; i < 4; i++)
-        {
-            for (int j = 0; j < 4; j++)
-            {
-                Color color = Color.black;
-                if (Random.value < 0.3) color = new Color(0f, 0.624f, 0.376f);
-                for (int x = 0; x < 8; x++)
-                {
-                    int xx = i * 8 + x;
-                    for (int y = 0; y < 8; y++)
-                    {
-                        int yy = j * 8 + y;
-                        texture.SetPixel(xx, yy, color);
-                        texture.SetPixel(63-xx, yy, color);
-                        texture.SetPixel(xx, 63-yy, color);
-                        texture.SetPixel(63-xx, 63-yy, color);
-                    }
-                }
-            }
-        }
-        */
-
-
-        
-        for (int x = 0; x < doorTextureSize; x++)
-        {
-            for (int y = 0; y < doorTextureSize; y++)
-            {
-                texture.SetPixel(x, y, Color.black);
-            }
-        }
-        
-        Vector2[] v = new Vector2[3];
-        Vector2[] w = new Vector2[3];
-        for (int n = 0; n < 6; n++)
-        {
-            for (int i = 0; i < v.Length; i++)
-            {
-                v[i].x = Random.Range(0, 31);
-                v[i].y = Random.Range(0, 31);
-
-                // Confine initial pattern to lower right quadrant
-                if (v[i].x > v[i].y)
-                {
-                    float tmp = v[i].x;
-                    v[i].x = v[i].y;
-                    v[i].y = tmp;
-                }
-            }
-            Color color = Background_DLA_Script.palette[0, Random.Range(0, 6)];
-
-            for (int k = 0; k < 8; k++)
-            {
-                kaleidoscopicReflect(v, w, k, 32);
-                DrawUtilies.drawTriangle(texture, color, w);
-            }
-        }
-         
-
-
-        //Vector2[] v = { new Vector2(32, 0), new Vector2(63, 63), new Vector2(0, 40) };
-        //Vector2[] v = { new Vector2(0, 40), new Vector2(63, 63),  new Vector2(32, 0)};
-        //Vector2[] v = { new Vector2(63, 63), new Vector2(0, 40), new Vector2(32, 0)};
-        //Vector2[] v = { new Vector2(32, 0), new Vector2(0, 40), new Vector2(63, 63)};
-        //Vector2[] v = {new Vector2(0, 40), new Vector2(32, 0), new Vector2(63, 63)};
-        //Vector2[] v = { new Vector2(63, 63) , new Vector2(32, 0), new Vector2(0, 40)};
-
-        //Vector2[] v = { new Vector2(32, 0), new Vector2(0, 63), new Vector2(63, 63) };
-        //Vector2[] v = { new Vector2(32, 0), new Vector2(0, 63), new Vector2(63, 63) };
-
-        //Vector2[] v = { new Vector2(0, 0), new Vector2(63, 10), new Vector2(32, 32) };
-        //Vector2[] v = { new Vector2(32, 32) , new Vector2(63, 10), new Vector2(0, 0)};
-
-        //DrawUtilies.drawTriangle(texture, Color.green, v);
-        texture.Apply();
-        Door1Mat.mainTexture = texture;
-    }
-
-
-    private static void kaleidoscopicReflect(Vector2[] v, Vector2[] w, int n, int offset)
-    {
-        for (int i = 0; i < v.Length; i++)
-        {
-
-            if (n == 0)
-            {
-                w[i].x = v[i].x + offset;
-                w[i].y = v[i].y + offset;
-            }
-            else if (n == 1)
-            {
-                w[i].x = -v[i].x + offset;
-                w[i].y = v[i].y + offset;
-            }
-            else if (n == 2)
-            {
-                w[i].x = v[i].x + offset;
-                w[i].y = -v[i].y + offset;
-            }
-            else if (n == 3)
-            {
-                w[i].x = -v[i].x + offset;
-                w[i].y = -v[i].y + offset;
-            }
-            else if (n == 4)
-            {
-                w[i].x = v[i].y + offset;
-                w[i].y = v[i].x + offset;
-            }
-            else if (n == 5)
-            {
-                w[i].x = -v[i].y + offset;
-                w[i].y = v[i].x + offset;
-            }
-            else if (n == 6)
-            {
-                w[i].x = v[i].y + offset;
-                w[i].y = -v[i].x + offset;
-            }
-            else if (n == 7)
-            {
-                w[i].x = -v[i].y + offset;
-                w[i].y = -v[i].x + offset;
-            }
-        }
-    }
 
 
     public static Element getElement(int idx)

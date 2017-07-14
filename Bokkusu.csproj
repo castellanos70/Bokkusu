@@ -93,12 +93,12 @@
   <ItemGroup>
     <None Include="Assets\Resources\Audio\Credits.txt" />
     <None Include="Assets\Resources\LogoMap.txt" />
+    <None Include="Assets\Resources\Maps\00Donjon.txt" />
     <None Include="Assets\Resources\Maps\0Rhombus.txt" />
     <None Include="Assets\Resources\Maps\Castle.txt" />
     <None Include="Assets\Resources\Maps\Celticknot.txt" />
     <None Include="Assets\Resources\Maps\CircuitBreaker.txt" />
     <None Include="Assets\Resources\Maps\CrossRoads.txt" />
-    <None Include="Assets\Resources\Maps\Donjon.txt" />
     <None Include="Assets\Resources\Maps\DotDash.txt" />
     <None Include="Assets\Resources\Maps\InkBottle.txt" />
     <None Include="Assets\Resources\Maps\InnerChamber.txt" />

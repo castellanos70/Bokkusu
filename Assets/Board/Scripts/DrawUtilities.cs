@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class DrawUtilies : MonoBehaviour
 {
-    public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
+    
+
+
+
+public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
     {
         // at first sort the three vertices by y-coordinate ascending so v1 is the topmost vertice
         sortVerticesAscendingByY(v);
@@ -50,7 +54,7 @@ public class DrawUtilies : MonoBehaviour
         {
             drawHorzLine(texture, color, (int)curx1, (int)curx2, y);
             //Debug.Log("    curx1=" + curx1 + ", curx2=" + curx2);
-           curx1 += invslope1;
+            curx1 += invslope1;
             curx2 += invslope2;
         }
     }
@@ -88,7 +92,7 @@ public class DrawUtilies : MonoBehaviour
 
 
     //===================================================================================
-    //It is totally unclear to me when Unity and or C# pass by reference verses by value
+    //It is totally unclear to me (joel) when Unity and or C# pass by reference verses by value
     //  For example, this swap, passing an array, works by reference, but
     //  Passing objects: private static void swap(Vector2 v1, Vector2 v2) is passed by value.
     //===================================================================================
@@ -114,4 +118,161 @@ public class DrawUtilies : MonoBehaviour
         }
     }
 
+
+    public static void setTextureColor(Texture2D texture, int pixelSize, Color color)
+    {
+        for (int x = 0; x < pixelSize; x++)
+        {
+            for (int y = 0; y < pixelSize; y++)
+            {
+                texture.SetPixel(x, y, Color.black);
+            }
+        }
+    }
+
+
+
+    public static void generateKaleidoscopicTexture(Material material, int pixelSize)
+    {
+        Texture2D texture = new Texture2D(pixelSize, pixelSize, TextureFormat.ARGB32, false);
+
+        setTextureColor(texture, pixelSize, Color.black);
+
+        Vector2[] v = new Vector2[3];
+        Vector2[] w = new Vector2[3];
+        for (int n = 0; n < 6; n++)
+        {
+            for (int i = 0; i < v.Length; i++)
+            {
+                v[i].x = Random.Range(0, 31);
+                v[i].y = Random.Range(0, 31);
+
+                // Confine initial pattern to lower right quadrant
+                if (v[i].x > v[i].y)
+                {
+                    float tmp = v[i].x;
+                    v[i].x = v[i].y;
+                    v[i].y = tmp;
+                }
+            }
+            Color color = Background_DLA_Script.palette[0, Random.Range(0, 6)];
+
+            for (int k = 0; k < 8; k++)
+            {
+                kaleidoscopicReflect(v, w, k, 32);
+                drawTriangle(texture, color, w);
+            }
+        }
+        texture.Apply();
+        material.mainTexture = texture;
+    }
+
+
+    private static void kaleidoscopicReflect(Vector2[] v, Vector2[] w, int n, int offset)
+    {
+        for (int i = 0; i < v.Length; i++)
+        {
+            if (n == 0)
+            {
+                w[i].x = v[i].x + offset;
+                w[i].y = v[i].y + offset;
+            }
+            else if (n == 1)
+            {
+                w[i].x = -v[i].x + offset;
+                w[i].y = v[i].y + offset;
+            }
+            else if (n == 2)
+            {
+                w[i].x = v[i].x + offset;
+                w[i].y = -v[i].y + offset;
+            }
+            else if (n == 3)
+            {
+                w[i].x = -v[i].x + offset;
+                w[i].y = -v[i].y + offset;
+            }
+            else if (n == 4)
+            {
+                w[i].x = v[i].y + offset;
+                w[i].y = v[i].x + offset;
+            }
+            else if (n == 5)
+            {
+                w[i].x = -v[i].y + offset;
+                w[i].y = v[i].x + offset;
+            }
+            else if (n == 6)
+            {
+                w[i].x = v[i].y + offset;
+                w[i].y = -v[i].x + offset;
+            }
+            else if (n == 7)
+            {
+                w[i].x = -v[i].y + offset;
+                w[i].y = -v[i].x + offset;
+            }
+        }
+    }
+
+
+
+
+    public static void generatePeriodicNoiseTexture(Material material, int pixelSize)
+    {
+        material.SetFloat("_Glossiness", 0.0f);
+        material.SetFloat("_Metallic", 0.0f);
+        Texture2D texture = new Texture2D(pixelSize, pixelSize, TextureFormat.ARGB32, false);
+
+
+        
+
+
+        //Color[] palette = {
+        //   new Color(0.000f, 0.000f, 0.000f),
+        //   new Color(0.118f, 0.118f, 0.118f),
+        //    //new Color(0.243f, 0.243f, 0.259f),
+        //    new Color(0.188f, 0.420f, 0.290f)
+        // };
+
+        Color[] palette = {
+           new Color(0.000f, 0.000f, 0.000f),
+           new Color(0.349f, 0.173f, 0.000f),
+           new Color(0.592f, 0.259f, 0.063f)
+           //new Color(1.000f, 0.459f, 0.094f)
+        };
+
+
+        float noiseScale = 500f;
+
+        float x0 = Random.value;
+        float y0 = Random.value;
+
+        for (int x = 0; x < pixelSize; x++)
+        {
+            for (int y = 0; y < pixelSize; y++)
+            {
+                //(1 + sin((x + noise(x * 5, y * 5) / 2) * 50)) / 2
+                //var val = (1 + sin((x + noise(x*noiseScale, y*noiseScale)/2)*50))*128;
+
+                float xCoord = noiseScale*(x0 + (x / pixelSize));
+                float yCoord = noiseScale*(y0 + (y / pixelSize));
+
+                float noise = Mathf.PerlinNoise(xCoord, yCoord);
+
+                //float val = (1 + Mathf.Sin((x/pixelSize + noise) * pixelSize/2)) / 2;
+                //Debug.Log("noise=" + noise);
+                float val = noise;
+                //int idx = 0;
+                //if (val < 0.3333) idx = 0;
+                //else if (val < 0.8627) idx = 1;
+                //else idx = 2;
+                //texture.SetPixel(x, y, palette[idx]);
+                texture.SetPixel(x, y, new Color(val, val, val));
+            }
+        }
+
+        texture.Apply();
+        material.mainTexture = texture;
+    }
 }
