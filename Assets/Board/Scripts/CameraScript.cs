@@ -18,8 +18,17 @@ public class CameraScript : MonoBehaviour
     public GameObject boardBlock;
     public GameObject crateBlock;
     public GameObject player1, player2;
-    private Material[] wallMat = new Material[25];
-    public Material[] floorMat = new Material[5];
+
+
+    private Material wallMat;
+    private int wallTextureSize = 64;
+    private float wallMorphScale = 0.02f;
+    private float wallTextureShift;
+
+    private Material floorMat;
+    private int floorTextureSize = 64;
+    private float floorMorphScale = 0.04f;
+    private float floorTextureShift;
    
 
     public GameObject goalBlock;
@@ -28,7 +37,7 @@ public class CameraScript : MonoBehaviour
 
     private Material doorMat;
     private int doorTextureSize = 64;
-    private int wallTextureSize = 64;
+    
 
     public enum GameState { INTRO, INITIALIZING, PLAYING, WON };
     private GameState gameState;
@@ -58,9 +67,9 @@ public class CameraScript : MonoBehaviour
         playerScript2 = player2.GetComponent<PlayerScript>();
         elementValues = (Element[])System.Enum.GetValues(typeof(Element));
 
-        gameMapList = MapLoader.loadAllMaps ();
-		//audio = gameObject.AddComponent<AudioSource>();
-		harpAudio = Resources.LoadAll<AudioClip>("Audio/harpsichord");
+        gameMapList = MapLoader.loadAllMaps();
+        //audio = gameObject.AddComponent<AudioSource>();
+        harpAudio = Resources.LoadAll<AudioClip>("Audio/harpsichord");
 
         boardBlock.SetActive(false);
         crateBlock.SetActive(false);
@@ -70,11 +79,18 @@ public class CameraScript : MonoBehaviour
         doorMat.SetFloat("_Glossiness", 0.0f);
         doorMat.SetFloat("_Metallic", 0.0f);
 
-        for (int i = 0; i < wallMat.Length; i++)
-        {
-            wallMat[i] = new Material(Shader.Find("Standard"));
-            DrawUtilies.generatePeriodicNoiseTexture(wallMat[i], wallTextureSize);
-        }
+        wallMat = new Material(Shader.Find("Standard"));
+        wallMat.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
+        wallMat.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
+        wallTextureShift = Random.value * 100;
+        DrawUtilies.generateWallTexture(wallMat, wallTextureSize, wallTextureShift);
+
+
+        floorMat = new Material(Shader.Find("Standard"));
+        floorMat.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
+        floorMat.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
+        floorTextureShift = Random.value * 100;
+        DrawUtilies.generateFloorTexture(floorMat, floorTextureSize, floorTextureShift);
 
     }
 
@@ -101,6 +117,7 @@ public class CameraScript : MonoBehaviour
         doorToggleSeconds = -1f;
         curLevel = level;
         destroyOldBoard();
+        
 
         gameMap = gameMapList[level];
         startMap = gameMap.getMap();
@@ -131,7 +148,8 @@ public class CameraScript : MonoBehaviour
                 Material mat = null;
                 if (startMap[x, z] == CameraScript.Element.WALL)
                 {
-                   mat = wallMat[Random.Range(0, wallMat.Length)];
+                    //mat = wallMat[Random.Range(0, wallMat.Length)];
+                    mat = wallMat;
                 }
                 else if (startMap[x, z] == CameraScript.Element.DOOR_A || startMap[x, z] == CameraScript.Element.DOOR_B)
                 {
@@ -139,7 +157,7 @@ public class CameraScript : MonoBehaviour
                 }
                 else
                 {
-                    mat = floorMat[Random.Range(0, floorMat.Length)];
+                    mat = floorMat;//floorMat[Random.Range(0, floorMat.Length)];
                 }
 
 
@@ -223,6 +241,8 @@ public class CameraScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+
         if (Input.GetKey(KeyCode.Escape))
         {
             Application.Quit();
@@ -231,9 +251,14 @@ public class CameraScript : MonoBehaviour
         backgroundScript.next();
         goalBlock.transform.Rotate(Vector3.up * Time.deltaTime*40);
         backgroundImage.transform.Rotate(Vector3.up * Time.deltaTime*.5f);
-        //goalBlock.transform.Rotate(Vector3.right * Time.deltaTime * 5);
-        //float scale = 1 + 0.2f*Mathf.Abs(Mathf.Sin(2*Mathf.PI*goalBlock.transform.eulerAngles.y/180f));
-        //goalBlock.transform.localScale = new Vector3(scale,1, scale);
+
+        wallTextureShift += Time.deltaTime * wallMorphScale;
+        DrawUtilies.generateWallTexture(wallMat, wallTextureSize, wallTextureShift);
+
+        floorTextureShift += Time.deltaTime * floorMorphScale;
+        DrawUtilies.generateFloorTexture(floorMat, floorTextureSize, floorTextureShift);
+
+        //Debug.Log(wallTextureShift + "," + floorTextureShift);
 
         if (gameState == GameState.INITIALIZING)
         {
@@ -267,7 +292,6 @@ public class CameraScript : MonoBehaviour
         else if (gameState == GameState.PLAYING)
         {
             
-
 
             movePlayer(player1, playerScript1);
             movePlayer(player2, playerScript2);

@@ -218,7 +218,7 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
 
 
 
-    public static void generatePeriodicNoiseTexture(Material material, int pixelSize)
+    public static void generateWallTexture(Material material, int pixelSize, float textureShift)
     {
         material.SetFloat("_Glossiness", 0.0f);
         material.SetFloat("_Metallic", 0.0f);
@@ -237,16 +237,18 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
 
         Color[] palette = {
            new Color(0.000f, 0.000f, 0.000f),
-           new Color(0.349f, 0.173f, 0.000f),
-           new Color(0.592f, 0.259f, 0.063f)
+          // new Color(0.349f, 0.173f, 0.000f),
+          // new Color(0.592f, 0.259f, 0.063f)
+           new Color(0.190f, 0.190f, 0.231f),
+           new Color(0.380f, 0.380f, 0.463f)
            //new Color(1.000f, 0.459f, 0.094f)
         };
 
 
         float noiseScale = 0.03f;
 
-        float x0 = Random.value;
-        float y0 = Random.value;
+        float x0 = textureShift;// Random.value*32768;
+        float y0 = textureShift;// Random.value * 32768;
 
         for (int x = 0; x < pixelSize; x++)
         {
@@ -264,17 +266,72 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
                 //Debug.Log("noise=" + noise);
                 //float val = noise;
 
-                
 
-                float val = (1 + Mathf.Sin((x + Mathf.PerlinNoise(x * noiseScale, y * noiseScale) / 2) * 50)) * 0.501960784f;
+                float xCoord = x0+ x * noiseScale;
+                float yCoord = y0 + y * noiseScale;
+                float noise = Mathf.PerlinNoise(xCoord, yCoord);
+
+                float val = (1 + Mathf.Sin((x + noise / 2) * 50)) * 0.501960784f;
 
 
                 int idx = 0;
-                if (val < 0.3333) idx = 0;
-                else if (val < 0.8627) idx = 1;
+                if (val < 0.3333f) idx = 0;
+                else if (val < 0.95f) idx = 1;
                 else idx = 2;
                 texture.SetPixel(x, y, palette[idx]);
                 //texture.SetPixel(x, y, new Color(val, val, val));
+            }
+        }
+
+        texture.Apply();
+        material.mainTexture = texture;
+    }
+
+
+
+
+
+
+
+
+
+    public static void generateFloorTexture(Material material, int pixelSize, float textureShift)
+    {
+        material.SetFloat("_Glossiness", 0.0f);
+        material.SetFloat("_Metallic", 0.0f);
+        Texture2D texture = new Texture2D(pixelSize, pixelSize, TextureFormat.ARGB32, false);
+
+
+        Color[] palette = {
+           new Color(0.910f, 0.949f, 0.961f),
+           new Color(0.843f, 0.898f, 0.947f),
+           new Color(0.776f, 0.847f, 0.933f),
+           new Color(0.690f, 0.749f, 0.893f)
+        };
+
+
+        float noiseScale = 0.03f;
+        for (int x = 0; x < pixelSize; x++)
+        {
+            for (int y = 0; y < pixelSize; y++)
+            {
+                if (x == 0 || y == 0 || x == pixelSize - 1 || y == pixelSize - 1) texture.SetPixel(x, y, Color.white);
+                else
+                {
+                    float xCoord = textureShift + x * noiseScale;
+                    float yCoord = textureShift + y * noiseScale;
+                    float noise = Mathf.PerlinNoise(xCoord, yCoord);
+
+                    float val = (1 + Mathf.Sin((x + noise / 4) * 75)) * 0.501960784f;
+
+
+                    int idx = 0;
+                    if (val < 0.3333f) idx = 0;
+                    else if (val < 0.7f) idx = 1;
+                    else if (val < 0.95f) idx = 2;
+                    else idx = 3;
+                    texture.SetPixel(x, y, palette[idx]);
+                }
             }
         }
 
