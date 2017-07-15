@@ -243,7 +243,7 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
         };
 
 
-        float noiseScale = 500f;
+        float noiseScale = 0.03f;
 
         float x0 = Random.value;
         float y0 = Random.value;
@@ -255,20 +255,26 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
                 //(1 + sin((x + noise(x * 5, y * 5) / 2) * 50)) / 2
                 //var val = (1 + sin((x + noise(x*noiseScale, y*noiseScale)/2)*50))*128;
 
-                float xCoord = noiseScale*(x0 + (x / pixelSize));
-                float yCoord = noiseScale*(y0 + (y / pixelSize));
+                //float xCoord = noiseScale*(x0 + (x / pixelSize));
+                //float yCoord = noiseScale*(y0 + (y / pixelSize));
 
-                float noise = Mathf.PerlinNoise(xCoord, yCoord);
+                //float noise = Mathf.PerlinNoise(xCoord, yCoord);
 
                 //float val = (1 + Mathf.Sin((x/pixelSize + noise) * pixelSize/2)) / 2;
                 //Debug.Log("noise=" + noise);
-                float val = noise;
-                //int idx = 0;
-                //if (val < 0.3333) idx = 0;
-                //else if (val < 0.8627) idx = 1;
-                //else idx = 2;
-                //texture.SetPixel(x, y, palette[idx]);
-                texture.SetPixel(x, y, new Color(val, val, val));
+                //float val = noise;
+
+                
+
+                float val = (1 + Mathf.Sin((x + Mathf.PerlinNoise(x * noiseScale, y * noiseScale) / 2) * 50)) * 0.501960784f;
+
+
+                int idx = 0;
+                if (val < 0.3333) idx = 0;
+                else if (val < 0.8627) idx = 1;
+                else idx = 2;
+                texture.SetPixel(x, y, palette[idx]);
+                //texture.SetPixel(x, y, new Color(val, val, val));
             }
         }
 
