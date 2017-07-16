@@ -22,7 +22,7 @@ public class CameraScript : MonoBehaviour
 
     private Material wallMat;
     private int wallTextureSize = 64;
-    private float wallMorphScale = 0.02f;
+    private float wallMorphScale = 0.03f;
     private float wallTextureShift;
 
     private Material floorMat;
@@ -32,11 +32,14 @@ public class CameraScript : MonoBehaviour
    
 
     public GameObject goalBlock;
-    public GameObject backgroundImage;
+
+    public GameObject backgroundPlane;
     private Background_AbstractScript backgroundScript;
 
+    private Kaleidoscope doorKaleidoscope;
     private Material doorMat;
     private int doorTextureSize = 64;
+    private float doorUpdateTime;
     
 
     public enum GameState { INTRO, INITIALIZING, PLAYING, WON };
@@ -53,12 +56,8 @@ public class CameraScript : MonoBehaviour
     private Cell[,] grid;
     private int curLevel = 0;
     
-
-    //Needed when have have more objects moving than just the players
-    //private List<GameObject> entityList = new List<GameObject>();
-
     private PlayerScript playerScript1, playerScript2;
-    private float winTime = 0;
+    //private float winTime = 0;
 
     private Vector3 eyePosition1, eyePosition2, eyePosition3, eyePositonAboveGoal;
     private Quaternion eyeRotation1, eyeRotation2, eyeRotation3;
@@ -88,14 +87,14 @@ public class CameraScript : MonoBehaviour
         wallMat.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
         wallMat.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
         wallTextureShift = Random.value * 100;
-        DrawUtilies.generateWallTexture(wallMat, wallTextureSize, wallTextureShift);
+        DrawUtilities.generateWallTexture(wallMat, wallTextureSize, wallTextureShift);
 
 
         floorMat = new Material(Shader.Find("Standard"));
         floorMat.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
         floorMat.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
         floorTextureShift = Random.value * 100;
-        DrawUtilies.generateFloorTexture(floorMat, floorTextureSize, floorTextureShift);
+        DrawUtilities.generateFloorTexture(floorMat, floorTextureSize, floorTextureShift);
 
     }
 
@@ -106,10 +105,10 @@ public class CameraScript : MonoBehaviour
 
         backgroundScript = GetComponent<Background_AbstractScript>();
         Texture2D texture = backgroundScript.create();
-        Renderer renderer = backgroundImage.GetComponent<Renderer>();
+        Renderer renderer = backgroundPlane.GetComponent<Renderer>();
         renderer.material.mainTexture = texture;
         spawnBoard(0);
-}
+    }
 
 
 
@@ -117,7 +116,9 @@ public class CameraScript : MonoBehaviour
     private void spawnBoard(int level)
     {
         gameState = GameState.INITIALIZING;
-        DrawUtilies.generateKaleidoscopicTexture(doorMat, doorTextureSize);
+        doorKaleidoscope = new Kaleidoscope(doorMat, doorTextureSize);
+        doorUpdateTime = 0;
+
         audioPriority = 255;
         doorToggleSeconds = -1f;
         curLevel = level;
@@ -233,7 +234,6 @@ public class CameraScript : MonoBehaviour
         float heightDiff = gridHeight / fullHeight;
         float heightMod = Mathf.Max(widthDiff, heightDiff);
 
-        float scale = Mathf.Max(gridWidth, gridHeight) * 0.25f;
         Vector3 boradCenter = new Vector3(gridWidth / 2.0f - .5f, 0, gridHeight / 2.0f - .5f);
 
         eyePosition1 = new Vector3(gridWidth / 2.0f - .5f, height * heightMod, gridHeight / 2.0f - .5f);
@@ -256,8 +256,9 @@ public class CameraScript : MonoBehaviour
 
         eyePositonAboveGoal = new Vector3(goalBlock.transform.position.x, 2, goalBlock.transform.position.z);
 
-        backgroundImage.transform.position = new Vector3(gridWidth / 2, 0, gridHeight / 2);
-        backgroundImage.transform.localScale = new Vector3(scale, 1, scale);
+        float scale = Mathf.Max(gridWidth, gridHeight) * 0.25f;
+        backgroundPlane.transform.position = new Vector3(gridWidth / 2, 0.4f, gridHeight / 2);
+        backgroundPlane.transform.localScale = new Vector3(scale, 1, scale);
         backgroundScript.clear(curLevel);
 
     }
@@ -272,13 +273,19 @@ public class CameraScript : MonoBehaviour
 
         backgroundScript.next();
         goalBlock.transform.Rotate(Vector3.up * Time.deltaTime*40);
-        backgroundImage.transform.Rotate(Vector3.up * Time.deltaTime*.5f);
+        backgroundPlane.transform.Rotate(Vector3.up * Time.deltaTime*.5f);
 
         wallTextureShift += Time.deltaTime * wallMorphScale;
-        DrawUtilies.generateWallTexture(wallMat, wallTextureSize, wallTextureShift);
+        DrawUtilities.generateWallTexture(wallMat, wallTextureSize, wallTextureShift);
 
         floorTextureShift += Time.deltaTime * floorMorphScale;
-        DrawUtilies.generateFloorTexture(floorMat, floorTextureSize, floorTextureShift);
+        DrawUtilities.generateFloorTexture(floorMat, floorTextureSize, floorTextureShift);
+
+        if (Time.time > doorUpdateTime)
+        {
+            doorUpdateTime = Time.time + 0.1f;
+            doorKaleidoscope.updateTexture();
+        }
 
         //Debug.Log(wallTextureShift + "," + floorTextureShift);
 
@@ -367,9 +374,9 @@ public class CameraScript : MonoBehaviour
 
         else if (gameState == GameState.WON)
         {
-            if (winTime > 0)
+            if (Vector2.Distance(transform.position, eyePositonAboveGoal) > 3)
             {
-                winTime -= Time.deltaTime;
+                //winTime -= Time.deltaTime;
                 transform.position = Vector3.Lerp(transform.position, eyePositonAboveGoal, Time.deltaTime * eyeSpeed*4);
                 transform.rotation = Quaternion.Lerp(transform.rotation, eyeRotation1, Time.deltaTime * eyeSpeed*2);
 
@@ -486,13 +493,6 @@ public class CameraScript : MonoBehaviour
     public void setGameState(GameState state)
     {
         gameState = state;
-        if (gameState == GameState.WON)
-        {
-            //Time.timeScale = 0;
-            //player1.SetActive(false);
-            //player2.SetActive(false);
-            winTime = 3;
-        }
     }
 
     public GameState getGameState()

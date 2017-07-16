@@ -86,6 +86,7 @@
     <Compile Include="Assets\Board\Scripts\DrawToolTester.cs" />
     <Compile Include="Assets\Board\Scripts\DrawUtilities.cs" />
     <Compile Include="Assets\Board\Scripts\GameMap.cs" />
+    <Compile Include="Assets\Board\Scripts\Kaleidoscope.cs" />
     <Compile Include="Assets\Board\Scripts\MapLoader.cs" />
     <Compile Include="Assets\Board\Scripts\TextureDrawer.cs" />
     <Compile Include="Assets\Players\PlayerScript.cs" />
@@ -103,6 +104,7 @@
     <None Include="Assets\Resources\Maps\InkBottle.txt" />
     <None Include="Assets\Resources\Maps\InnerChamber.txt" />
     <None Include="Assets\Resources\Maps\Maze.txt" />
+    <None Include="Assets\Resources\Maps\Rhombus-13x13.txt" />
     <None Include="Assets\Resources\Maps\SoccerField.txt" />
     <None Include="Assets\Resources\Maps\SpaceInvader.txt" />
     <None Include="Assets\Resources\Maps\Z-shape.txt" />

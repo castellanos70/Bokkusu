@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DrawUtilies : MonoBehaviour
+public class DrawUtilities : MonoBehaviour
 {
     
 
@@ -132,88 +132,7 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
 
 
 
-    public static void generateKaleidoscopicTexture(Material material, int pixelSize)
-    {
-        Texture2D texture = new Texture2D(pixelSize, pixelSize, TextureFormat.ARGB32, false);
 
-        setTextureColor(texture, pixelSize, Color.black);
-
-        Vector2[] v = new Vector2[3];
-        Vector2[] w = new Vector2[3];
-        for (int n = 0; n < 6; n++)
-        {
-            for (int i = 0; i < v.Length; i++)
-            {
-                v[i].x = Random.Range(0, 31);
-                v[i].y = Random.Range(0, 31);
-
-                // Confine initial pattern to lower right quadrant
-                if (v[i].x > v[i].y)
-                {
-                    float tmp = v[i].x;
-                    v[i].x = v[i].y;
-                    v[i].y = tmp;
-                }
-            }
-            Color color = Background_DLA_Script.palette[0, Random.Range(0, 6)];
-
-            for (int k = 0; k < 8; k++)
-            {
-                kaleidoscopicReflect(v, w, k, 32);
-                drawTriangle(texture, color, w);
-            }
-        }
-        texture.Apply();
-        material.mainTexture = texture;
-    }
-
-
-    private static void kaleidoscopicReflect(Vector2[] v, Vector2[] w, int n, int offset)
-    {
-        for (int i = 0; i < v.Length; i++)
-        {
-            if (n == 0)
-            {
-                w[i].x = v[i].x + offset;
-                w[i].y = v[i].y + offset;
-            }
-            else if (n == 1)
-            {
-                w[i].x = -v[i].x + offset;
-                w[i].y = v[i].y + offset;
-            }
-            else if (n == 2)
-            {
-                w[i].x = v[i].x + offset;
-                w[i].y = -v[i].y + offset;
-            }
-            else if (n == 3)
-            {
-                w[i].x = -v[i].x + offset;
-                w[i].y = -v[i].y + offset;
-            }
-            else if (n == 4)
-            {
-                w[i].x = v[i].y + offset;
-                w[i].y = v[i].x + offset;
-            }
-            else if (n == 5)
-            {
-                w[i].x = -v[i].y + offset;
-                w[i].y = v[i].x + offset;
-            }
-            else if (n == 6)
-            {
-                w[i].x = v[i].y + offset;
-                w[i].y = -v[i].x + offset;
-            }
-            else if (n == 7)
-            {
-                w[i].x = -v[i].y + offset;
-                w[i].y = -v[i].x + offset;
-            }
-        }
-    }
 
 
 
