@@ -93,6 +93,7 @@ public class Background_DLA_Script : Background_AbstractScript
         totalSec = 0;
         secPerColor = Random.Range(20, 50);
         paletteIdx = level % paletteCount;
+        Color nearBlack = new Color(0.01f, 0f, 0f);
 
         for (int x = 0; x < textureSize; x++)
         {
@@ -100,7 +101,7 @@ public class Background_DLA_Script : Background_AbstractScript
             {
                 if (x==0 || y == 0 || x == textureSize-1 || y == textureSize-1)
                 {
-                    texture.SetPixel(x, y, Color.red);
+                    texture.SetPixel(x, y, nearBlack);
                 }
                 else texture.SetPixel(x, y, Color.black);
             }

@@ -27,7 +27,7 @@ public class CameraScript : MonoBehaviour
 
     private Material floorMat;
     private int floorTextureSize = 64;
-    private float floorMorphScale = 0.04f;
+    private float floorMorphScale = 0.06f;
     private float floorTextureShift;
    
 
@@ -59,6 +59,11 @@ public class CameraScript : MonoBehaviour
 
     private PlayerScript playerScript1, playerScript2;
     private float winTime = 0;
+
+    private Vector3 eyePosition1, eyePosition2, eyePosition3, eyePositonAboveGoal;
+    private Quaternion eyeRotation1, eyeRotation2, eyeRotation3;
+    private int eyeMovingTo;
+    private float eyeSpeed = 0.05f;
 
 
     void Awake()
@@ -104,7 +109,7 @@ public class CameraScript : MonoBehaviour
         Renderer renderer = backgroundImage.GetComponent<Renderer>();
         renderer.material.mainTexture = texture;
         spawnBoard(0);
-    }
+}
 
 
 
@@ -117,19 +122,19 @@ public class CameraScript : MonoBehaviour
         doorToggleSeconds = -1f;
         curLevel = level;
         destroyOldBoard();
-        
+
 
         gameMap = gameMapList[level];
         startMap = gameMap.getMap();
         gridWidth = startMap.GetLength(0);
         gridHeight = startMap.GetLength(1);
 
-		int numCells = 0;
+        int numCells = 0;
 
         grid = new Cell[gridWidth, gridHeight];
         bool foundGoal = false;
 
-		int[] pentatonic = {0, 2, 4, 7, 9};
+        int[] pentatonic = { 0, 2, 4, 7, 9 };
 
         // Spawn board blocks
         //Debug.Log("Spawn Board(" + level + "): " + grid.GetLength(0) + "(" + gridWidth + ") x " + grid.GetLength(1) + "(" + gridHeight + ")");
@@ -139,7 +144,7 @@ public class CameraScript : MonoBehaviour
             {
                 if (startMap[x, z] == Element.NOTHING) continue;
 
-				numCells++;
+                numCells++;
 
                 int y = Random.Range(2, 40);
                 GameObject block = Instantiate(boardBlock, new Vector3(x, y, z), Quaternion.identity);
@@ -162,8 +167,8 @@ public class CameraScript : MonoBehaviour
 
 
                 grid[x, z] = new Cell(startMap[x, z], block, mat);
-				int audioIndex = pentatonic[Random.Range(0, 5)] + (Random.Range(0, (harpAudio.Length/12)-1)*12);
-				grid[x, z].setAudioClip(harpAudio[audioIndex]);
+                int audioIndex = pentatonic[Random.Range(0, 5)] + (Random.Range(0, (harpAudio.Length / 12) - 1) * 12);
+                grid[x, z].setAudioClip(harpAudio[audioIndex]);
 
                 if (startMap[x, z] == Element.GOAL)
                 {
@@ -178,15 +183,15 @@ public class CameraScript : MonoBehaviour
             }
         }
 
-		audioDecrement = 127.0f/numCells;
+        audioDecrement = 127.0f / numCells;
 
         if (!foundGoal)
         {
             Debug.Log("Each level must have Exactly ONE goal.");
             //UnityEditor.EditorApplication.isPlaying = false;
         }
-    
-        
+
+
         playerScript1.setBoard(this, grid);
         playerScript2.setBoard(this, grid);
 
@@ -229,8 +234,27 @@ public class CameraScript : MonoBehaviour
         float heightMod = Mathf.Max(widthDiff, heightDiff);
 
         float scale = Mathf.Max(gridWidth, gridHeight) * 0.25f;
+        Vector3 boradCenter = new Vector3(gridWidth / 2.0f - .5f, 0, gridHeight / 2.0f - .5f);
 
-        transform.position = new Vector3(gridWidth / 2.0f - .5f, height * heightMod, gridHeight / 2.0f - .5f);
+        eyePosition1 = new Vector3(gridWidth / 2.0f - .5f, height * heightMod, gridHeight / 2.0f - .5f);
+        transform.position = eyePosition1;
+        transform.LookAt(boradCenter, Vector3.up);
+        eyeRotation1 = transform.rotation;
+
+
+        eyePosition2 = new Vector3(3*gridWidth / 4.0f - .5f, height * heightMod * .7f, -(gridHeight + 1));
+        transform.position = eyePosition2;
+        transform.LookAt(boradCenter, Vector3.up);
+        eyeRotation2 = transform.rotation;
+
+        eyePosition3 = new Vector3(gridWidth / 4.0f - .5f, height * heightMod * .7f, -(gridHeight + 1));
+        transform.position = eyePosition3;
+        transform.LookAt(boradCenter, Vector3.up);
+        eyeRotation3 = transform.rotation;
+
+        eyeMovingTo = 1;
+
+        eyePositonAboveGoal = new Vector3(goalBlock.transform.position.x, 2, goalBlock.transform.position.z);
 
         backgroundImage.transform.position = new Vector3(gridWidth / 2, 0, gridHeight / 2);
         backgroundImage.transform.localScale = new Vector3(scale, 1, scale);
@@ -241,8 +265,6 @@ public class CameraScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-
         if (Input.GetKey(KeyCode.Escape))
         {
             Application.Quit();
@@ -296,6 +318,32 @@ public class CameraScript : MonoBehaviour
             movePlayer(player1, playerScript1);
             movePlayer(player2, playerScript2);
 
+            if (eyeMovingTo == 1)
+            {
+                transform.position = Vector3.Lerp(transform.position, eyePosition1, Time.deltaTime * eyeSpeed);
+                transform.rotation = Quaternion.Lerp(transform.rotation, eyeRotation1, Time.deltaTime * eyeSpeed);
+                //Debug.Log("moveTo=1: "+Vector3.Distance(transform.position, eyePosition1));
+                if (Vector3.Distance(transform.position, eyePosition1) < 0.5f) eyeMovingTo = 2;
+            }
+            else if (eyeMovingTo == 2)
+            {
+                transform.position = Vector3.Lerp(transform.position, eyePosition2, Time.deltaTime * eyeSpeed);
+                transform.rotation = Quaternion.Lerp(transform.rotation, eyeRotation2, Time.deltaTime * eyeSpeed);
+                //Debug.Log("moveTo=2: " + Vector3.Distance(transform.position, eyePosition2));
+                if (Vector3.Distance(transform.position, eyePosition2) < 0.5f) eyeMovingTo = 3;
+            }
+            else
+            {
+                transform.position = Vector3.Lerp(transform.position, eyePosition3, Time.deltaTime * eyeSpeed);
+                transform.rotation = Quaternion.Lerp(transform.rotation, eyeRotation3, Time.deltaTime * eyeSpeed);
+                //Debug.Log("moveTo=3: " + Vector3.Distance(transform.position, eyePosition3));
+                if (Vector3.Distance(transform.position, eyePosition3) < 0.5f) eyeMovingTo = 1;
+            }
+
+
+            
+
+
             if (doorToggleSeconds >= 0f)
             {
                 doorToggleSeconds -= Time.deltaTime;
@@ -322,12 +370,13 @@ public class CameraScript : MonoBehaviour
             if (winTime > 0)
             {
                 winTime -= Time.deltaTime;
+                transform.position = Vector3.Lerp(transform.position, eyePositonAboveGoal, Time.deltaTime * eyeSpeed*4);
+                transform.rotation = Quaternion.Lerp(transform.rotation, eyeRotation1, Time.deltaTime * eyeSpeed*2);
 
-
-                float dx = (goalBlock.transform.position.x - transform.position.x) * Time.deltaTime * 3;
-                float dz = (goalBlock.transform.position.z - transform.position.z) * Time.deltaTime * 3;
-                float dy = (transform.position.y - 2) * Time.deltaTime;
-                transform.Translate(dx, dz, dy);
+                //float dx = (goalBlock.transform.position.x - transform.position.x) * Time.deltaTime * 3;
+                //float dz = (goalBlock.transform.position.z - transform.position.z) * Time.deltaTime * 3;
+                //float dy = (transform.position.y - 2) * Time.deltaTime;
+                //transform.Translate(dx, dz, dy);
             }
             else
             {
