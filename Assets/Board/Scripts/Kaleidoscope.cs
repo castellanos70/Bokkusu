@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class Kaleidoscope
 {
-    private static int triangleCount = 6;
+    private static int triangleCount = 5;
+    private static int reflectionCount = 8;
     private Vector2[,] triangleList = new Vector2[triangleCount,3];
     private Color[] triangleColor = new Color[triangleCount];
     private Texture2D texture;
@@ -131,7 +132,7 @@ public class Kaleidoscope
 
 
 
-            for (int k = 0; k < 8; k++)
+            for (int k = 0; k < reflectionCount; k++)
             {
                 kaleidoscopicReflect(v, w, k, pixelSize / 2);
                 DrawUtilities.drawTriangle(texture, triangleColor[n], w);
