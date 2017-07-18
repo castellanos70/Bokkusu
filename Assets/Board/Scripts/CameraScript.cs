@@ -330,21 +330,21 @@ public class CameraScript : MonoBehaviour
                 transform.position = Vector3.Lerp(transform.position, eyePosition1, Time.deltaTime * eyeSpeed);
                 transform.rotation = Quaternion.Lerp(transform.rotation, eyeRotation1, Time.deltaTime * eyeSpeed);
                 //Debug.Log("moveTo=1: "+Vector3.Distance(transform.position, eyePosition1));
-                if (Vector3.Distance(transform.position, eyePosition1) < 0.5f) eyeMovingTo = 2;
+                if (Vector3.Distance(transform.position, eyePosition1) < 1.0f) eyeMovingTo = 2;
             }
             else if (eyeMovingTo == 2)
             {
                 transform.position = Vector3.Lerp(transform.position, eyePosition2, Time.deltaTime * eyeSpeed);
                 transform.rotation = Quaternion.Lerp(transform.rotation, eyeRotation2, Time.deltaTime * eyeSpeed);
                 //Debug.Log("moveTo=2: " + Vector3.Distance(transform.position, eyePosition2));
-                if (Vector3.Distance(transform.position, eyePosition2) < 0.5f) eyeMovingTo = 3;
+                if (Vector3.Distance(transform.position, eyePosition2) < 1.0f) eyeMovingTo = 3;
             }
             else
             {
                 transform.position = Vector3.Lerp(transform.position, eyePosition3, Time.deltaTime * eyeSpeed);
                 transform.rotation = Quaternion.Lerp(transform.rotation, eyeRotation3, Time.deltaTime * eyeSpeed);
                 //Debug.Log("moveTo=3: " + Vector3.Distance(transform.position, eyePosition3));
-                if (Vector3.Distance(transform.position, eyePosition3) < 0.5f) eyeMovingTo = 1;
+                if (Vector3.Distance(transform.position, eyePosition3) < 1.0f) eyeMovingTo = 1;
             }
 
 
@@ -377,8 +377,8 @@ public class CameraScript : MonoBehaviour
             if (Vector2.Distance(transform.position, eyePositonAboveGoal) > 3)
             {
                 //winTime -= Time.deltaTime;
-                transform.position = Vector3.Lerp(transform.position, eyePositonAboveGoal, Time.deltaTime * eyeSpeed*4);
-                transform.rotation = Quaternion.Lerp(transform.rotation, eyeRotation1, Time.deltaTime * eyeSpeed*2);
+                transform.position = Vector3.Lerp(transform.position, eyePositonAboveGoal, Time.deltaTime * eyeSpeed*6);
+                transform.rotation = Quaternion.Lerp(transform.rotation, eyeRotation1, Time.deltaTime * eyeSpeed*3);
 
                 //float dx = (goalBlock.transform.position.x - transform.position.x) * Time.deltaTime * 3;
                 //float dz = (goalBlock.transform.position.z - transform.position.z) * Time.deltaTime * 3;
@@ -558,12 +558,10 @@ public class CameraScript : MonoBehaviour
             for (int z = 0; z < gridHeight; z++)
             {
                 if (startMap[x, z] == Element.NOTHING) continue;
-
                 Element type = grid[x, z].getType();
                 if (type == Element.DOOR_A || type == Element.DOOR_B)
                 {
                     if ((x == playerScript1.getGridX()) && (z == playerScript1.getGridZ())) continue;
-                    
                     if ((x == playerScript2.getGridX()) && (z == playerScript2.getGridZ())) continue;
 
                     grid[x, z].toggleDoor();
