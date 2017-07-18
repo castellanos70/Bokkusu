@@ -80,7 +80,7 @@ public class Cell
 
     public void toggleDoor()
     {
-        Debug.Log("toggleDoor(): y=" + getY());
+        //Debug.Log("toggleDoor(): y=" + getY());
         if (getY() == 1f) doorLowering = true;
         else if (getY() == 0f)
         {
