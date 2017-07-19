@@ -320,6 +320,10 @@ public class PlayerScript : MonoBehaviour
             if (Input.GetButtonDown("ArcadeOne1")) return true;
             if (Input.GetButtonDown("ArcadeOne2")) return true;
             if (Input.GetButtonDown("ArcadeOne3")) return true;
+            if (Input.GetButtonDown("ArcadeOne4")) return true;
+            if (Input.GetButtonDown("ArcadeOne5")) return true;
+            if (Input.GetButtonDown("ArcadeOne6")) return true;
+            if (Input.GetButtonDown("ArcadeOne7")) return true;
         }
         else
         {
@@ -327,6 +331,10 @@ public class PlayerScript : MonoBehaviour
             if (Input.GetButtonDown("ArcadeTwo1")) return true;
             if (Input.GetButtonDown("ArcadeTwo2")) return true;
             if (Input.GetButtonDown("ArcadeTwo3")) return true;
+            if (Input.GetButtonDown("ArcadeTwo4")) return true;
+            if (Input.GetButtonDown("ArcadeTwo5")) return true;
+            if (Input.GetButtonDown("ArcadeTwo6")) return true;
+            if (Input.GetButtonDown("ArcadeTwo7")) return true;
         }
         return false;
     }
@@ -372,8 +380,8 @@ public class PlayerScript : MonoBehaviour
         if (Input.GetKey(keycode[2])) return -1;
 
         float value = Input.GetAxis(axisVertical);
-        if (value > 0.5f) return 1;
-        if (value < -0.5f) return -1;
+        if (value > 0.5f) return -1;
+        if (value < -0.5f) return 1;
         return 0;
     }
 

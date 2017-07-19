@@ -6,7 +6,7 @@ public class Cell
 {
     private CameraScript.Element type = CameraScript.Element.NOTHING;
     private GameObject baseObj = null;
-    private GameObject overlayObj = null;
+    private GameObject crateObj = null;
     private float bottomY = 0;
     private float fallSpeed;
     private int x, z;
@@ -72,7 +72,7 @@ public class Cell
 
     public void addCrate(GameObject obj)
     {
-        this.overlayObj = obj;
+        this.crateObj = obj;
         type = CameraScript.Element.CRATE;
         //obj.transform.Rotate(new Vector3(0, 90 * Random.Range(0, 4), 0));
     }
@@ -84,7 +84,7 @@ public class Cell
         if (getY() == 1f) doorLowering = true;
         else if (getY() == 0f)
         {
-            if (overlayObj != null) return;
+            if (crateObj != null) return;
             doorRaising = true;
         }
 
@@ -109,6 +109,10 @@ public class Cell
 
     public CameraScript.Element getType()
     {
+        //if (crateObj != null)
+        //{
+        //    return CameraScript.Element.CRATE;
+        //}
         return type;
     }
 
@@ -121,21 +125,21 @@ public class Cell
     public void smashCrate(float speed)
     {
         if (type != CameraScript.Element.CRATE) return;
-        if (overlayObj == null) return;
+        if (crateObj == null) return;
 
-        CrateScript crate = (CrateScript)overlayObj.GetComponent(typeof(CrateScript));
+        CrateScript crate = (CrateScript)crateObj.GetComponent(typeof(CrateScript));
         crate.detonate(speed);
         type = CameraScript.Element.FLOOR;
-        overlayObj = null;
+        crateObj = null;
     }
 
 
     public void destroyObjects()
     {
         if (baseObj != null) Object.Destroy(baseObj);
-        if (overlayObj != null)
+        if (crateObj != null)
         {
-            if (!overlayObj.CompareTag("Finish")) Object.Destroy(overlayObj);
+            if (!crateObj.CompareTag("Finish")) Object.Destroy(crateObj);
         }
     }
 }

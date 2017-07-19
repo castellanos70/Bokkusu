@@ -27,7 +27,7 @@ public class Background_DLA_Script : Background_AbstractScript
     private static int ATTRACTOR_COUNT = 13;
     private Particle[] attractorList = new Particle[ATTRACTOR_COUNT];
 
-    private int crystalCount;
+    private int crystalCount, maxCrystals;
 
     public static Color[,] palette =
     {
@@ -66,6 +66,8 @@ public class Background_DLA_Script : Background_AbstractScript
     {
         // Create a texture ARGB32 (32 bit with alpha) and no mipmaps
         texture = new Texture2D(textureSize, textureSize, TextureFormat.ARGB32, false);
+        maxCrystals = texturePixels / 3;
+
 
         for (int i = 0; i < ATTRACTOR_COUNT; i++)
         {
@@ -91,6 +93,7 @@ public class Background_DLA_Script : Background_AbstractScript
         //  If C# were not stupid, this would be a function call: Random.value()
         //Debug.Log(Random.value + ", " + Random.value + ", " + Random.value);
         totalSec = 0;
+        crystalCount = 0;
         secPerColor = Random.Range(20, 50);
         paletteIdx = level % paletteCount;
         Color nearBlack = new Color(0.01f, 0f, 0f);
@@ -126,6 +129,8 @@ public class Background_DLA_Script : Background_AbstractScript
 
     override public void next()
     {
+        //if (crystalCount >= maxCrystals) return;
+
         totalSec += Time.deltaTime;
 
         for (int i = 0; i < POINT_COUNT; i++)
@@ -215,14 +220,13 @@ public class Background_DLA_Script : Background_AbstractScript
         public void spawn(Texture2D texture)
         {
             int n = 0;
-            while (true)
+            int x = -1;
+            while (n<10)
             {
                 n++;
                 x = Random.Range(2, textureSize - 3);
                 y = Random.Range(2, textureSize - 3);
                 if (texture.GetPixel(x, y).Equals(Color.black)) break;
-
-                if (n > 100) break;
             }
         }
 
