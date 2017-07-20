@@ -65,10 +65,16 @@ public class Kaleidoscope
     {
         morphTriangleIdx = Random.Range(0, triangleCount);
         morphVertexIdx = Random.Range(0, 3);
-        morphDeltaX = 1;
-        morphDeltaY = 1;
-        if (Random.value < 0.5f) morphDeltaX = -1;
-        if (Random.value < 0.5f) morphDeltaY = -1;
+        morphDeltaX = 0;
+        morphDeltaY = 0;
+        if (Random.value < 0.5f)
+        {
+            if (Random.value < 0.5f) morphDeltaX = -1; else morphDeltaX = 1;
+        }
+        else
+        {
+            if (Random.value < 0.5f) morphDeltaY = -1; else morphDeltaY = 1;
+        }
     }
 
 
