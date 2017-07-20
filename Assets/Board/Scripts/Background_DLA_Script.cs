@@ -24,8 +24,8 @@ public class Background_DLA_Script : Background_AbstractScript
     private Particle[] pointList = new Particle[POINT_COUNT];
 
 
-    private static int ATTRACTOR_COUNT = 13;
-    private Particle[] attractorList = new Particle[ATTRACTOR_COUNT];
+    private static int attractorCount;
+    private Particle[] attractorList;
 
     private int crystalCount, maxCrystals;
 
@@ -66,10 +66,14 @@ public class Background_DLA_Script : Background_AbstractScript
     {
         // Create a texture ARGB32 (32 bit with alpha) and no mipmaps
         texture = new Texture2D(textureSize, textureSize, TextureFormat.ARGB32, false);
-        maxCrystals = texturePixels / 3;
+        maxCrystals = 500000;//(textureSize * textureSize) / 4;
+        //Debug.Log("Background_DLA_Script.create(): maxCrystals="+ maxCrystals);
+
+        attractorCount = Random.Range(5,30);
+        attractorList = new Particle[attractorCount];
 
 
-        for (int i = 0; i < ATTRACTOR_COUNT; i++)
+        for (int i = 0; i < attractorCount; i++)
         {
             attractorList[i] = new Particle();
 
@@ -110,7 +114,7 @@ public class Background_DLA_Script : Background_AbstractScript
             }
         }
 
-        for (int i = 0; i < ATTRACTOR_COUNT; i++)
+        for (int i = 0; i < attractorCount; i++)
         {
             attractorList[i].spawn(texture, palette[paletteIdx,0]);
 
@@ -129,34 +133,39 @@ public class Background_DLA_Script : Background_AbstractScript
 
     override public void next()
     {
-        //if (crystalCount >= maxCrystals) return;
-
         totalSec += Time.deltaTime;
 
         for (int i = 0; i < POINT_COUNT; i++)
-        {
+        { 
+            if (i >= STAR_POINTS && crystalCount >= maxCrystals) break;
+
             int x = pointList[i].x;
             int y = pointList[i].y;
             if (pointList[i].x < 0) continue;
 
+            
 
             bool crystalize = false;
-            if (isCrystal(x - 1, y)) crystalize = true;
-            else if (isCrystal(x + 1, y)) crystalize = true;
-            else if (isCrystal(x, y-1)) crystalize = true;
-            else if (isCrystal(x, y+1)) crystalize = true;
+            if (crystalCount < maxCrystals)
+            {
+                if (isCrystal(x - 1, y)) crystalize = true;
+                else if (isCrystal(x + 1, y)) crystalize = true;
+                else if (isCrystal(x, y - 1)) crystalize = true;
+                else if (isCrystal(x, y + 1)) crystalize = true;
 
-            else if (isCrystal(x-1, y - 1)) crystalize = true;
-            else if (isCrystal(x - 1, y + 1)) crystalize = true;
-            else if (isCrystal(x + 1, y - 1)) crystalize = true;
-            else if (isCrystal(x + 1, y + 1)) crystalize = true;
+                else if (isCrystal(x - 1, y - 1)) crystalize = true;
+                else if (isCrystal(x - 1, y + 1)) crystalize = true;
+                else if (isCrystal(x + 1, y - 1)) crystalize = true;
+                else if (isCrystal(x + 1, y + 1)) crystalize = true;
+            }
 
             if (crystalize)
             {
                 crystalCount++;
+                //if ((crystalCount % 1000 == 0) || (crystalCount > maxCrystals)) Debug.Log("Background_DLA_Script.next(): " + crystalCount);
 
                 int colorIdx = (((int)totalSec) / secPerColor) % paletteSize;
-                texture.SetPixel(x, y, palette[paletteIdx,colorIdx]);
+                texture.SetPixel(x, y, palette[paletteIdx, colorIdx]);
                 if (i < STAR_POINTS) pointList[i].spawn(texture, Color.white);
                 else
                 {
@@ -183,7 +192,7 @@ public class Background_DLA_Script : Background_AbstractScript
                         pointList[i].x = x;
                         pointList[i].y = y;
                     }
-                    if (Random.value < 0.85f) texture.SetPixel(x, y, Color.white);
+                    if (Random.value < 0.75f) texture.SetPixel(x, y, Color.white);
                 }
                 else
                 {
@@ -220,13 +229,14 @@ public class Background_DLA_Script : Background_AbstractScript
         public void spawn(Texture2D texture)
         {
             int n = 0;
-            int x = -1;
-            while (n<10)
+            while (true)
             {
                 n++;
                 x = Random.Range(2, textureSize - 3);
                 y = Random.Range(2, textureSize - 3);
                 if (texture.GetPixel(x, y).Equals(Color.black)) break;
+
+                if (n > 10) break;
             }
         }
 
@@ -242,7 +252,7 @@ public class Background_DLA_Script : Background_AbstractScript
 
         public void setAttractor(Particle[] attractorList)
         {
-            int goalIdx = Random.Range(0, ATTRACTOR_COUNT - 1);
+            int goalIdx = Random.Range(0, attractorCount - 1);
             goalx = attractorList[goalIdx].x;
             goaly = attractorList[goalIdx].y;
         }

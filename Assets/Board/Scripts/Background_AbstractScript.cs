@@ -5,7 +5,6 @@ using UnityEngine;
 public abstract class Background_AbstractScript : MonoBehaviour
 {
     protected static int textureSize = 2048;
-    protected static int texturePixels = textureSize* textureSize;
     protected Texture2D texture;
 
     public abstract Texture2D create();
