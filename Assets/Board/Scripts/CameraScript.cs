@@ -21,13 +21,13 @@ public class CameraScript : MonoBehaviour
 
 
     private Material wallMat;
-    private int wallTextureSize = 64;
-    private float wallMorphScale = 0.03f;
+    private int wallTextureSize = 128;
+    private float wallMorphScale = 0.05f;
     private float wallTextureShift;
 
     private Material floorMat;
-    private int floorTextureSize = 64;
-    private float floorMorphScale = 0.06f;
+    private int floorTextureSize = 128;
+    private float floorMorphScale = 0.08f;
     private float floorTextureShift;
    
 
@@ -38,9 +38,10 @@ public class CameraScript : MonoBehaviour
 
     private Kaleidoscope doorKaleidoscope;
     private Material doorMat;
-    private int doorTextureSize = 64;
+    private int doorTextureSize = 128;
     private float doorUpdateTime;
-    
+    private float doorDownScale, doorDownDeltaScale;
+
 
     public enum GameState { INTRO, INITIALIZING, PLAYING, WON };
     private GameState gameState;
@@ -82,6 +83,8 @@ public class CameraScript : MonoBehaviour
         doorMat = new Material(Shader.Find("Standard"));
         doorMat.SetFloat("_Glossiness", 0.0f);
         doorMat.SetFloat("_Metallic", 0.0f);
+        doorMat.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
+        doorMat.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
 
         wallMat = new Material(Shader.Find("Standard"));
         wallMat.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
@@ -107,6 +110,10 @@ public class CameraScript : MonoBehaviour
         Texture2D texture = backgroundScript.create();
         Renderer renderer = backgroundPlane.GetComponent<Renderer>();
         renderer.material.mainTexture = texture;
+
+        doorKaleidoscope = new Kaleidoscope(doorMat, doorTextureSize);
+        
+
         spawnBoard(0);
     }
 
@@ -116,13 +123,18 @@ public class CameraScript : MonoBehaviour
     private void spawnBoard(int level)
     {
         gameState = GameState.INITIALIZING;
-        doorKaleidoscope = new Kaleidoscope(doorMat, doorTextureSize);
         doorUpdateTime = 0;
 
         audioPriority = 255;
         doorToggleSeconds = -1f;
+        doorDownScale = 1f;
+        doorDownDeltaScale = 0.1f;
+
+
         curLevel = level;
         destroyOldBoard();
+
+
 
 
         gameMap = gameMapList[level];
@@ -196,10 +208,6 @@ public class CameraScript : MonoBehaviour
         playerScript1.setBoard(this, grid);
         playerScript2.setBoard(this, grid);
 
-        //Needed when have have more objects moving than just the players
-        //entityList.Add(player1);
-        //entityList.Add(player2);
-
         for (int x = 0; x < gridWidth; x++)
         {
             for (int z = 0; z < gridHeight; z++)
@@ -236,7 +244,7 @@ public class CameraScript : MonoBehaviour
 
         Vector3 boradCenter = new Vector3(gridWidth / 2.0f - .5f, 0, gridHeight / 2.0f - .5f);
 
-        eyePosition1 = new Vector3(gridWidth / 2.0f - .5f, height * heightMod, gridHeight / 2.0f - .5f);
+        eyePosition1 = new Vector3(gridWidth / 2.0f - .5f, height * heightMod, -2*gridHeight / 3.0f);
         transform.position = eyePosition1;
         transform.LookAt(boradCenter, Vector3.up);
         eyeRotation1 = transform.rotation;
@@ -301,13 +309,13 @@ public class CameraScript : MonoBehaviour
 
                     float fallSpeed = grid[x, z].getFallSpeed();
 
-					if (fallSpeed == 0f){
-						if (!grid[x,z].hasPlayedAudio()){
-							grid[x, z].playAudioClip(audioPriority);
-							audioPriority -= audioDecrement;
-						}
-						continue;
-					};
+                    if (fallSpeed == 0f) {
+                        if (!grid[x, z].hasPlayedAudio()) {
+                            grid[x, z].playAudioClip(audioPriority);
+                            audioPriority -= audioDecrement;
+                        }
+                        continue;
+                    };
 
                     float y = grid[x, z].getY() - fallSpeed * Time.deltaTime;
 
@@ -320,7 +328,7 @@ public class CameraScript : MonoBehaviour
 
         else if (gameState == GameState.PLAYING)
         {
-            
+
 
             movePlayer(player1, playerScript1);
             movePlayer(player2, playerScript2);
@@ -348,37 +356,56 @@ public class CameraScript : MonoBehaviour
             }
 
 
-            
 
+
+            doorDownScale = doorDownScale + doorDownDeltaScale * Time.deltaTime;
+            if (doorDownDeltaScale > 0 && doorDownScale > 1f)
+            {
+                doorDownScale = 1f;
+                doorDownDeltaScale = -0.1f;
+            }
+            else if (doorDownDeltaScale < 0 && doorDownScale < 0.4f)
+            {
+                doorDownScale = 0.4f;
+                doorDownDeltaScale = 0.1f;
+            }
 
             if (doorToggleSeconds >= 0f)
             {
                 doorToggleSeconds -= Time.deltaTime;
-                if (doorToggleSeconds < 0f) doorToggleSeconds = 0f;
-                for (int x = 0; x < gridWidth; x++)
+                if (doorToggleSeconds < 0f)
                 {
-                    for (int z = 0; z < gridHeight; z++)
-                    {
-                        if (startMap[x, z] == Element.NOTHING) continue;
+                    doorToggleSeconds = 0f;
+                    doorDownScale = 1f;
+                }
+            }
 
-                        Element type = grid[x, z].getType();
-                        if (type == Element.DOOR_A || type == Element.DOOR_B)
-                        {
-                            grid[x, z].updateDoor(doorToggleSeconds);
-                        }
+
+
+            for (int x = 0; x < gridWidth; x++)
+            {
+                for (int z = 0; z < gridHeight; z++)
+                {
+                    if (startMap[x, z] == Element.NOTHING) continue;
+
+                    Element type = grid[x, z].getType();
+                    if (type == Element.DOOR_A || type == Element.DOOR_B)
+                    {
+                        grid[x, z].updateDoor(doorToggleSeconds, doorDownScale);
                     }
                 }
-                if (doorToggleSeconds == 0f) doorToggleSeconds = -1f;
             }
+            if (doorToggleSeconds == 0f) doorToggleSeconds = -1f;
         }
+
 
         else if (gameState == GameState.WON)
         {
             if (Vector2.Distance(transform.position, eyePositonAboveGoal) > 3)
             {
                 //winTime -= Time.deltaTime;
-                transform.position = Vector3.Lerp(transform.position, eyePositonAboveGoal, Time.deltaTime * eyeSpeed*8);
-                transform.rotation = Quaternion.Lerp(transform.rotation, eyeRotation1, Time.deltaTime * eyeSpeed*4);
+                transform.position = Vector3.Lerp(transform.position, eyePositonAboveGoal, Time.deltaTime * eyeSpeed * 8);
+                transform.rotation = Quaternion.Lerp(transform.rotation, eyeRotation1, Time.deltaTime * eyeSpeed * 4);
 
                 //float dx = (goalBlock.transform.position.x - transform.position.x) * Time.deltaTime * 3;
                 //float dz = (goalBlock.transform.position.z - transform.position.z) * Time.deltaTime * 3;
@@ -388,13 +415,10 @@ public class CameraScript : MonoBehaviour
             else
             {
 
-                //Do not spawn a board that is the same as the current board.
-                int level = curLevel;
-                while (level == curLevel)
-                {
-                    level = Random.Range(1, gameMapList.Length);
-                }
-                spawnBoard(level);
+                curLevel++;
+                if (curLevel >= gameMapList.Length) curLevel = 1;
+
+                spawnBoard(curLevel);
             }
         }
     }
@@ -540,10 +564,7 @@ public class CameraScript : MonoBehaviour
 
         if (type == Element.FLOOR) return true;
         if (type == Element.GOAL) return true;
-        if (type == Element.DOOR_A || type == Element.DOOR_B)
-        {
-            if (grid[x, z].getY() == 0) return true;
-        }
+        if (grid[x, z].isDoorDown()) return true;
 
 
         return false;

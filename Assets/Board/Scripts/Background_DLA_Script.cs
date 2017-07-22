@@ -57,7 +57,7 @@ public class Background_DLA_Script : Background_AbstractScript
     };
     private int paletteSize, paletteCount;
 
-    private int secPerColor;
+ 
     private float totalSec;
     private int paletteIdx;
 
@@ -98,7 +98,6 @@ public class Background_DLA_Script : Background_AbstractScript
         //Debug.Log(Random.value + ", " + Random.value + ", " + Random.value);
         totalSec = 0;
         crystalCount = 0;
-        secPerColor = Random.Range(20, 50);
         paletteIdx = level % paletteCount;
         Color nearBlack = new Color(0.01f, 0f, 0f);
 
@@ -164,7 +163,7 @@ public class Background_DLA_Script : Background_AbstractScript
                 crystalCount++;
                 //if ((crystalCount % 1000 == 0) || (crystalCount > maxCrystals)) Debug.Log("Background_DLA_Script.next(): " + crystalCount);
 
-                int colorIdx = (((int)totalSec) / secPerColor) % paletteSize;
+                int colorIdx = (int)(paletteSize * (float)crystalCount/(maxCrystals +1f));
                 texture.SetPixel(x, y, palette[paletteIdx, colorIdx]);
                 if (i < STAR_POINTS) pointList[i].spawn(texture, Color.white);
                 else

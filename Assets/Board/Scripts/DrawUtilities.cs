@@ -164,7 +164,7 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
         };
 
 
-        float noiseScale = 0.03f;
+        float noiseScale = 0.02f;
 
         float x0 = textureShift;// Random.value*32768;
         float y0 = textureShift;// Random.value * 32768;
@@ -241,7 +241,7 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
                     float yCoord = textureShift + y * noiseScale;
                     float noise = Mathf.PerlinNoise(xCoord, yCoord);
 
-                    float val = (1 + Mathf.Sin((x + noise / 4) * 75)) * 0.501960784f;
+                    float val = (1 + Mathf.Sin((x + noise / 4) * 25)) * 0.501960784f;
 
 
                     int idx = 0;

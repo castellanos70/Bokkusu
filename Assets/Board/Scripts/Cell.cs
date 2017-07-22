@@ -14,8 +14,12 @@ public class Cell
     private bool doorRaising = false;
     private bool doorLowering = false;
 
-	private AudioSource audio;
-	private AudioClip audioClip;
+    private bool doorIsDown = false;
+
+    private AudioSource audio;
+    private AudioClip audioClip;
+
+    
 
     public Cell(CameraScript.Element element, GameObject block, Material mat)
     {
@@ -36,7 +40,7 @@ public class Cell
         if (type == CameraScript.Element.WALL) bottomY = 1f;
         else if (type == CameraScript.Element.DOOR_B) bottomY = 1f;
 
-		audio = baseObj.AddComponent<AudioSource>();
+       audio = baseObj.AddComponent<AudioSource>();
 
         fallSpeed = 8 + Random.value * 15;
     }
@@ -66,6 +70,7 @@ public class Cell
         {
             fallSpeed = 0f;
             y = bottomY;
+            if (type == CameraScript.Element.DOOR_A) doorIsDown = true;
         }
         baseObj.transform.Translate(0, y-getY(), 0);
     }
@@ -82,26 +87,52 @@ public class Cell
     {
         //Debug.Log("toggleDoor(): y=" + getY());
         if (getY() == 1f) doorLowering = true;
-        else if (getY() == 0f)
+        else if (doorIsDown)
         {
             if (crateObj != null) return;
+
+            baseObj.transform.localScale = new Vector3(1f, 1f, 1f);
             doorRaising = true;
+            doorIsDown = false;
         }
 
     }
 
 
-    public void updateDoor(float seconds)
+    public bool isDoorDown()
     {
+        if (type == CameraScript.Element.DOOR_A || type == CameraScript.Element.DOOR_B)
+        {
+            return doorIsDown;
+        }
+        return false;
+    }
+
+
+
+
+    public void updateDoor(float doorToggleSeconds, float doorDownScale)
+    {
+        if (doorIsDown)
+        {
+            baseObj.transform.localScale = new Vector3(doorDownScale, 1f, doorDownScale);
+        }
+
         if (!doorLowering && !doorRaising) return;
 
-        float yy = seconds;
-        if (doorRaising) yy = 1f - seconds;
+        if (doorToggleSeconds < 0f) doorToggleSeconds = 0f;
+        float yy = doorToggleSeconds;
+        if (doorRaising) yy = 1f - doorToggleSeconds;
 
-        if (seconds == 0f)
+        if (doorToggleSeconds <= 0f)
         {
+            if (doorLowering)
+            {
+                doorIsDown = true;
+            }
+            
             doorLowering = false;
-            doorRaising = false;
+            doorRaising  = false;
         }
         baseObj.transform.position = new Vector3(x, yy, z);
     }

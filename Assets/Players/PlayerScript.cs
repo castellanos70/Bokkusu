@@ -118,7 +118,8 @@ public class PlayerScript : MonoBehaviour
         speedZ = 0;
 
         spawnSpotDeltaTransparency = -1;
-        spawnSpotObj.transform.position =  new Vector3(transform.position.x, 0.51f, transform.position.z);
+        //spawnSpotObj.transform.position =  new Vector3(transform.position.x, 0.51f, transform.position.z);
+        spawnSpotObj.transform.position = new Vector3(transform.position.x, 1f, transform.position.z);
 
     }
 
@@ -141,7 +142,7 @@ public class PlayerScript : MonoBehaviour
             updateSpeed();
             updateArrows();
 
-            
+            /*
             Color color = spawnSpotObj.GetComponent<Renderer>().material.color;
             
             color.a = color.a + spawnSpotDeltaTransparency*Time.deltaTime;
@@ -160,6 +161,7 @@ public class PlayerScript : MonoBehaviour
             scale.z = scale.x;
             spawnSpotObj.transform.localScale = scale;
             spawnSpotObj.GetComponent<Renderer>().material.SetColor("_Color", color);
+            */
         }
         updateArrows();
     }
@@ -461,10 +463,6 @@ public class PlayerScript : MonoBehaviour
 
         
         int[] dists = getDistances();
-        //if (speedX == 0) { arrows[1].SetActive(true); arrows[3].SetActive(true); }
-        //else { arrows[1].SetActive(false); arrows[3].SetActive(false); }
-        //if (speedZ == 0) { arrows[0].SetActive(true); arrows[2].SetActive(true); }
-        //else { arrows[0].SetActive(false); arrows[2].SetActive(false); }
 
         libertyCount = 0;
         for (int i = 0; i < 4; i++)
