@@ -244,7 +244,8 @@ public class CameraScript : MonoBehaviour
 
         Vector3 boradCenter = new Vector3(gridWidth / 2.0f - .5f, 0, gridHeight / 2.0f - .5f);
 
-        eyePosition1 = new Vector3(gridWidth / 2.0f - .5f, height * heightMod, -2*gridHeight / 3.0f);
+        //eyePosition1 = new Vector3(gridWidth / 2.0f - .5f, height * heightMod, -3*gridHeight / 5.0f);
+        eyePosition1 = new Vector3(gridWidth / 2.0f - .5f, height * heightMod, gridHeight / 2.0f - .5f);
         transform.position = eyePosition1;
         transform.LookAt(boradCenter, Vector3.up);
         eyeRotation1 = transform.rotation;
@@ -276,6 +277,7 @@ public class CameraScript : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Escape))
         {
+            //if (!Application.isEditor) System.Diagnostics.Process.GetCurrentProcess().Kill();
             Application.Quit();
         }
 
@@ -338,7 +340,7 @@ public class CameraScript : MonoBehaviour
                 transform.position = Vector3.Lerp(transform.position, eyePosition1, Time.deltaTime * eyeSpeed);
                 transform.rotation = Quaternion.Lerp(transform.rotation, eyeRotation1, Time.deltaTime * eyeSpeed);
                 //Debug.Log("moveTo=1: "+Vector3.Distance(transform.position, eyePosition1));
-                if (Vector3.Distance(transform.position, eyePosition1) < 1.0f) eyeMovingTo = 2;
+                if (Vector3.Distance(transform.position, eyePosition1) < 2.0f) eyeMovingTo = 2;
             }
             else if (eyeMovingTo == 2)
             {
@@ -404,9 +406,15 @@ public class CameraScript : MonoBehaviour
             if (Vector2.Distance(transform.position, eyePositonAboveGoal) > 3)
             {
                 //winTime -= Time.deltaTime;
-                transform.position = Vector3.Lerp(transform.position, eyePositonAboveGoal, Time.deltaTime * eyeSpeed * 8);
-                transform.rotation = Quaternion.Lerp(transform.rotation, eyeRotation1, Time.deltaTime * eyeSpeed * 4);
+                //transform.position = Vector3.Lerp(transform.position, eyePositonAboveGoal, Time.deltaTime * eyeSpeed * 8);
+                //transform.rotation = Quaternion.Lerp(transform.rotation, eyeRotation1, Time.deltaTime * eyeSpeed * 4);
+                //transform.LookAt(goalBlock.transform);
+                Vector3 lookPos = goalBlock.transform.position - transform.position;
+                Quaternion lookRot = Quaternion.LookRotation(lookPos);
+                transform.rotation = Quaternion.Lerp(transform.rotation, lookRot, 1 * Time.deltaTime);
 
+                transform.position += transform.forward * Time.deltaTime * 3;
+                if (transform.position.y < 2) transform.position = new Vector3(transform.position.x, 2, transform.position.z);
                 //float dx = (goalBlock.transform.position.x - transform.position.x) * Time.deltaTime * 3;
                 //float dz = (goalBlock.transform.position.z - transform.position.z) * Time.deltaTime * 3;
                 //float dy = (transform.position.y - 2) * Time.deltaTime;
