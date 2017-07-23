@@ -63,7 +63,7 @@ public class CameraScript : MonoBehaviour
     private Vector3 eyePosition1, eyePosition2, eyePosition3, eyePositonAboveGoal;
     private Quaternion eyeRotation1, eyeRotation2, eyeRotation3;
     private int eyeMovingTo;
-    private float eyeSpeed = 0.05f;
+    private float eyeSpeed = 0.09f;
 
 
     void Awake()
