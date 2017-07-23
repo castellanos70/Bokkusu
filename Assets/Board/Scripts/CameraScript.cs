@@ -18,6 +18,8 @@ public class CameraScript : MonoBehaviour
     public GameObject boardBlock;
     public GameObject crateBlock;
     public GameObject player1, player2;
+    public GameObject dustBunny;
+
 
 
     private Material wallMat;
@@ -180,8 +182,8 @@ public class CameraScript : MonoBehaviour
 
 
                 grid[x, z] = new Cell(startMap[x, z], block, mat);
-                //int audioIndex = pentatonic[Random.Range(0, 5)] + (Random.Range(0, (harpAudio.Length / 12) - 1) * 12);
-                int audioIndex = (x * gridWidth) / harpAudio.Length;
+                int audioIndex = pentatonic[Random.Range(0, 5)] + (Random.Range(0, (harpAudio.Length / 12) - 1) * 12);
+                //int audioIndex = (x * gridWidth) / harpAudio.Length;
                 grid[x, z].setAudioClip(harpAudio[audioIndex]);
 
                 if (startMap[x, z] == Element.GOAL)
@@ -286,7 +288,12 @@ public class CameraScript : MonoBehaviour
         goalBlock.transform.Rotate(Vector3.up * Time.deltaTime*40);
         backgroundPlane.transform.Rotate(Vector3.up * Time.deltaTime*.5f);
 
-        wallTextureShift += Time.deltaTime * wallMorphScale;
+        float goalAngle = Mathf.PI*goalBlock.transform.rotation.eulerAngles.y/180f;
+        //float goalScale = Mathf.Sin(2 * goalAngle) * 0.0125f;
+        float goalScale = 1 - 0.2f* Mathf.Abs(Mathf.Sin(2 * goalAngle));
+        goalBlock.transform.localScale = new Vector3(goalScale, goalScale, goalScale);
+
+       wallTextureShift += Time.deltaTime * wallMorphScale;
         DrawUtilities.generateWallTexture(wallMat, wallTextureSize, wallTextureShift);
 
         floorTextureShift += Time.deltaTime * floorMorphScale;
@@ -463,7 +470,7 @@ public class CameraScript : MonoBehaviour
 
         if ((toX != gridX) || (toZ != gridZ))
         {
-            grid[gridX, gridZ].playAudioClip(audioPriority);
+            //grid[gridX, gridZ].playAudioClip(audioPriority);
             float speed = script.getSpeedMagnitude();
             bool smashCrate = false;
             if (speed >= CrateScript.getStrength()) smashCrate = true;
