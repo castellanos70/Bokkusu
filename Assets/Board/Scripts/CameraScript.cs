@@ -18,8 +18,9 @@ public class CameraScript : MonoBehaviour
     public GameObject boardBlock;
     public GameObject crateBlock;
     public GameObject player1, player2;
-    public GameObject dustBunny;
+    public GameObject dustBunny1, dustBunny2;
 
+    private bool dustBunnyIsActive;
 
 
     private Material wallMat;
@@ -101,7 +102,11 @@ public class CameraScript : MonoBehaviour
         floorTextureShift = Random.value * 100;
         DrawUtilities.generateFloorTexture(floorMat, floorTextureSize, floorTextureShift);
 
-    }
+
+        dustBunny1.SetActive(false);
+        dustBunny2.SetActive(false);
+        dustBunnyIsActive = false;
+}
 
 
 
@@ -288,10 +293,10 @@ public class CameraScript : MonoBehaviour
         goalBlock.transform.Rotate(Vector3.up * Time.deltaTime*40);
         backgroundPlane.transform.Rotate(Vector3.up * Time.deltaTime*.5f);
 
-        float goalAngle = Mathf.PI*goalBlock.transform.rotation.eulerAngles.y/180f;
+        //float goalAngle = Mathf.PI*goalBlock.transform.rotation.eulerAngles.y/180f;
         //float goalScale = Mathf.Sin(2 * goalAngle) * 0.0125f;
-        float goalScale = 1 - 0.2f* Mathf.Abs(Mathf.Sin(2 * goalAngle));
-        goalBlock.transform.localScale = new Vector3(goalScale, goalScale, goalScale);
+        //float goalScale = 1 - 0.2f* Mathf.Abs(Mathf.Sin(2 * goalAngle));
+        //goalBlock.transform.localScale = new Vector3(goalScale, goalScale, goalScale);
 
        wallTextureShift += Time.deltaTime * wallMorphScale;
         DrawUtilities.generateWallTexture(wallMat, wallTextureSize, wallTextureShift);
@@ -406,6 +411,43 @@ public class CameraScript : MonoBehaviour
                 }
             }
             if (doorToggleSeconds == 0f) doorToggleSeconds = -1f;
+
+
+
+
+            //Dustbunny
+            if (!dustBunnyIsActive && Random.value < 0.005)
+            {
+                float dustBunnyY = gridWidth + gridHeight;
+                float dustBunnyX = goalBlock.transform.position.x;
+                float dustBunnyZ = goalBlock.transform.position.z;
+                dustBunny1.transform.position = new Vector3(dustBunnyX, dustBunnyY, dustBunnyZ);
+                dustBunny2.transform.position = new Vector3(dustBunnyX, dustBunnyY, dustBunnyZ);
+
+                dustBunny1.SetActive(true);
+                dustBunny2.SetActive(true);
+                dustBunnyIsActive = true;
+                Debug.Log(" dustBunnyY=" + dustBunnyY);
+            }
+            if (dustBunnyIsActive)
+            {
+                float dustBunnyY = dustBunny1.transform.position.y - Time.deltaTime*3;
+                if (dustBunnyY < 1)
+                {
+                    dustBunny1.SetActive(false);
+                    dustBunny2.SetActive(false);
+                    dustBunnyIsActive = false;
+                }
+                else
+                {
+                    float dustBunnyX1 = (dustBunnyY - 1) / 3 * Mathf.Cos(Time.time) + goalBlock.transform.position.x;
+                    float dustBunnyZ1 = (dustBunnyY - 1) / 3 * Mathf.Sin(Time.time) + goalBlock.transform.position.z;
+                    float dustBunnyX2 = (dustBunnyY - 1) / 3 * Mathf.Cos(Time.time+Mathf.PI) + goalBlock.transform.position.x;
+                    float dustBunnyZ2 = (dustBunnyY - 1) / 3 * Mathf.Sin(Time.time + Mathf.PI) + goalBlock.transform.position.z;
+                    dustBunny1.transform.position = new Vector3(dustBunnyX1, dustBunnyY, dustBunnyZ1);
+                    dustBunny2.transform.position = new Vector3(dustBunnyX2, dustBunnyY, dustBunnyZ2);
+                }
+            }
         }
 
 
