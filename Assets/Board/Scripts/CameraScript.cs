@@ -180,7 +180,8 @@ public class CameraScript : MonoBehaviour
 
 
                 grid[x, z] = new Cell(startMap[x, z], block, mat);
-                int audioIndex = pentatonic[Random.Range(0, 5)] + (Random.Range(0, (harpAudio.Length / 12) - 1) * 12);
+                //int audioIndex = pentatonic[Random.Range(0, 5)] + (Random.Range(0, (harpAudio.Length / 12) - 1) * 12);
+                int audioIndex = (x * gridWidth) / harpAudio.Length;
                 grid[x, z].setAudioClip(harpAudio[audioIndex]);
 
                 if (startMap[x, z] == Element.GOAL)
@@ -403,7 +404,7 @@ public class CameraScript : MonoBehaviour
 
         else if (gameState == GameState.WON)
         {
-            if (Vector2.Distance(transform.position, eyePositonAboveGoal) > 3)
+            if (Vector2.Distance(transform.position, eyePositonAboveGoal) > 4)
             {
                 //winTime -= Time.deltaTime;
                 //transform.position = Vector3.Lerp(transform.position, eyePositonAboveGoal, Time.deltaTime * eyeSpeed * 8);
@@ -462,6 +463,7 @@ public class CameraScript : MonoBehaviour
 
         if ((toX != gridX) || (toZ != gridZ))
         {
+            grid[gridX, gridZ].playAudioClip(audioPriority);
             float speed = script.getSpeedMagnitude();
             bool smashCrate = false;
             if (speed >= CrateScript.getStrength()) smashCrate = true;

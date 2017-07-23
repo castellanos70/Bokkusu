@@ -208,7 +208,7 @@ public class PlayerScript : MonoBehaviour
             if (cameraScript.enterIfPossible(toX, toZ, true, getSpeedMagnitude()))
             {
                 moving = true;
-                playerAudio.Play();
+                //playerAudio.Play();
             }
             else
             {
@@ -219,7 +219,7 @@ public class PlayerScript : MonoBehaviour
         if (moving)
         {
             float speed = speedX + speedZ;
-            playerAudio.pitch = 0.5f + floatToUnit(speed) * (speed / (speedMax / 2.5f));
+            //playerAudio.pitch = 0.5f + floatToUnit(speed) * (speed / (speedMax / 2.5f));
         }
     }
 
