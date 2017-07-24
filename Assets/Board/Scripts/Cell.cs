@@ -38,9 +38,10 @@ public class Cell
 
         bottomY = 0f;
         if (type == CameraScript.Element.WALL) bottomY = 1f;
+        else if (type == CameraScript.Element.DOOR_A) baseObj.transform.localScale = new Vector3(0.76f, 0.9f, 0.76f);
         else if (type == CameraScript.Element.DOOR_B) bottomY = 1f;
 
-       audio = baseObj.AddComponent<AudioSource>();
+        audio = baseObj.AddComponent<AudioSource>();
 
         fallSpeed = 8 + Random.value * 15;
     }
@@ -92,6 +93,7 @@ public class Cell
             if (crateObj != null) return;
 
             baseObj.transform.localScale = new Vector3(1f, 1f, 1f);
+            baseObj.transform.rotation = Quaternion.identity;
             doorRaising = true;
             doorIsDown = false;
         }
@@ -111,12 +113,13 @@ public class Cell
 
 
 
-    public void updateDoor(float doorToggleSeconds, float doorDownScale)
+    public void updateDoor(float doorToggleSeconds, float doorDownAngle)
     {
         if (doorIsDown)
         {
-            baseObj.transform.localScale = new Vector3(doorDownScale, 1f, doorDownScale);
+            baseObj.transform.rotation = Quaternion.Euler(0, 180f*doorDownAngle/Mathf.PI, 0);
         }
+
 
         if (!doorLowering && !doorRaising) return;
 
@@ -129,6 +132,7 @@ public class Cell
             if (doorLowering)
             {
                 doorIsDown = true;
+                baseObj.transform.localScale = new Vector3(0.76f, 0.9f, 0.76f);
             }
             
             doorLowering = false;

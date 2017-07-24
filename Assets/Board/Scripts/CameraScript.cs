@@ -20,18 +20,18 @@ public class CameraScript : MonoBehaviour
     public GameObject player1, player2;
     public GameObject dustBunny1, dustBunny2;
 
-    private bool dustBunnyIsActive;
+    private int dustBunnyPhase;
 
 
     private Material wallMat;
+    private NoiseTexture wallScript;
     private int wallTextureSize = 128;
     private float wallMorphScale = 0.05f;
-    private float wallTextureShift;
 
     private Material floorMat;
+    private NoiseTexture floorScript;
     private int floorTextureSize = 128;
-    private float floorMorphScale = 0.08f;
-    private float floorTextureShift;
+    private float floorMorphScale = 0.1f;
    
 
     public GameObject goalBlock;
@@ -43,7 +43,7 @@ public class CameraScript : MonoBehaviour
     private Material doorMat;
     private int doorTextureSize = 128;
     private float doorUpdateTime;
-    private float doorDownScale, doorDownDeltaScale;
+    private float doorDownAngle;
 
 
     public enum GameState { INTRO, INITIALIZING, PLAYING, WON };
@@ -90,29 +90,16 @@ public class CameraScript : MonoBehaviour
         doorMat.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
 
         wallMat = new Material(Shader.Find("Standard"));
-        wallMat.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
-        wallMat.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
-        wallTextureShift = Random.value * 100;
-        DrawUtilities.generateWallTexture(wallMat, wallTextureSize, wallTextureShift);
-
+        wallScript = new NoiseTexture(wallMat, wallTextureSize, 0.02f, wallMorphScale, 1);
 
         floorMat = new Material(Shader.Find("Standard"));
-        floorMat.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
-        floorMat.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
-        floorTextureShift = Random.value * 100;
-        DrawUtilities.generateFloorTexture(floorMat, floorTextureSize, floorTextureShift);
-
-
-        dustBunny1.SetActive(false);
-        dustBunny2.SetActive(false);
-        dustBunnyIsActive = false;
-}
+        floorScript = new NoiseTexture(floorMat, floorTextureSize, 0.03f, floorMorphScale, 0);
+    }
 
 
 
     void Start()
     {
-
         backgroundScript = GetComponent<Background_AbstractScript>();
         Texture2D texture = backgroundScript.create();
         Renderer renderer = backgroundPlane.GetComponent<Renderer>();
@@ -132,10 +119,13 @@ public class CameraScript : MonoBehaviour
         gameState = GameState.INITIALIZING;
         doorUpdateTime = 0;
 
+        dustBunny1.SetActive(false);
+        dustBunny2.SetActive(false);
+        dustBunnyPhase = 0;
+
         audioPriority = 255;
         doorToggleSeconds = -1f;
-        doorDownScale = 1f;
-        doorDownDeltaScale = 0.1f;
+        doorDownAngle = 0f;
 
 
         curLevel = level;
@@ -293,16 +283,10 @@ public class CameraScript : MonoBehaviour
         goalBlock.transform.Rotate(Vector3.up * Time.deltaTime*40);
         backgroundPlane.transform.Rotate(Vector3.up * Time.deltaTime*.5f);
 
-        //float goalAngle = Mathf.PI*goalBlock.transform.rotation.eulerAngles.y/180f;
-        //float goalScale = Mathf.Sin(2 * goalAngle) * 0.0125f;
-        //float goalScale = 1 - 0.2f* Mathf.Abs(Mathf.Sin(2 * goalAngle));
-        //goalBlock.transform.localScale = new Vector3(goalScale, goalScale, goalScale);
+        wallScript.next();
+        floorScript.next();
 
-       wallTextureShift += Time.deltaTime * wallMorphScale;
-        DrawUtilities.generateWallTexture(wallMat, wallTextureSize, wallTextureShift);
-
-        floorTextureShift += Time.deltaTime * floorMorphScale;
-        DrawUtilities.generateFloorTexture(floorMat, floorTextureSize, floorTextureShift);
+        
 
         if (Time.time > doorUpdateTime)
         {
@@ -324,8 +308,10 @@ public class CameraScript : MonoBehaviour
 
                     float fallSpeed = grid[x, z].getFallSpeed();
 
-                    if (fallSpeed == 0f) {
-                        if (!grid[x, z].hasPlayedAudio()) {
+                    if (fallSpeed == 0f)
+                    {
+                        if (!grid[x, z].hasPlayedAudio())
+                        {
                             grid[x, z].playAudioClip(audioPriority);
                             audioPriority -= audioDecrement;
                         }
@@ -370,20 +356,9 @@ public class CameraScript : MonoBehaviour
                 if (Vector3.Distance(transform.position, eyePosition3) < 1.0f) eyeMovingTo = 1;
             }
 
+            doorDownAngle = doorDownAngle - 0.2f * Time.deltaTime;
+            //float doorScale = 1 - 0.2f* Mathf.Abs(Mathf.Sin(2 * doorDownAngle));
 
-
-
-            doorDownScale = doorDownScale + doorDownDeltaScale * Time.deltaTime;
-            if (doorDownDeltaScale > 0 && doorDownScale > 1f)
-            {
-                doorDownScale = 1f;
-                doorDownDeltaScale = -0.1f;
-            }
-            else if (doorDownDeltaScale < 0 && doorDownScale < 0.4f)
-            {
-                doorDownScale = 0.4f;
-                doorDownDeltaScale = 0.1f;
-            }
 
             if (doorToggleSeconds >= 0f)
             {
@@ -391,7 +366,7 @@ public class CameraScript : MonoBehaviour
                 if (doorToggleSeconds < 0f)
                 {
                     doorToggleSeconds = 0f;
-                    doorDownScale = 1f;
+                    doorDownAngle = 0f;
                 }
             }
 
@@ -406,7 +381,7 @@ public class CameraScript : MonoBehaviour
                     Element type = grid[x, z].getType();
                     if (type == Element.DOOR_A || type == Element.DOOR_B)
                     {
-                        grid[x, z].updateDoor(doorToggleSeconds, doorDownScale);
+                        grid[x, z].updateDoor(doorToggleSeconds, doorDownAngle);
                     }
                 }
             }
@@ -416,40 +391,33 @@ public class CameraScript : MonoBehaviour
 
 
             //Dustbunny
-            if (!dustBunnyIsActive && Random.value < 0.005)
+            if ((dustBunnyPhase == 0) && (Random.value < 0.005))
             {
-                float dustBunnyY = gridWidth + gridHeight;
+                float dustBunnyY1 = gridWidth + gridHeight - Random.value * 4f;
+                float dustBunnyY2 = gridWidth + gridHeight - Random.value * 4f;
                 float dustBunnyX = goalBlock.transform.position.x;
                 float dustBunnyZ = goalBlock.transform.position.z;
-                dustBunny1.transform.position = new Vector3(dustBunnyX, dustBunnyY, dustBunnyZ);
-                dustBunny2.transform.position = new Vector3(dustBunnyX, dustBunnyY, dustBunnyZ);
+                dustBunny1.transform.position = new Vector3(dustBunnyX, dustBunnyY1, dustBunnyZ);
+                dustBunny2.transform.position = new Vector3(dustBunnyX, dustBunnyY2, dustBunnyZ);
 
+                dustBunny1.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                dustBunny2.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
                 dustBunny1.SetActive(true);
                 dustBunny2.SetActive(true);
-                dustBunnyIsActive = true;
-                Debug.Log(" dustBunnyY=" + dustBunnyY);
+                dustBunnyPhase = 1;
+                //Debug.Log(" dustBunnyY=" + dustBunnyY);
             }
-            if (dustBunnyIsActive)
+            else if (dustBunnyPhase == 1)
             {
-                float dustBunnyY = dustBunny1.transform.position.y - Time.deltaTime*3;
-                if (dustBunnyY < 1)
+                updateDustBunny(dustBunny1, 0f);
+                updateDustBunny(dustBunny2, Mathf.PI);
+
+                if (!dustBunny1.activeSelf && !dustBunny2.activeSelf)
                 {
-                    dustBunny1.SetActive(false);
-                    dustBunny2.SetActive(false);
-                    dustBunnyIsActive = false;
-                }
-                else
-                {
-                    float dustBunnyX1 = (dustBunnyY - 1) / 3 * Mathf.Cos(Time.time) + goalBlock.transform.position.x;
-                    float dustBunnyZ1 = (dustBunnyY - 1) / 3 * Mathf.Sin(Time.time) + goalBlock.transform.position.z;
-                    float dustBunnyX2 = (dustBunnyY - 1) / 3 * Mathf.Cos(Time.time+Mathf.PI) + goalBlock.transform.position.x;
-                    float dustBunnyZ2 = (dustBunnyY - 1) / 3 * Mathf.Sin(Time.time + Mathf.PI) + goalBlock.transform.position.z;
-                    dustBunny1.transform.position = new Vector3(dustBunnyX1, dustBunnyY, dustBunnyZ1);
-                    dustBunny2.transform.position = new Vector3(dustBunnyX2, dustBunnyY, dustBunnyZ2);
+                    dustBunnyPhase = 0;
                 }
             }
         }
-
 
         else if (gameState == GameState.WON)
         {
@@ -478,6 +446,33 @@ public class CameraScript : MonoBehaviour
 
                 spawnBoard(curLevel);
             }
+        }
+    }
+
+
+
+    private void updateDustBunny(GameObject dustBunny, float phase)
+    {
+        if (dustBunny.activeSelf)
+        {
+            float dustBunnyY = dustBunny.transform.position.y - Time.deltaTime * 3;
+            if (dustBunnyY < 1)
+            {
+                dustBunnyY = 1;
+                float scale = dustBunny.transform.localScale.x;
+                scale = scale - Time.deltaTime / 10;
+                if (scale < 0)
+                {
+                    dustBunny.SetActive(false);
+                }
+                else
+                {
+                    dustBunny.transform.localScale = new Vector3(scale, scale, scale);
+                }
+            }
+            float dustBunnyX = (dustBunnyY - 1) / 3 * Mathf.Cos(Time.time+phase) + goalBlock.transform.position.x;
+            float dustBunnyZ = (dustBunnyY - 1) / 3 * Mathf.Sin(Time.time + phase) + goalBlock.transform.position.z;
+            dustBunny.transform.position = new Vector3(dustBunnyX, dustBunnyY, dustBunnyZ);
         }
     }
 

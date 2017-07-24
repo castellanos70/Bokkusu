@@ -14,8 +14,6 @@ public class PlayerScript : MonoBehaviour
     public int acceleration;
     public GameObject spawnSpotObj;
 
-    private float spawnSpotDeltaTransparency;
-
     //private Material playerMaterial;
     private bool moving = false;
     private float speedX = 0;
@@ -117,7 +115,6 @@ public class PlayerScript : MonoBehaviour
         speedX = 0;
         speedZ = 0;
 
-        spawnSpotDeltaTransparency = -1;
         //spawnSpotObj.transform.position =  new Vector3(transform.position.x, 0.51f, transform.position.z);
         spawnSpotObj.transform.position = new Vector3(transform.position.x, 1f, transform.position.z);
 

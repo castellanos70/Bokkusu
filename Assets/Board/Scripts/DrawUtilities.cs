@@ -134,33 +134,22 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
 
 
 
+    /*
 
 
-
-    public static void generateWallTexture(Material material, int pixelSize, float textureShift)
+    private static void generateWallTexture(Material material, int pixelSize, float textureShift)
     {
         material.SetFloat("_Glossiness", 0.0f);
         material.SetFloat("_Metallic", 0.0f);
         Texture2D texture = new Texture2D(pixelSize, pixelSize, TextureFormat.ARGB32, false);
 
 
-        
-
-
-        //Color[] palette = {
-        //   new Color(0.000f, 0.000f, 0.000f),
-        //   new Color(0.118f, 0.118f, 0.118f),
-        //    //new Color(0.243f, 0.243f, 0.259f),
-        //    new Color(0.188f, 0.420f, 0.290f)
-        // };
+      
 
         Color[] palette = {
            new Color(0.000f, 0.000f, 0.000f),
-          // new Color(0.349f, 0.173f, 0.000f),
-          // new Color(0.592f, 0.259f, 0.063f)
            new Color(0.190f, 0.190f, 0.231f),
            new Color(0.380f, 0.380f, 0.463f)
-           //new Color(1.000f, 0.459f, 0.094f)
         };
 
 
@@ -214,7 +203,7 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
 
 
 
-    public static void generateFloorTexture(Material material, int pixelSize, float textureShift)
+    private static void generateFloorTexture(Material material, int pixelSize, float textureShift)
     {
         material.SetFloat("_Glossiness", 0.0f);
         material.SetFloat("_Metallic", 0.0f);
@@ -241,7 +230,7 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
                     float yCoord = textureShift + y * noiseScale;
                     float noise = Mathf.PerlinNoise(xCoord, yCoord);
 
-                    float val = (1 + Mathf.Sin((x + noise / 4) * 25)) * 0.501960784f;
+                    float val = (1 + Mathf.Sin((x + noise / 2) * 50)) * 0.501960784f;
 
 
                     int idx = 0;
@@ -257,4 +246,6 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
         texture.Apply();
         material.mainTexture = texture;
     }
+
+    */
 }
