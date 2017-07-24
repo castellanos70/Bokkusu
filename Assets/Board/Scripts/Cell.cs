@@ -38,7 +38,7 @@ public class Cell
 
         bottomY = 0f;
         if (type == CameraScript.Element.WALL) bottomY = 1f;
-        else if (type == CameraScript.Element.DOOR_A) baseObj.transform.localScale = new Vector3(0.76f, 0.9f, 0.76f);
+        else if (type == CameraScript.Element.DOOR_A) bottomY = -0.05f;//baseObj.transform.localScale = new Vector3(0.76f, 0.9f, 0.76f);
         else if (type == CameraScript.Element.DOOR_B) bottomY = 1f;
 
         audio = baseObj.AddComponent<AudioSource>();
@@ -46,15 +46,18 @@ public class Cell
         fallSpeed = 8 + Random.value * 15;
     }
 		
-	public void setAudioClip(AudioClip audioClip){
+	public void setAudioClip(AudioClip audioClip)
+    {
 		this.audioClip = audioClip;
 	}
 
-	public bool hasPlayedAudio(){
+	public bool hasPlayedAudio()
+    {
 		return playedSound;
 	}
 
-	public void playAudioClip(float priority){
+	public void playAudioClip(float priority)
+    {
 		audio.priority = (int)priority;
 		audio.PlayOneShot(audioClip, 0.1f);
 		playedSound = true;
@@ -92,7 +95,8 @@ public class Cell
         {
             if (crateObj != null) return;
 
-            baseObj.transform.localScale = new Vector3(1f, 1f, 1f);
+            //baseObj.transform.localScale = new Vector3(1f, 1f, 1f);
+            baseObj.transform.position = new Vector3(x, 0f, z);
             baseObj.transform.rotation = Quaternion.identity;
             doorRaising = true;
             doorIsDown = false;
@@ -131,8 +135,9 @@ public class Cell
         {
             if (doorLowering)
             {
+                yy = - 0.05f;
                 doorIsDown = true;
-                baseObj.transform.localScale = new Vector3(0.76f, 0.9f, 0.76f);
+                //baseObj.transform.localScale = new Vector3(0.76f, 0.9f, 0.76f);
             }
             
             doorLowering = false;

@@ -106,8 +106,8 @@ public class CameraScript : MonoBehaviour
         renderer.material.mainTexture = texture;
 
         doorKaleidoscope = new Kaleidoscope(doorMat, doorTextureSize);
-        
 
+        Cursor.visible = false;
         spawnBoard(0);
     }
 
