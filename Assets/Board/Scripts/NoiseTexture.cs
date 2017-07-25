@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NoiseTexture //: MonoBehaviour
+public class NoiseTexture
 {
     private Texture2D texture;
     private int pixelSize;
@@ -15,7 +15,6 @@ public class NoiseTexture //: MonoBehaviour
     private float[] colorThreshold;
 
 
-    //float noiseScale = 0.03f;
     public NoiseTexture(Material material, int pixelSize, float noise, float morphRate, int paletteIdx)
     {
         this.pixelSize = pixelSize;
@@ -94,6 +93,5 @@ public class NoiseTexture //: MonoBehaviour
             }
         }
         texture.Apply();
-        //material.mainTexture = texture;
     }
 }

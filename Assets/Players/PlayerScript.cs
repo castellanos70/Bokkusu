@@ -14,7 +14,6 @@ public class PlayerScript : MonoBehaviour
     public int acceleration;
     public GameObject spawnSpotObj;
 
-    //private Material playerMaterial;
     private bool moving = false;
     private float speedX = 0;
     private float speedZ = 0;
@@ -38,11 +37,12 @@ public class PlayerScript : MonoBehaviour
     
     private CameraScript.Element myPlayerEnum;
     private CameraScript cameraScript;
-    //private PlayerScript otherPlayerScript;
     private int libertyCount;
 
     private KeyCode[] keycode = new KeyCode[5];
     private String axisHorizontal, axisVertical;
+
+    private Voronoi voronoiScript;
 
     void Start()
     {
@@ -87,6 +87,32 @@ public class PlayerScript : MonoBehaviour
             timingOffset = 50;
         }
         libertyCount = 4;
+
+
+        Material playerMat = new Material(Shader.Find("Standard"));
+        if (playerNumber == 1) voronoiScript = new Voronoi(playerMat, 256, 240, 0, 21);
+        else voronoiScript = new Voronoi(playerMat, 256, 218, 216, 29);
+        Renderer renderer = GetComponent<Renderer>();
+        renderer.material = playerMat;
+
+        Shader spawnSpotShader = Shader.Find("Transparent/Diffuse");
+        Material spawnSpotMat = new Material(spawnSpotShader);
+        spawnSpotMat.shader = spawnSpotShader;
+
+        spawnSpotMat.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
+        spawnSpotMat.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
+        spawnSpotMat.SetFloat("_Glossiness", 0.0f);
+        spawnSpotMat.SetFloat("_Metallic", 0.0f);
+
+
+        spawnSpotMat.mainTexture = playerMat.mainTexture;
+        spawnSpotMat.color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+
+        Renderer spawnRenderer = spawnSpotObj.GetComponent<Renderer>();
+        spawnRenderer.material = spawnSpotMat;
+
+        
+
     }
 
 
@@ -124,6 +150,8 @@ public class PlayerScript : MonoBehaviour
     // Update is called once per main game loop iteration
     void Update()
     {
+
+
         if (cameraScript.getGameState() == CameraScript.GameState.WON && iHaveWon)
         {
             transform.localScale *= 0.995f;
@@ -199,6 +227,9 @@ public class PlayerScript : MonoBehaviour
         speedZ = toSpeedBounds(speedZ);
         //Debug.Log("Player["+playerNumber+"] speed=(" + tmpx+", "+tmpz+") === > (" + speedX+", "+speedZ+")");
 
+        if (playerIsPressingMove) voronoiScript.next();
+
+
 
         if ((!moving) && playerIsPressingMove)
         {
@@ -209,6 +240,7 @@ public class PlayerScript : MonoBehaviour
             }
             else
             {
+                
                 speedX = 0;
                 speedZ = 0;
             }

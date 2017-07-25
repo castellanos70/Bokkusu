@@ -90,6 +90,7 @@
     <Compile Include="Assets\Board\Scripts\MapLoader.cs" />
     <Compile Include="Assets\Board\Scripts\NoiseTexture.cs" />
     <Compile Include="Assets\Board\Scripts\TextureDrawer.cs" />
+    <Compile Include="Assets\Board\Scripts\Voronoi.cs" />
     <Compile Include="Assets\Players\PlayerScript.cs" />
   </ItemGroup>
   <ItemGroup>

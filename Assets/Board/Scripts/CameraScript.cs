@@ -45,6 +45,9 @@ public class CameraScript : MonoBehaviour
     private float doorUpdateTime;
     private float doorDownAngle;
 
+    //private Voronoi voronoiScript1, voronoiScript2;
+    //private Material playerMat1, playerMat2;
+
 
     public enum GameState { INTRO, INITIALIZING, PLAYING, WON };
     private GameState gameState;
@@ -81,8 +84,12 @@ public class CameraScript : MonoBehaviour
 
         boardBlock.SetActive(false);
         crateBlock.SetActive(false);
+    }
 
 
+
+    void Start()
+    {
         doorMat = new Material(Shader.Find("Standard"));
         doorMat.SetFloat("_Glossiness", 0.0f);
         doorMat.SetFloat("_Metallic", 0.0f);
@@ -94,12 +101,23 @@ public class CameraScript : MonoBehaviour
 
         floorMat = new Material(Shader.Find("Standard"));
         floorScript = new NoiseTexture(floorMat, floorTextureSize, 0.03f, floorMorphScale, 0);
-    }
+
+        //Material playerMat1 = new Material(Shader.Find("Standard"));
+        //voronoiScript1 = new Voronoi(playerMat1, 256, 178, 0, 21);
+        //Renderer renderer1 = player1.GetComponent<Renderer>();
+        //renderer1.material = playerMat1;
+
+        //Material playerMat2 = new Material(Shader.Find("Standard"));
+        //voronoiScript2 = new Voronoi(playerMat2, 256, 218, 216, 29);
+        //Renderer renderer2 = player2.GetComponent<Renderer>();
+        //renderer2.material = playerMat2;
 
 
 
-    void Start()
-    {
+
+
+
+
         backgroundScript = GetComponent<Background_AbstractScript>();
         Texture2D texture = backgroundScript.create();
         Renderer renderer = backgroundPlane.GetComponent<Renderer>();
@@ -130,9 +148,6 @@ public class CameraScript : MonoBehaviour
 
         curLevel = level;
         destroyOldBoard();
-
-
-
 
         gameMap = gameMapList[level];
         startMap = gameMap.getMap();
@@ -288,6 +303,7 @@ public class CameraScript : MonoBehaviour
 
         
 
+
         if (Time.time > doorUpdateTime)
         {
             doorUpdateTime = Time.time + 0.1f;
@@ -356,7 +372,7 @@ public class CameraScript : MonoBehaviour
                 if (Vector3.Distance(transform.position, eyePosition3) < 1.0f) eyeMovingTo = 1;
             }
 
-            doorDownAngle = doorDownAngle - 0.2f * Time.deltaTime;
+            doorDownAngle = doorDownAngle - 0.1f * Time.deltaTime;
             //float doorScale = 1 - 0.2f* Mathf.Abs(Mathf.Sin(2 * doorDownAngle));
 
 
@@ -391,7 +407,7 @@ public class CameraScript : MonoBehaviour
 
 
             //Dustbunny
-            if ((dustBunnyPhase == 0) && (Random.value < 0.005))
+            if ((dustBunnyPhase == 0) && (Random.value < 0.001))
             {
                 float dustBunnyY1 = gridWidth + gridHeight - Random.value * 4f;
                 float dustBunnyY2 = gridWidth + gridHeight - Random.value * 4f;
