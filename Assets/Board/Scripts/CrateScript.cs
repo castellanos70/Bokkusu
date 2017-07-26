@@ -7,8 +7,7 @@ public class CrateScript : MonoBehaviour
 
     private static int strength = 15;
     public ParticleSystem crateParticles;
-    public ParticleSystem player1Particles;
-    public ParticleSystem player2Particles;
+    public ParticleSystem spawnParticles;
     public AudioSource crateAudio;
     public Material crateMaterial;
 
@@ -16,10 +15,13 @@ public class CrateScript : MonoBehaviour
     public AudioClip detonateClipHard;
     public AudioClip[] spawnClip;
 
-    public void spawnAnimation(bool player1)
+    public void spawnAnimation(GameObject player)
     {
-        if (player1) player1Particles.Emit(10);
-        else player2Particles.Emit(10);
+        Renderer renderer = player.GetComponent<Renderer>();
+        Texture texture = renderer.material.mainTexture;
+
+        spawnParticles.GetComponent<Renderer>().material.mainTexture = texture;
+        spawnParticles.Emit(10);
 
         crateAudio.clip = spawnClip[Random.Range(0, spawnClip.Length)];
         crateAudio.Play();
@@ -43,11 +45,6 @@ public class CrateScript : MonoBehaviour
     }
 
 
-
-    // Update is called once per frame
-    //void Update ()
-    //{
-    //}
 
 
     public static int getStrength()

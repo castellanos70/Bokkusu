@@ -42,6 +42,7 @@ public class PlayerScript : MonoBehaviour
     private KeyCode[] keycode = new KeyCode[5];
     private String axisHorizontal, axisVertical;
 
+    private Material playerMat;
     private Voronoi voronoiScript;
 
     void Start()
@@ -60,8 +61,6 @@ public class PlayerScript : MonoBehaviour
 
 
         arrow.SetActive(false);
-        //playerMaterial = gameObject.GetComponent<Renderer>().material;
-
         
         if (playerNumber == 1)
         {
@@ -89,11 +88,11 @@ public class PlayerScript : MonoBehaviour
         libertyCount = 4;
 
 
-        Material playerMat = new Material(Shader.Find("Standard"));
+        playerMat = gameObject.GetComponent<Renderer>().material;
         if (playerNumber == 1) voronoiScript = new Voronoi(playerMat, 256, 240, 0, 21);
         else voronoiScript = new Voronoi(playerMat, 256, 218, 216, 29);
-        Renderer renderer = GetComponent<Renderer>();
-        renderer.material = playerMat;
+        //Renderer renderer = GetComponent<Renderer>();
+        //renderer.material = playerMat;
 
         //Renderer spawnRenderer = spawnSpotObj.GetComponent<Renderer>();
         //Shader spawnSpotShader = Shader.Find("Transparent/Diffuse");

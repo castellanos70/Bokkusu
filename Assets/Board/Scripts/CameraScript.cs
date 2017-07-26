@@ -581,8 +581,7 @@ public class CameraScript : MonoBehaviour
         crateClone.SetActive(true);
         grid[x, z].addCrate(crateClone);
 
-        if (player == player1) crateClone.GetComponent<CrateScript>().spawnAnimation(true);
-        else crateClone.GetComponent<CrateScript>().spawnAnimation(false);
+        crateClone.GetComponent<CrateScript>().spawnAnimation(player);
     }
 
     public void setGameState(GameState state)
