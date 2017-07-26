@@ -166,27 +166,6 @@ public class PlayerScript : MonoBehaviour
             updateSpawnCrate();
             updateSpeed();
             updateArrows();
-
-            /*
-            Color color = spawnSpotObj.GetComponent<Renderer>().material.color;
-            
-            color.a = color.a + spawnSpotDeltaTransparency*Time.deltaTime;
-            if (color.a < 0)
-            {
-                color.a = 0;
-                spawnSpotDeltaTransparency = 1;
-            }
-            if (color.a > 1)
-            {
-                color.a = 1;
-                spawnSpotDeltaTransparency = -1;
-            }
-            Vector3 scale = spawnSpotObj.transform.localScale;
-            scale.x = 0.1f + 0.9f * color.a;
-            scale.z = scale.x;
-            spawnSpotObj.transform.localScale = scale;
-            spawnSpotObj.GetComponent<Renderer>().material.SetColor("_Color", color);
-            */
         }
         updateArrows();
     }
