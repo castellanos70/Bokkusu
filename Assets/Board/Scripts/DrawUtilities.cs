@@ -125,7 +125,7 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
         {
             for (int y = 0; y < pixelSize; y++)
             {
-                texture.SetPixel(x, y, Color.black);
+                texture.SetPixel(x, y, color);
             }
         }
     }

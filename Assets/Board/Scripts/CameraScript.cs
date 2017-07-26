@@ -40,10 +40,10 @@ public class CameraScript : MonoBehaviour
     private Background_AbstractScript backgroundScript;
 
     private Kaleidoscope doorKaleidoscope;
-    private Material doorMat;
+    private Material doorMat1, doorMat2;
     private int doorTextureSize = 128;
     private float doorUpdateTime;
-    private float doorDownAngle;
+    //private float doorDownAngle;
 
     //private Voronoi voronoiScript1, voronoiScript2;
     //private Material playerMat1, playerMat2;
@@ -90,11 +90,10 @@ public class CameraScript : MonoBehaviour
 
     void Start()
     {
-        doorMat = new Material(Shader.Find("Standard"));
-        doorMat.SetFloat("_Glossiness", 0.0f);
-        doorMat.SetFloat("_Metallic", 0.0f);
-        doorMat.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
-        doorMat.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
+        doorMat1 = new Material(Shader.Find("Standard"));
+        doorMat2 = new Material(Shader.Find("Standard"));
+        doorKaleidoscope = new Kaleidoscope(doorMat1, doorMat2, doorTextureSize);
+        Cell.setDoorMat(doorMat1, doorMat2);
 
         wallMat = new Material(Shader.Find("Standard"));
         wallScript = new NoiseTexture(wallMat, wallTextureSize, 0.02f, wallMorphScale, 1);
@@ -123,8 +122,6 @@ public class CameraScript : MonoBehaviour
         Renderer renderer = backgroundPlane.GetComponent<Renderer>();
         renderer.material.mainTexture = texture;
 
-        doorKaleidoscope = new Kaleidoscope(doorMat, doorTextureSize);
-
         Cursor.visible = false;
         spawnBoard(0);
     }
@@ -143,7 +140,7 @@ public class CameraScript : MonoBehaviour
 
         audioPriority = 255;
         doorToggleSeconds = -1f;
-        doorDownAngle = 0f;
+        //doorDownAngle = 0f;
 
 
         curLevel = level;
@@ -181,9 +178,13 @@ public class CameraScript : MonoBehaviour
                     //mat = wallMat[Random.Range(0, wallMat.Length)];
                     mat = wallMat;
                 }
-                else if (startMap[x, z] == CameraScript.Element.DOOR_A || startMap[x, z] == CameraScript.Element.DOOR_B)
+                else if (startMap[x, z] == CameraScript.Element.DOOR_A)
                 {
-                    mat = doorMat;
+                    mat = doorMat1;
+                }
+                else if (startMap[x, z] == CameraScript.Element.DOOR_B)
+                {
+                    mat = doorMat2;
                 }
                 else
                 {
@@ -372,7 +373,7 @@ public class CameraScript : MonoBehaviour
                 if (Vector3.Distance(transform.position, eyePosition3) < 1.0f) eyeMovingTo = 1;
             }
 
-            doorDownAngle = doorDownAngle - 0.1f * Time.deltaTime;
+            //doorDownAngle = doorDownAngle - 0.1f * Time.deltaTime;
             //float doorScale = 1 - 0.2f* Mathf.Abs(Mathf.Sin(2 * doorDownAngle));
 
 
@@ -382,7 +383,7 @@ public class CameraScript : MonoBehaviour
                 if (doorToggleSeconds < 0f)
                 {
                     doorToggleSeconds = 0f;
-                    doorDownAngle = 0f;
+                    //doorDownAngle = 0f;
                 }
             }
 
@@ -397,7 +398,7 @@ public class CameraScript : MonoBehaviour
                     Element type = grid[x, z].getType();
                     if (type == Element.DOOR_A || type == Element.DOOR_B)
                     {
-                        grid[x, z].updateDoor(doorToggleSeconds, doorDownAngle);
+                        grid[x, z].updateDoor(doorToggleSeconds);
                     }
                 }
             }

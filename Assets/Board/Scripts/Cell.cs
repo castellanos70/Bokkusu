@@ -19,6 +19,9 @@ public class Cell
     private AudioSource audio;
     private AudioClip audioClip;
 
+    private static Material doorMat1, doorMat2;
+    
+
     
 
     public Cell(CameraScript.Element element, GameObject block, Material mat)
@@ -28,8 +31,6 @@ public class Cell
         this.x = (int)baseObj.transform.position.x;
         this.z = (int)baseObj.transform.position.z;
 
-        Renderer renderer = baseObj.GetComponent<Renderer>();
-        renderer.material = mat;
 
         if (type == CameraScript.Element.FLOOR || type == CameraScript.Element.WALL)
         {
@@ -38,15 +39,27 @@ public class Cell
 
         bottomY = 0f;
         if (type == CameraScript.Element.WALL) bottomY = 1f;
-        else if (type == CameraScript.Element.DOOR_A) bottomY = -0.05f;//baseObj.transform.localScale = new Vector3(0.76f, 0.9f, 0.76f);
         else if (type == CameraScript.Element.DOOR_B) bottomY = 1f;
+  
+
+        Renderer renderer = baseObj.GetComponent<Renderer>();
+        renderer.material = mat;
+
 
         audio = baseObj.AddComponent<AudioSource>();
 
         fallSpeed = 8 + Random.value * 15;
     }
-		
-	public void setAudioClip(AudioClip audioClip)
+
+
+    public static void setDoorMat(Material mat1, Material mat2)
+    {
+        doorMat1 = mat1;
+        doorMat2 = mat2;
+    }
+
+
+    public void setAudioClip(AudioClip audioClip)
     {
 		this.audioClip = audioClip;
 	}
@@ -100,6 +113,8 @@ public class Cell
             baseObj.transform.rotation = Quaternion.identity;
             doorRaising = true;
             doorIsDown = false;
+            Renderer renderer = baseObj.GetComponent<Renderer>();
+            renderer.material = doorMat2;
         }
 
     }
@@ -117,12 +132,12 @@ public class Cell
 
 
 
-    public void updateDoor(float doorToggleSeconds, float doorDownAngle)
+    public void updateDoor(float doorToggleSeconds)
     {
-        if (doorIsDown)
-        {
-            baseObj.transform.rotation = Quaternion.Euler(0, 180f*doorDownAngle/Mathf.PI, 0);
-        }
+        //if (doorIsDown)
+        //{
+        //    baseObj.transform.rotation = Quaternion.Euler(0, 180f*doorDownAngle/Mathf.PI, 0);
+        //}
 
 
         if (!doorLowering && !doorRaising) return;
@@ -135,9 +150,11 @@ public class Cell
         {
             if (doorLowering)
             {
-                yy = - 0.05f;
+                yy = - 0f;
                 doorIsDown = true;
                 //baseObj.transform.localScale = new Vector3(0.76f, 0.9f, 0.76f);
+                Renderer renderer = baseObj.GetComponent<Renderer>();
+                renderer.material = doorMat1;
             }
             
             doorLowering = false;

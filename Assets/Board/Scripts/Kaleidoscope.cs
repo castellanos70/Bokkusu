@@ -8,7 +8,7 @@ public class Kaleidoscope
     private static int reflectionCount = 8;
     private Vector2[,] triangleList = new Vector2[triangleCount,3];
     private Color[] triangleColor = new Color[triangleCount];
-    private Texture2D texture;
+    private Texture2D texture1, texture2;
     private int pixelSize;
 
     private int morphTriangleIdx;
@@ -30,10 +30,21 @@ public class Kaleidoscope
 
 
 
-    public Kaleidoscope(Material material, int pixelSize)
+    public Kaleidoscope(Material mat1, Material mat2, int pixelSize)
     {
         this.pixelSize = pixelSize;
-        texture = new Texture2D(pixelSize, pixelSize, TextureFormat.ARGB32, false);
+        mat1.SetFloat("_Glossiness", 0.0f);
+        mat1.SetFloat("_Metallic", 0.0f);
+        mat1.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
+        mat1.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
+
+        mat2.SetFloat("_Glossiness", 0.0f);
+        mat2.SetFloat("_Metallic", 0.0f);
+        mat2.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
+        mat2.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
+
+        texture1 = new Texture2D(pixelSize, pixelSize, TextureFormat.ARGB32, false);
+        texture2 = new Texture2D(pixelSize, pixelSize, TextureFormat.ARGB32, false);
 
         for (int n = 0; n < triangleCount; n++)
         {
@@ -55,7 +66,8 @@ public class Kaleidoscope
             triangleColor[n] = palette[Random.Range(0, 6)];
         }
 
-        material.mainTexture = texture;
+        mat1.mainTexture = texture1;
+        mat2.mainTexture = texture2;
 
         setMorphParams();
     }
@@ -82,7 +94,8 @@ public class Kaleidoscope
     public void updateTexture()
     {
 
-        DrawUtilities.setTextureColor(texture, pixelSize, Color.black);
+        DrawUtilities.setTextureColor(texture1, pixelSize, Color.white);
+        DrawUtilities.setTextureColor(texture2, pixelSize, Color.black);
         Vector2[] v = new Vector2[3];
         Vector2[] w = new Vector2[3];
 
@@ -141,11 +154,13 @@ public class Kaleidoscope
             for (int k = 0; k < reflectionCount; k++)
             {
                 kaleidoscopicReflect(v, w, k, pixelSize / 2);
-                DrawUtilities.drawTriangle(texture, triangleColor[n], w);
+                DrawUtilities.drawTriangle(texture1, triangleColor[n], w);
+                DrawUtilities.drawTriangle(texture2, triangleColor[n], w);
             }
         }
-        texture.Apply();
-        
+        texture1.Apply();
+        texture2.Apply();
+
     }
 
 

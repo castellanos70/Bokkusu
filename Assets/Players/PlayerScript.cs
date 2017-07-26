@@ -95,23 +95,19 @@ public class PlayerScript : MonoBehaviour
         Renderer renderer = GetComponent<Renderer>();
         renderer.material = playerMat;
 
-        Shader spawnSpotShader = Shader.Find("Transparent/Diffuse");
-        Material spawnSpotMat = new Material(spawnSpotShader);
-        spawnSpotMat.shader = spawnSpotShader;
+        //Renderer spawnRenderer = spawnSpotObj.GetComponent<Renderer>();
+        //Shader spawnSpotShader = Shader.Find("Transparent/Diffuse");
+        //Material spawnSpotMat = spawnRenderer.material;
+        //spawnSpotMat.shader = spawnSpotShader;
 
-        spawnSpotMat.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
-        spawnSpotMat.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
-        spawnSpotMat.SetFloat("_Glossiness", 0.0f);
-        spawnSpotMat.SetFloat("_Metallic", 0.0f);
+        //spawnSpotMat.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
+        //spawnSpotMat.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
+        //spawnSpotMat.SetFloat("_Glossiness", 0.0f);
+        //spawnSpotMat.SetFloat("_Metallic", 0.0f);
 
 
-        spawnSpotMat.mainTexture = playerMat.mainTexture;
-        spawnSpotMat.color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
-
-        Renderer spawnRenderer = spawnSpotObj.GetComponent<Renderer>();
-        spawnRenderer.material = spawnSpotMat;
-
-        
+        //spawnSpotMat.mainTexture = playerMat.mainTexture;
+        //spawnSpotMat.color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
 
     }
 
