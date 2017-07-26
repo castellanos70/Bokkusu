@@ -97,8 +97,8 @@
     <None Include="Assets\Resources\Audio\Credits.txt" />
     <None Include="Assets\Resources\LogoMap.txt" />
     <None Include="Assets\Resources\Maps\00_MiniRhombas.txt" />
-    <None Include="Assets\Resources\Maps\01_InnerChamber.txt" />
-    <None Include="Assets\Resources\Maps\02_Donjon.txt" />
+    <None Include="Assets\Resources\Maps\01_Donjon.txt" />
+    <None Include="Assets\Resources\Maps\02_InnerChamber.txt" />
     <None Include="Assets\Resources\Maps\03_CircuitBreaker.txt" />
     <None Include="Assets\Resources\Maps\04_Z-shape.txt" />
     <None Include="Assets\Resources\Maps\05_SoccerField.txt" />

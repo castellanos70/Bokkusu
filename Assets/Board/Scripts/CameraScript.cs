@@ -408,7 +408,7 @@ public class CameraScript : MonoBehaviour
 
 
             //Dustbunny
-            if ((dustBunnyPhase == 0) && (Random.value < 0.001))
+            if ((dustBunnyPhase == 0) && (Random.value < 0.002))
             {
                 float dustBunnyY1 = gridWidth + gridHeight - Random.value * 4f;
                 float dustBunnyY2 = gridWidth + gridHeight - Random.value * 4f;
