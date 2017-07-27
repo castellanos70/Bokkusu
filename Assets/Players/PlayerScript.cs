@@ -9,9 +9,9 @@ public class PlayerScript : MonoBehaviour
     public AudioSource playerAudio;
 
     public int playerNumber;
-    public int speedMax;
-    public int speedMin;
-    public int acceleration;
+    private static float speedMax = 20;
+    private static float speedMin = 1;
+    private static float acceleration = 30;
     public GameObject spawnSpotObj;
 
     private bool moving = false;
@@ -183,23 +183,41 @@ public class PlayerScript : MonoBehaviour
         int joystickZ = readJoystickZ();
         
 
-        if (joystickZ != 0 && speedX == 0)
+        if (joystickX != 0 && speedZ == 0)
         {
             playerIsPressingMove = true;
-            speedZ += joystickZ * acceleration * Time.deltaTime;
-            toZ = gridZ + joystickZ;
-        }
-        
-        else if (joystickX != 0 && speedZ == 0)
-        {
-            playerIsPressingMove = true;
-            speedX += joystickX * acceleration * Time.deltaTime;
+            float speed = speedX + joystickX*acceleration * Time.deltaTime;
+            if (speedX > 0)
+            {
+                if (speed > speedMax) speed = speedMax;
+                else if (speed < speedMin) speed = speedMin;
+            }
+            else if (speedX < 0)
+            {
+                if (speed < -speedMax) speed = -speedMax;
+                else if (speed > -speedMin) speed = -speedMin;
+            }
+            speedX = speed;
             toX = gridX + joystickX;
         }
 
-        speedX = toSpeedBounds(speedX);
-        speedZ = toSpeedBounds(speedZ);
-        //Debug.Log("Player["+playerNumber+"] speed=(" + tmpx+", "+tmpz+") === > (" + speedX+", "+speedZ+")");
+        else if (joystickZ != 0 && speedX == 0)
+        {
+            playerIsPressingMove = true;
+            float speed = speedZ + joystickZ * acceleration * Time.deltaTime;
+            if (speedZ > 0)
+            {
+                if (speed > speedMax) speed = speedMax;
+                else if (speed < speedMin) speed = speedMin;
+            }
+            else if (speedZ < 0)
+            {
+                if (speed < -speedMax) speed = -speedMax;
+                else if (speed > -speedMin) speed = -speedMin;
+            }
+            speedZ = speed;
+            toZ = gridZ + joystickZ;
+        }
 
         if (playerIsPressingMove) voronoiScript.next();
 
@@ -390,17 +408,6 @@ public class PlayerScript : MonoBehaviour
         return 0;
     }
 
-    private float toSpeedBounds(float speed)
-    {
-        if (speed == 0f) return 0f;
-        if (speed > speedMax) return speedMax;
-        if (speed < -speedMax) return -speedMax;
-
-        if (speed > 0 && speed < speedMin) return speedMin;
-        if (speed < 0 && speed > -speedMin) return -speedMin;
-
-        return speed;
-    }
 
     private int intToUnit(int n)
     {
