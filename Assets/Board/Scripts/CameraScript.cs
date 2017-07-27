@@ -41,7 +41,7 @@ public class CameraScript : MonoBehaviour
 
     private Kaleidoscope doorKaleidoscope;
     private Material doorMat1, doorMat2;
-    private int doorTextureSize = 128;
+    private int doorTextureSize = 256;
     private float doorUpdateTime;
     //private float doorDownAngle;
 

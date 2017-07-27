@@ -106,8 +106,8 @@
     <None Include="Assets\Resources\Maps\07_InkBottle.txt" />
     <None Include="Assets\Resources\Maps\08_CrossRoads.txt" />
     <None Include="Assets\Resources\Maps\09_SpaceInvader.txt" />
-    <None Include="Assets\Resources\Maps\10_DotDash.txt" />
-    <None Include="Assets\Resources\Maps\11_Rhombus.txt" />
+    <None Include="Assets\Resources\Maps\10_Rhombus.txt" />
+    <None Include="Assets\Resources\Maps\11_DotDash.txt" />
     <None Include="Assets\Resources\Maps\12_MiniEnigma.txt" />
     <None Include="Assets\Resources\Maps\13_Celticknot.txt" />
     <None Include="Assets\Resources\Maps\14_Enigma.txt" />

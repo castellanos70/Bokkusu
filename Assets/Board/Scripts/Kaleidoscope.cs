@@ -11,9 +11,11 @@ public class Kaleidoscope
     private Texture2D texture1, texture2;
     private int pixelSize;
 
-    private int morphTriangleIdx;
-    private int morphVertexIdx;
-    private int morphDeltaX, morphDeltaY;
+    private static int MORPH_PARAM_COUNT = 3;
+    private int[] morphTriangleIdx = new int[MORPH_PARAM_COUNT];
+    private int[] morphVertexIdx = new int[MORPH_PARAM_COUNT];
+    private int[] morphDeltaX = new int[MORPH_PARAM_COUNT];
+    private int[] morphDeltaY = new int[MORPH_PARAM_COUNT];
 
     private static Color[] palette =
     {
@@ -75,17 +77,20 @@ public class Kaleidoscope
 
     private void setMorphParams()
     {
-        morphTriangleIdx = Random.Range(0, triangleCount);
-        morphVertexIdx = Random.Range(0, 3);
-        morphDeltaX = 0;
-        morphDeltaY = 0;
-        if (Random.value < 0.5f)
+        for (int i = 0; i < MORPH_PARAM_COUNT; i++)
         {
-            if (Random.value < 0.5f) morphDeltaX = -1; else morphDeltaX = 1;
-        }
-        else
-        {
-            if (Random.value < 0.5f) morphDeltaY = -1; else morphDeltaY = 1;
+            morphTriangleIdx[i] = Random.Range(0, triangleCount);
+            morphVertexIdx[i] = Random.Range(0, 3);
+            morphDeltaX[i] = 0;
+            morphDeltaY[i] = 0;
+            if (Random.value < 0.5f)
+            {
+                if (Random.value < 0.5f) morphDeltaX[i] = -1; else morphDeltaX[i] = 1;
+            }
+            else
+            {
+                if (Random.value < 0.5f) morphDeltaY[i] = -1; else morphDeltaY[i] = 1;
+            }
         }
     }
 
@@ -100,53 +105,54 @@ public class Kaleidoscope
         Vector2[] w = new Vector2[3];
 
 
-        if (Random.value < 0.025f) setMorphParams();
+        if (Random.value < 0.01f) setMorphParams();
 
-        float x = triangleList[morphTriangleIdx, morphVertexIdx].x + morphDeltaX;
-        float y = triangleList[morphTriangleIdx, morphVertexIdx].y + morphDeltaY;
-
-        if (x > pixelSize / 2 - 1)
+        for (int i = 0; i < MORPH_PARAM_COUNT; i++)
         {
-            x = pixelSize / 2 - 1;
-            morphDeltaX = -1;
-        }
-        else if (x < 0)
-        {   x = 0;
-            morphDeltaX = 1;
-        }
+            float x = triangleList[morphTriangleIdx[i], morphVertexIdx[i]].x + morphDeltaX[i];
+            float y = triangleList[morphTriangleIdx[i], morphVertexIdx[i]].y + morphDeltaY[i];
+
+            if (x > pixelSize / 2 - 1)
+            {
+                x = pixelSize / 2 - 1;
+                morphDeltaX[i] = -1;
+            }
+            else if (x < 0)
+            {
+                x = 0;
+                morphDeltaX[i] = 1;
+            }
 
 
-        if (y > pixelSize / 2 - 1)
-        {
-            y = pixelSize / 2 - 1;
-            morphDeltaY = -1;
-        }
-        else if (y < 0)
-        {
-            y = 0;
-            morphDeltaY = 1;
-        }
+            if (y > pixelSize / 2 - 1)
+            {
+                y = pixelSize / 2 - 1;
+                morphDeltaY[i] = -1;
+            }
+            else if (y < 0)
+            {
+                y = 0;
+                morphDeltaY[i] = 1;
+            }
 
-        // Confine initial pattern to lower right quadrant
-        if (x > y)
-        {
-            float tmp = x;
-            x = y;
-            y = tmp;
-        }
+            // Confine initial pattern to lower right quadrant
+            if (x > y)
+            {
+                float tmp = x;
+                x = y;
+                y = tmp;
+            }
 
-        triangleList[morphTriangleIdx, morphVertexIdx].x = x;
-        triangleList[morphTriangleIdx, morphVertexIdx].y = y;
+            triangleList[morphTriangleIdx[i], morphVertexIdx[i]].x = x;
+            triangleList[morphTriangleIdx[i], morphVertexIdx[i]].y = y;
+        }
 
         for (int n = 0; n < triangleCount; n++)
         {
-            for (int i = 0; i < 3; i++)
+            for (int k = 0; k < 3; k++)
             {
-                //Debug.Log("r=" + r + ": triangle(" + i + ") = (" + triangleList[n, i].x + ", " + triangleList[n, i].y + ")");
-               
-                v[i].x = triangleList[n, i].x;
-                v[i].y = triangleList[n, i].y;
-                //Debug.Log("v=" + v[i].x + ", " + v[i].y);
+                v[k].x = triangleList[n, k].x;
+                v[k].y = triangleList[n, k].y;
             }
 
 
