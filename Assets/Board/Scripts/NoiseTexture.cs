@@ -5,7 +5,7 @@ using UnityEngine;
 public class NoiseTexture
 {
     private Texture2D texture;
-    private Color[] colorData;
+    private Color32[] colorData;
 
     private int pixelSize;
     private float noiseScale;
@@ -13,7 +13,7 @@ public class NoiseTexture
     private float textureShift;
     private int paletteIdx;
 
-    private Color[] palette;
+    private Color32[] palette;
     private float[] colorThreshold;
 
 
@@ -31,17 +31,17 @@ public class NoiseTexture
 
         textureShift = Random.value * 100;
         texture = new Texture2D(pixelSize, pixelSize, TextureFormat.ARGB32, false);
-        colorData = new Color[pixelSize * pixelSize];
+        colorData = new Color32[pixelSize * pixelSize];
 
         material.mainTexture = texture;
 
         if (paletteIdx == 0)
-        { palette = new Color[]
+        { palette = new Color32[]
           {
-             new Color(0.910f, 0.949f, 0.961f),
-             new Color(0.843f, 0.898f, 0.947f),
-             new Color(0.776f, 0.847f, 0.933f),
-             new Color(0.690f, 0.749f, 0.893f)
+             new Color32(232, 242, 245,255),
+             new Color32(215, 229, 241,255),
+             new Color32(198, 216, 238,255),
+             new Color32(176, 191, 228,255)
           };
 
             colorThreshold = new float[]
@@ -49,11 +49,11 @@ public class NoiseTexture
         }
         else
         {
-            palette = new Color[]
+            palette = new Color32[]
             {
-               new Color(0.000f, 0.000f, 0.000f),
-               new Color(0.190f, 0.190f, 0.231f),
-               new Color(0.380f, 0.380f, 0.463f)
+               new Color32(0, 0, 0,255),
+               new Color32(48, 48, 59, 255),
+               new Color32(97, 97, 118, 255)
             };
 
             colorThreshold = new float[]
@@ -98,7 +98,7 @@ public class NoiseTexture
                 }
             }
         }
-        texture.SetPixels(colorData);
+        texture.SetPixels32(colorData);
         texture.Apply();
     }
 }
