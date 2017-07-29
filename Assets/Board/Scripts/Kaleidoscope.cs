@@ -9,6 +9,7 @@ public class Kaleidoscope
     private Vector2[,] triangleList = new Vector2[triangleCount,3];
     private Color[] triangleColor = new Color[triangleCount];
     private Texture2D texture1, texture2;
+    private Color[] colorData1, colorData2;
     private int pixelSize;
 
     private static int MORPH_PARAM_COUNT = 3;
@@ -47,6 +48,9 @@ public class Kaleidoscope
 
         texture1 = new Texture2D(pixelSize, pixelSize, TextureFormat.ARGB32, false);
         texture2 = new Texture2D(pixelSize, pixelSize, TextureFormat.ARGB32, false);
+
+        colorData1 = new Color[pixelSize* pixelSize];
+        colorData2 = new Color[pixelSize * pixelSize];
 
         for (int n = 0; n < triangleCount; n++)
         {
@@ -99,8 +103,11 @@ public class Kaleidoscope
     public void updateTexture()
     {
 
-        DrawUtilities.setTextureColor(texture1, pixelSize, Color.white);
-        DrawUtilities.setTextureColor(texture2, pixelSize, Color.black);
+        //DrawUtilities.setTextureColor(texture1, pixelSize, Color.white);
+        //DrawUtilities.setTextureColor(texture2, pixelSize, Color.black);
+        DrawUtilities.clear(colorData1, Color.white);
+        DrawUtilities.clear(colorData2, Color.black);
+
         Vector2[] v = new Vector2[3];
         Vector2[] w = new Vector2[3];
 
@@ -160,11 +167,15 @@ public class Kaleidoscope
             for (int k = 0; k < reflectionCount; k++)
             {
                 kaleidoscopicReflect(v, w, k, pixelSize / 2);
-                DrawUtilities.drawTriangle(texture1, triangleColor[n], w);
-                DrawUtilities.drawTriangle(texture2, triangleColor[n], w);
+                DrawUtilities.drawTriangle(colorData1, pixelSize, triangleColor[n], w);
+                DrawUtilities.drawTriangle(colorData2, pixelSize, triangleColor[n], w);
             }
         }
+
+        texture1.SetPixels(colorData1);
         texture1.Apply();
+
+        texture2.SetPixels(colorData2);
         texture2.Apply();
 
     }

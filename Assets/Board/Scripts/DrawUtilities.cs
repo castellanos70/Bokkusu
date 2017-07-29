@@ -8,7 +8,7 @@ public class DrawUtilities : MonoBehaviour
 
 
 
-public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
+public static void drawTriangle(Color[] colorData, int imageWidth, Color color, Vector2[] v)
     {
         // at first sort the three vertices by y-coordinate ascending so v1 is the topmost vertice
         sortVerticesAscendingByY(v);
@@ -17,12 +17,12 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
         // check for trivial case of bottom-flat triangle
         if (v[1].y == v[2].y)
         {
-              fillBottomFlatTriangle(texture, color, v[0], v[1], v[2]);
+              fillBottomFlatTriangle(colorData, imageWidth, color, v[0], v[1], v[2]);
         }
         // check for trivial case of top-flat triangle 
         else if (v[0].y == v[1].y)
         {
-            fillTopFlatTriangle(texture, color, v[0], v[1], v[2]);
+            fillTopFlatTriangle(colorData, imageWidth, color, v[0], v[1], v[2]);
         }
         else
         {
@@ -32,13 +32,13 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
 
            // Debug.Log("v4=(" + v4.x + ", " + v4.y + ")");
 
-            fillBottomFlatTriangle(texture, color, v[0], v[1], v4);
-            fillTopFlatTriangle(texture, color, v[1], v4, v[2]);
+            fillBottomFlatTriangle(colorData, imageWidth, color, v[0], v[1], v4);
+            fillTopFlatTriangle(colorData, imageWidth, color, v[1], v4, v[2]);
         }
     }
 
 
-    private static void fillBottomFlatTriangle(Texture2D texture, Color color, Vector2 v1, Vector2 v2, Vector2 v3)
+    private static void fillBottomFlatTriangle(Color[] colorData, int imageWidth, Color color, Vector2 v1, Vector2 v2, Vector2 v3)
     {
         //Debug.Log("fillBottomFlatTriangle   v={ (" + v1.x + "," + v1.y + "), (" +
         //        v2.x + "," + v2.y + "), (" +
@@ -52,7 +52,7 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
 
         for (int y = (int)v1.y; y <= v2.y; y++)
         {
-            drawHorzLine(texture, color, (int)curx1, (int)curx2, y);
+            drawHorzLine(colorData, imageWidth, color, (int)curx1, (int)curx2, y);
             //Debug.Log("    curx1=" + curx1 + ", curx2=" + curx2);
             curx1 += invslope1;
             curx2 += invslope2;
@@ -60,7 +60,7 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
     }
 
 
-    private static void fillTopFlatTriangle(Texture2D texture, Color color, Vector2 v1, Vector2 v2, Vector2 v3)
+    private static void fillTopFlatTriangle(Color[] colorData, int imageWidth, Color color, Vector2 v1, Vector2 v2, Vector2 v3)
     {
         float invslope1 = (v3.x - v1.x) / (v3.y - v1.y);
         float invslope2 = (v3.x - v2.x) / (v3.y - v2.y);
@@ -70,7 +70,7 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
 
         for (int y = (int)v3.y; y > v1.y; y--)
         {
-            drawHorzLine(texture, color, (int)curx1, (int)curx2, y);
+            drawHorzLine(colorData, imageWidth, color, (int)curx1, (int)curx2, y);
             curx1 -= invslope1;
             curx2 -= invslope2;
         }
@@ -104,7 +104,7 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
     }
 
 
-    private static void drawHorzLine(Texture2D texture, Color color, int x1, int x2, int y)
+    private static void drawHorzLine(Color[] colorData, int imageWidth, Color color, int x1, int x2, int y)
     {
         if (x1 > x2)
         {
@@ -112,9 +112,11 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
             x1 = x2;
             x2 = tmp;
         }
+        int yy = y * imageWidth;
         for (int x = x1; x <= x2; x++)
         {
-            texture.SetPixel(x, y, color);
+            //texture.SetPixel(x, y, color);
+            colorData[yy + x] = color;
         }
     }
 
@@ -131,7 +133,13 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
     }
 
 
-
+    public static void clear(Color[] colorData, Color c)
+    {
+        for (var i = 0; i < colorData.Length; i++)
+        {
+            colorData[i] = c;
+        }
+    }
 
 
     /*

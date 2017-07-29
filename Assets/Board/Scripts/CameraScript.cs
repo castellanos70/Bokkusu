@@ -22,6 +22,9 @@ public class CameraScript : MonoBehaviour
 
     private int dustBunnyPhase;
 
+    private int frameCount;
+    private float timeOfLevel;
+
 
     private Material wallMat;
     private NoiseTexture wallScript;
@@ -41,12 +44,7 @@ public class CameraScript : MonoBehaviour
 
     private Kaleidoscope doorKaleidoscope;
     private Material doorMat1, doorMat2;
-    private int doorTextureSize = 256;
-    private float doorUpdateTime;
-    //private float doorDownAngle;
-
-    //private Voronoi voronoiScript1, voronoiScript2;
-    //private Material playerMat1, playerMat2;
+    private int doorTextureSize = 256;//128;//256;
 
 
     public enum GameState { INTRO, INITIALIZING, PLAYING, WON };
@@ -132,7 +130,6 @@ public class CameraScript : MonoBehaviour
     private void spawnBoard(int level)
     {
         gameState = GameState.INITIALIZING;
-        doorUpdateTime = 0;
 
         dustBunny1.SetActive(false);
         dustBunny2.SetActive(false);
@@ -141,7 +138,8 @@ public class CameraScript : MonoBehaviour
         audioPriority = 255;
         doorToggleSeconds = -1f;
         //doorDownAngle = 0f;
-
+        frameCount = 0;
+        timeOfLevel = 0;
 
         curLevel = level;
         destroyOldBoard();
@@ -289,6 +287,9 @@ public class CameraScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        frameCount++;
+        timeOfLevel += Time.deltaTime;
+
         if (Input.GetKey(KeyCode.Escape))
         {
             //if (!Application.isEditor) System.Diagnostics.Process.GetCurrentProcess().Kill();
@@ -302,14 +303,7 @@ public class CameraScript : MonoBehaviour
         wallScript.next();
         floorScript.next();
 
-        
-
-
-        if (Time.time > doorUpdateTime)
-        {
-            doorUpdateTime = Time.time + 0.1f;
-            doorKaleidoscope.updateTexture();
-        }
+        doorKaleidoscope.updateTexture();
 
         //Debug.Log(wallTextureShift + "," + floorTextureShift);
 
@@ -587,6 +581,10 @@ public class CameraScript : MonoBehaviour
     public void setGameState(GameState state)
     {
         gameState = state;
+        if (gameState==GameState.WON)
+        {
+            Debug.Log("Frames/sec=" + frameCount/ timeOfLevel);
+        }
     }
 
     public GameState getGameState()
