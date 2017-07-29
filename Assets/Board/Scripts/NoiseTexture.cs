@@ -5,6 +5,8 @@ using UnityEngine;
 public class NoiseTexture
 {
     private Texture2D texture;
+    private Color[] colorData;
+
     private int pixelSize;
     private float noiseScale;
     private float morphRate;
@@ -29,6 +31,7 @@ public class NoiseTexture
 
         textureShift = Random.value * 100;
         texture = new Texture2D(pixelSize, pixelSize, TextureFormat.ARGB32, false);
+        colorData = new Color[pixelSize * pixelSize];
 
         material.mainTexture = texture;
 
@@ -66,9 +69,11 @@ public class NoiseTexture
         {
             for (int y = 0; y < pixelSize; y++)
             {
+                int pixel = y * pixelSize + x;
                 if ((paletteIdx == 0) && (x == 0 || y == 0 || x == pixelSize - 1 || y == pixelSize - 1))
                 {
                     texture.SetPixel(x, y, Color.white);
+                    colorData[pixel] = Color.white;
                 }
                 else
                 {
@@ -88,10 +93,12 @@ public class NoiseTexture
                         }
                     }
                     //if (x==1) Debug.Log("val=" + val + ", idx=" + idx);
-                    texture.SetPixel(x, y, palette[idx]);
+                    //texture.SetPixel(x, y, palette[idx]);
+                    colorData[pixel] = palette[idx];
                 }
             }
         }
+        texture.SetPixels(colorData);
         texture.Apply();
     }
 }

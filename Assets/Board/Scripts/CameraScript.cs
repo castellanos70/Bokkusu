@@ -44,7 +44,7 @@ public class CameraScript : MonoBehaviour
 
     private Kaleidoscope doorKaleidoscope;
     private Material doorMat1, doorMat2;
-    private int doorTextureSize = 256;//128;//256;
+    private int doorTextureSize = 256;
 
 
     public enum GameState { INTRO, INITIALIZING, PLAYING, WON };
