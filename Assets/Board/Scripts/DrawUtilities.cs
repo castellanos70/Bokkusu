@@ -8,7 +8,7 @@ public class DrawUtilities : MonoBehaviour
 
 
 
-public static void drawTriangle(Color[] colorData, int imageWidth, Color color, Vector2[] v)
+public static void drawTriangle(Color32[] colorData, int imageWidth, Color color, Vector2[] v)
     {
         // at first sort the three vertices by y-coordinate ascending so v1 is the topmost vertice
         sortVerticesAscendingByY(v);
@@ -38,7 +38,7 @@ public static void drawTriangle(Color[] colorData, int imageWidth, Color color, 
     }
 
 
-    private static void fillBottomFlatTriangle(Color[] colorData, int imageWidth, Color color, Vector2 v1, Vector2 v2, Vector2 v3)
+    private static void fillBottomFlatTriangle(Color32[] colorData, int imageWidth, Color color, Vector2 v1, Vector2 v2, Vector2 v3)
     {
         //Debug.Log("fillBottomFlatTriangle   v={ (" + v1.x + "," + v1.y + "), (" +
         //        v2.x + "," + v2.y + "), (" +
@@ -60,7 +60,7 @@ public static void drawTriangle(Color[] colorData, int imageWidth, Color color, 
     }
 
 
-    private static void fillTopFlatTriangle(Color[] colorData, int imageWidth, Color color, Vector2 v1, Vector2 v2, Vector2 v3)
+    private static void fillTopFlatTriangle(Color32[] colorData, int imageWidth, Color color, Vector2 v1, Vector2 v2, Vector2 v3)
     {
         float invslope1 = (v3.x - v1.x) / (v3.y - v1.y);
         float invslope2 = (v3.x - v2.x) / (v3.y - v2.y);
@@ -104,7 +104,7 @@ public static void drawTriangle(Color[] colorData, int imageWidth, Color color, 
     }
 
 
-    private static void drawHorzLine(Color[] colorData, int imageWidth, Color color, int x1, int x2, int y)
+    private static void drawHorzLine(Color32[] colorData, int imageWidth, Color color, int x1, int x2, int y)
     {
         if (x1 > x2)
         {
@@ -133,9 +133,9 @@ public static void drawTriangle(Color[] colorData, int imageWidth, Color color, 
     }
 
 
-    public static void clear(Color[] colorData, Color c)
+    public static void clear(Color32[] colorData, Color32 c)
     {
-        for (var i = 0; i < colorData.Length; i++)
+        for (int i = 0; i < colorData.Length; i++)
         {
             colorData[i] = c;
         }

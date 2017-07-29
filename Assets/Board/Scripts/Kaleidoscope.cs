@@ -9,7 +9,7 @@ public class Kaleidoscope
     private Vector2[,] triangleList = new Vector2[triangleCount,3];
     private Color[] triangleColor = new Color[triangleCount];
     private Texture2D texture1, texture2;
-    private Color[] colorData1, colorData2;
+    private Color32[] colorData1, colorData2;
     private int pixelSize;
 
     private static int MORPH_PARAM_COUNT = 3;
@@ -18,16 +18,16 @@ public class Kaleidoscope
     private int[] morphDeltaX = new int[MORPH_PARAM_COUNT];
     private int[] morphDeltaY = new int[MORPH_PARAM_COUNT];
 
-    private static Color[] palette =
+    private static Color32[] palette =
     {
-           new Color(0.306f, 0.376f, 0.275f),
-           new Color(0.349f, 0.475f, 0.369f),
-           new Color(0.404f, 0.549f, 0.427f),
-           new Color(0.486f, 0.541f, 0.388f),
-           new Color(0.624f, 0.529f, 0.322f),
-           new Color(0.678f, 0.592f, 0.322f),
-           new Color(0.753f, 0.647f, 0.443f),
-           new Color(0.804f, 0.686f, 0.451f)
+           new Color32(78, 96, 70, 255),
+           new Color32(89, 121, 94, 255),
+           new Color32(103, 140, 109,255),
+           new Color32(124, 138, 99,255),
+           new Color32(159, 135, 82,255),
+           new Color32(173, 151, 82,255),
+           new Color32(192, 165, 123,255),
+           new Color32(205, 175, 115,255)
      };
 
 
@@ -49,8 +49,8 @@ public class Kaleidoscope
         texture1 = new Texture2D(pixelSize, pixelSize, TextureFormat.ARGB32, false);
         texture2 = new Texture2D(pixelSize, pixelSize, TextureFormat.ARGB32, false);
 
-        colorData1 = new Color[pixelSize* pixelSize];
-        colorData2 = new Color[pixelSize * pixelSize];
+        colorData1 = new Color32[pixelSize* pixelSize];
+        colorData2 = new Color32[pixelSize * pixelSize];
 
         for (int n = 0; n < triangleCount; n++)
         {
@@ -105,8 +105,8 @@ public class Kaleidoscope
 
         //DrawUtilities.setTextureColor(texture1, pixelSize, Color.white);
         //DrawUtilities.setTextureColor(texture2, pixelSize, Color.black);
-        DrawUtilities.clear(colorData1, Color.white);
-        DrawUtilities.clear(colorData2, Color.black);
+        DrawUtilities.clear(colorData1, new Color32(255,255,255,255));
+        DrawUtilities.clear(colorData2, new Color32(0, 0, 0, 255));
 
         Vector2[] v = new Vector2[3];
         Vector2[] w = new Vector2[3];
@@ -172,10 +172,10 @@ public class Kaleidoscope
             }
         }
 
-        texture1.SetPixels(colorData1);
+        texture1.SetPixels32(colorData1);
         texture1.Apply();
 
-        texture2.SetPixels(colorData2);
+        texture2.SetPixels32(colorData2);
         texture2.Apply();
 
     }
