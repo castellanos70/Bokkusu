@@ -477,20 +477,12 @@ public class CameraScript : MonoBehaviour
 			}
             if (Vector2.Distance(transform.position, eyePositonAboveGoal) > 4)
             {
-                //winTime -= Time.deltaTime;
-                //transform.position = Vector3.Lerp(transform.position, eyePositonAboveGoal, Time.deltaTime * eyeSpeed * 8);
-                //transform.rotation = Quaternion.Lerp(transform.rotation, eyeRotation1, Time.deltaTime * eyeSpeed * 4);
-                //transform.LookAt(goalBlock.transform);
                 Vector3 lookPos = goalBlock.transform.position - transform.position;
                 Quaternion lookRot = Quaternion.LookRotation(lookPos);
-                transform.rotation = Quaternion.Lerp(transform.rotation, lookRot, 1 * Time.deltaTime);
+                transform.rotation = Quaternion.Lerp(transform.rotation, lookRot, 2 * Time.deltaTime);
 
-                transform.position += transform.forward * Time.deltaTime * 3;
+                transform.position += transform.forward * Time.deltaTime * 6;
                 if (transform.position.y < 2) transform.position = new Vector3(transform.position.x, 2, transform.position.z);
-                //float dx = (goalBlock.transform.position.x - transform.position.x) * Time.deltaTime * 3;
-                //float dz = (goalBlock.transform.position.z - transform.position.z) * Time.deltaTime * 3;
-                //float dy = (transform.position.y - 2) * Time.deltaTime;
-                //transform.Translate(dx, dz, dy);
             }
             else
             {
