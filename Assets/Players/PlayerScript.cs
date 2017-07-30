@@ -149,7 +149,7 @@ public class PlayerScript : MonoBehaviour
 
         if (cameraScript.getGameState() == CameraScript.GameState.WON && iHaveWon)
         {
-            transform.localScale *= 0.98f;
+            transform.localScale *= 0.985f;
             transform.Rotate(Vector3.up * Time.deltaTime * 90);
             float x = transform.position.x + (gridX - transform.position.x) / 4;
             float z = transform.position.z + (gridZ - transform.position.z) / 4;

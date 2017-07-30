@@ -16,7 +16,8 @@ public class CameraScript : MonoBehaviour
 	//private AudioSource audio;
 	private AudioClip[] harpAudio;
 	private AudioClip[] pentAudio; //pantatonic scale
-	public AudioSource cameraAudio;
+    public AudioClip harpEndLevel0; //TODO: add different end for each level.
+    public AudioSource cameraAudio;
 
 
     public GameObject boardBlock;
@@ -470,29 +471,31 @@ public class CameraScript : MonoBehaviour
 
         else if (gameState == GameState.WON)
         {
-			if (frameCount%2 == 0){
-				if (winNote < pentAudio.Length){
-					cameraAudio.PlayOneShot(pentAudio[winNote], 0.5f);
-					winNote++;
-				}
-			}
+            //if (frameCount%2 == 0){
+            //	if (winNote < pentAudio.Length){
+            //		cameraAudio.PlayOneShot(pentAudio[winNote], 0.5f);
+            //		winNote++;
+            //	}
+            //}
             if (Vector2.Distance(transform.position, eyePositonAboveGoal) > 4)
             {
                 Vector3 lookPos = goalBlock.transform.position - transform.position;
                 Quaternion lookRot = Quaternion.LookRotation(lookPos);
-                transform.rotation = Quaternion.Lerp(transform.rotation, lookRot, 2 * Time.deltaTime);
+                transform.rotation = Quaternion.Lerp(transform.rotation, lookRot, 1.7f * Time.deltaTime);
 
-                transform.position += transform.forward * Time.deltaTime * 6;
+                transform.position += transform.forward * Time.deltaTime * 5;
                 if (transform.position.y < 2) transform.position = new Vector3(transform.position.x, 2, transform.position.z);
             }
             else
             {
-				cameraAudio.Stop();
+                if (!cameraAudio.isPlaying)
+                {    //cameraAudio.Stop();
 
-                curLevel++;
-                if (curLevel >= gameMapList.Length) curLevel = 1;
+                    curLevel++;
+                    if (curLevel >= gameMapList.Length) curLevel = 1;
 
-                spawnBoard(curLevel);
+                    spawnBoard(curLevel);
+                }
             }
         }
     }
@@ -623,6 +626,7 @@ public class CameraScript : MonoBehaviour
         if (gameState==GameState.WON)
         {
             Debug.Log("Frames/sec=" + frameCount/ timeOfLevel);
+            cameraAudio.PlayOneShot(harpEndLevel0, 0.5f); 
         }
     }
 
