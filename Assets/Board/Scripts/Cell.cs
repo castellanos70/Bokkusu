@@ -10,9 +10,11 @@ public class Cell
     private float bottomY = 0;
     private float fallSpeed;
     private int x, z;
+	private int audioX, audioZ;
 	private bool playedSound = false;
     private bool doorRaising = false;
     private bool doorLowering = false;
+
 
     private bool doorIsDown = false;
 
@@ -47,8 +49,10 @@ public class Cell
 
 
         audio = baseObj.AddComponent<AudioSource>();
+		audioX = audioZ = -1;
 
-        fallSpeed = 8 + Random.value * 15;
+        //fallSpeed = 8 + Random.value * 15;
+		fallSpeed = 11;
     }
 
 
@@ -71,10 +75,24 @@ public class Cell
 
 	public void playAudioClip(float priority)
     {
+		//audio.Stop();
+		if (audioClip == null) return;
 		audio.priority = (int)priority;
-		audio.PlayOneShot(audioClip, 0.1f);
+		audio.PlayOneShot(audioClip, 0.5f);
 		playedSound = true;
 		//Debug.Log(priority);
+	}
+
+	public void playAudioClip(float priority, int x, int z){
+		if (audioClip == null) return;
+		if (audioX == x && audioZ == z) return;
+		audioX = x;
+		audioZ = z;
+
+		audio.Stop();
+		audio.priority = (int)priority;
+		audio.PlayOneShot(audioClip, 0.5f);
+		playedSound = true;
 	}
 		
     public float getFallSpeed() { return fallSpeed; }

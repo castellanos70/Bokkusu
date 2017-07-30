@@ -8,12 +8,16 @@ public class CameraScript : MonoBehaviour
 	private static float fullWidth = 32;
 	private static float fullHeight = 14;
     private int gridWidth, gridHeight;
+	private int winNote = 0;
 	private float audioPriority = 255;
 	private float audioDecrement = 1;
     private float doorToggleSeconds;
 
 	//private AudioSource audio;
 	private AudioClip[] harpAudio;
+	private AudioClip[] pentAudio; //pantatonic scale
+	public AudioSource cameraAudio;
+
 
     public GameObject boardBlock;
     public GameObject crateBlock;
@@ -78,7 +82,31 @@ public class CameraScript : MonoBehaviour
 
         gameMapList = MapLoader.loadAllMaps();
         //audio = gameObject.AddComponent<AudioSource>();
-        harpAudio = Resources.LoadAll<AudioClip>("Audio/harpsichord");
+
+		{//audio stuff
+			harpAudio = Resources.LoadAll<AudioClip>("Audio/harpsichord");
+			int[] pentatonic = { 0, 2, 4, 7, 9 };
+
+			pentAudio = new AudioClip[(int)(harpAudio.Length*(5f/12f))];
+
+			Debug.Log("pent: " + pentAudio.Length);
+
+			int pentLength = 0;
+			for (int i = 0; i < harpAudio.Length; i++){
+				bool isPent = false;
+				for (var j = 0; j < 5; j++){ 
+					if (i%12 == pentatonic[j]){
+						isPent = true; break;
+					}
+				}
+				if (isPent && pentLength < pentAudio.Length){
+					pentAudio[pentLength] = harpAudio[i];
+					pentLength++;
+				}
+			}
+			winNote = pentAudio.Length-1;
+		}
+			
 
         boardBlock.SetActive(false);
         crateBlock.SetActive(false);
@@ -154,8 +182,6 @@ public class CameraScript : MonoBehaviour
         grid = new Cell[gridWidth, gridHeight];
         bool foundGoal = false;
 
-        int[] pentatonic = { 0, 2, 4, 7, 9 };
-
         // Spawn board blocks
         //Debug.Log("Spawn Board(" + level + "): " + grid.GetLength(0) + "(" + gridWidth + ") x " + grid.GetLength(1) + "(" + gridHeight + ")");
         for (int x = 0; x < gridWidth; x++)
@@ -189,11 +215,11 @@ public class CameraScript : MonoBehaviour
                     mat = floorMat;//floorMat[Random.Range(0, floorMat.Length)];
                 }
 
+				grid[x, z] = new Cell(startMap[x, z], block, mat);
 
-                grid[x, z] = new Cell(startMap[x, z], block, mat);
-                int audioIndex = pentatonic[Random.Range(0, 5)] + (Random.Range(0, (harpAudio.Length / 12) - 1) * 12);
-                //int audioIndex = (x * gridWidth) / harpAudio.Length;
-                grid[x, z].setAudioClip(harpAudio[audioIndex]);
+				int audioIndex = (int)(((40 - y)/40.0f)*pentAudio.Length);
+				Debug.Log(audioIndex);
+				grid[x, z].setAudioClip(pentAudio[audioIndex]);
 
                 if (startMap[x, z] == Element.GOAL)
                 {
@@ -311,6 +337,14 @@ public class CameraScript : MonoBehaviour
         {
             bool fallingDone = true;
 
+			if (frameCount%4 == 0){
+				if (winNote > 0){
+					winNote = Mathf.Min(winNote, pentAudio.Length-1);
+					cameraAudio.PlayOneShot(pentAudio[winNote], 0.5f);
+					winNote--;
+				}
+			}
+
             for (int x = 0; x < gridWidth; x++)
             {
                 for (int z = 0; z < gridHeight; z++)
@@ -321,11 +355,11 @@ public class CameraScript : MonoBehaviour
 
                     if (fallSpeed == 0f)
                     {
-                        if (!grid[x, z].hasPlayedAudio())
-                        {
-                            grid[x, z].playAudioClip(audioPriority);
-                            audioPriority -= audioDecrement;
-                        }
+//                        if (!grid[x, z].hasPlayedAudio())
+//                        {
+//                            grid[x, z].playAudioClip(audioPriority);
+//                            audioPriority -= audioDecrement;
+//                        }
                         continue;
                     };
 
@@ -335,7 +369,10 @@ public class CameraScript : MonoBehaviour
                     fallingDone = false;
                 }
             }
-            if (fallingDone) gameState = GameState.PLAYING;
+			if (fallingDone){
+				gameState = GameState.PLAYING;
+				//cameraAudio.Stop();
+			}
         }
 
         else if (gameState == GameState.PLAYING)
@@ -432,6 +469,12 @@ public class CameraScript : MonoBehaviour
 
         else if (gameState == GameState.WON)
         {
+			if (frameCount%2 == 0){
+				if (winNote < pentAudio.Length){
+					cameraAudio.PlayOneShot(pentAudio[winNote], 0.5f);
+					winNote++;
+				}
+			}
             if (Vector2.Distance(transform.position, eyePositonAboveGoal) > 4)
             {
                 //winTime -= Time.deltaTime;
@@ -451,6 +494,7 @@ public class CameraScript : MonoBehaviour
             }
             else
             {
+				cameraAudio.Stop();
 
                 curLevel++;
                 if (curLevel >= gameMapList.Length) curLevel = 1;
@@ -518,7 +562,9 @@ public class CameraScript : MonoBehaviour
 
         if ((toX != gridX) || (toZ != gridZ))
         {
-            //grid[gridX, gridZ].playAudioClip(audioPriority);
+			//play audio clip
+			grid[gridX, gridZ].playAudioClip(frameCount%255, toX, toZ);
+
             float speed = script.getSpeedMagnitude();
             bool smashCrate = false;
             if (speed >= CrateScript.getStrength()) smashCrate = true;
