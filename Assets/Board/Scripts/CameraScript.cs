@@ -9,8 +9,8 @@ public class CameraScript : MonoBehaviour
 	private static float fullHeight = 14;
     private int gridWidth, gridHeight;
 	private int winNote = 0;
-	private float audioPriority = 255;
-	private float audioDecrement = 1;
+	//private float audioPriority = 255;
+	//private float audioDecrement = 1;
     private float doorToggleSeconds;
 
 	//private AudioSource audio;
@@ -89,7 +89,7 @@ public class CameraScript : MonoBehaviour
 
 			pentAudio = new AudioClip[(int)(harpAudio.Length*(5f/12f))];
 
-			Debug.Log("pent: " + pentAudio.Length);
+			//Debug.Log("pent: " + pentAudio.Length);
 
 			int pentLength = 0;
 			for (int i = 0; i < harpAudio.Length; i++){
@@ -163,7 +163,7 @@ public class CameraScript : MonoBehaviour
         dustBunny2.SetActive(false);
         dustBunnyPhase = 0;
 
-        audioPriority = 255;
+        //audioPriority = 255;
         doorToggleSeconds = -1f;
         //doorDownAngle = 0f;
         frameCount = 0;
@@ -218,7 +218,7 @@ public class CameraScript : MonoBehaviour
 				grid[x, z] = new Cell(startMap[x, z], block, mat);
 
 				int audioIndex = (int)(((40 - y)/40.0f)*pentAudio.Length);
-				Debug.Log(audioIndex);
+				//Debug.Log(audioIndex);
 				grid[x, z].setAudioClip(pentAudio[audioIndex]);
 
                 if (startMap[x, z] == Element.GOAL)
@@ -234,7 +234,7 @@ public class CameraScript : MonoBehaviour
             }
         }
 
-        audioDecrement = 127.0f / numCells;
+        //audioDecrement = 127.0f / numCells;
 
         if (!foundGoal)
         {

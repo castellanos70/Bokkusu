@@ -94,7 +94,6 @@
     <Compile Include="Assets\Players\PlayerScript.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Resources\Audio\Credits.txt" />
     <None Include="Assets\Resources\LogoMap.txt" />
     <None Include="Assets\Resources\Maps\00_MiniRhombas.txt" />
     <None Include="Assets\Resources\Maps\01_Donjon.txt" />
