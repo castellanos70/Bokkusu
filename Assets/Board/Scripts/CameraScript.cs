@@ -147,6 +147,7 @@ public class CameraScript : MonoBehaviour
         Texture2D texture = backgroundScript.create();
         Renderer renderer = backgroundPlane.GetComponent<Renderer>();
         renderer.material.mainTexture = texture;
+        backgroundScript.clear(Random.Range(0,1));
 
         Cursor.visible = false;
         spawnBoard(0);
@@ -306,7 +307,7 @@ public class CameraScript : MonoBehaviour
         float scale = Mathf.Max(gridWidth, gridHeight) * 0.25f;
         backgroundPlane.transform.position = new Vector3(gridWidth / 2, 0.4f, gridHeight / 2);
         backgroundPlane.transform.localScale = new Vector3(scale, 1, scale);
-        backgroundScript.clear(curLevel);
+        if (backgroundScript.isDone()) backgroundScript.clear(curLevel);
 
     }
 

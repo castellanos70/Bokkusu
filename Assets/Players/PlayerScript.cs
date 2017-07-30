@@ -149,7 +149,7 @@ public class PlayerScript : MonoBehaviour
 
         if (cameraScript.getGameState() == CameraScript.GameState.WON && iHaveWon)
         {
-            transform.localScale *= 0.995f;
+            transform.localScale *= 0.98f;
             transform.Rotate(Vector3.up * Time.deltaTime * 90);
             float x = transform.position.x + (gridX - transform.position.x) / 4;
             float z = transform.position.z + (gridZ - transform.position.z) / 4;
@@ -228,7 +228,6 @@ public class PlayerScript : MonoBehaviour
             if (cameraScript.enterIfPossible(toX, toZ, true, getSpeedMagnitude()))
             {
                 moving = true;
-                //playerAudio.Play();
             }
             else
             {
@@ -237,24 +236,16 @@ public class PlayerScript : MonoBehaviour
                 speedZ = 0;
             }
         }
-        if (moving)
-        {
-            float speed = speedX + speedZ;
-            //playerAudio.pitch = 0.5f + floatToUnit(speed) * (speed / (speedMax / 2.5f));
-        }
     }
 
     public bool isMoving()
     {
-        //if (speedX == 0f && speedZ == 0f) return true;
-        //return false;
         return moving;
     }
 
 
     public void hit()
     {
-        //playerAudio.Stop();
         transform.position = new Vector3(gridX, 1, gridZ);
         moving = false;
         speedX = 0;
