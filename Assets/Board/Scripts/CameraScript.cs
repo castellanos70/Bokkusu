@@ -16,7 +16,7 @@ public class CameraScript : MonoBehaviour
 	//private AudioSource audio;
 	private AudioClip[] harpAudio;
 	private AudioClip[] pentAudio; //pantatonic scale
-    public AudioClip harpEndLevel0; //TODO: add different end for each level.
+    public AudioClip[] harpEndLevel; 
     public AudioSource cameraAudio;
 
 
@@ -128,19 +128,6 @@ public class CameraScript : MonoBehaviour
         floorMat = new Material(Shader.Find("Standard"));
         floorScript = new NoiseTexture(floorMat, floorTextureSize, 0.03f, floorMorphScale, 0);
 
-        //Material playerMat1 = new Material(Shader.Find("Standard"));
-        //voronoiScript1 = new Voronoi(playerMat1, 256, 178, 0, 21);
-        //Renderer renderer1 = player1.GetComponent<Renderer>();
-        //renderer1.material = playerMat1;
-
-        //Material playerMat2 = new Material(Shader.Find("Standard"));
-        //voronoiScript2 = new Voronoi(playerMat2, 256, 218, 216, 29);
-        //Renderer renderer2 = player2.GetComponent<Renderer>();
-        //renderer2.material = playerMat2;
-
-
-
-
 
 
 
@@ -167,7 +154,6 @@ public class CameraScript : MonoBehaviour
 
         //audioPriority = 255;
         doorToggleSeconds = -1f;
-        //doorDownAngle = 0f;
         frameCount = 0;
         timeOfLevel = 0;
 
@@ -201,7 +187,6 @@ public class CameraScript : MonoBehaviour
                 Material mat = null;
                 if (startMap[x, z] == CameraScript.Element.WALL)
                 {
-                    //mat = wallMat[Random.Range(0, wallMat.Length)];
                     mat = wallMat;
                 }
                 else if (startMap[x, z] == CameraScript.Element.DOOR_A)
@@ -214,14 +199,15 @@ public class CameraScript : MonoBehaviour
                 }
                 else
                 {
-                    mat = floorMat;//floorMat[Random.Range(0, floorMat.Length)];
+                    mat = floorMat;
                 }
 
 				grid[x, z] = new Cell(startMap[x, z], block, mat);
 
 				int audioIndex = (int)(((40 - y)/40.0f)*pentAudio.Length);
-				//Debug.Log(audioIndex);
-				grid[x, z].setAudioClip(pentAudio[audioIndex]);
+				//Debug.Log("audioIndex="+audioIndex);
+
+                grid[x, z].setAudioClip(pentAudio[audioIndex]);
 
                 if (startMap[x, z] == Element.GOAL)
                 {
@@ -320,7 +306,6 @@ public class CameraScript : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Escape))
         {
-            //if (!Application.isEditor) System.Diagnostics.Process.GetCurrentProcess().Kill();
             Application.Quit();
         }
 
@@ -339,13 +324,13 @@ public class CameraScript : MonoBehaviour
         {
             bool fallingDone = true;
 
-			if (frameCount%4 == 0){
-				if (winNote > 0){
-					winNote = Mathf.Min(winNote, pentAudio.Length-1);
-					cameraAudio.PlayOneShot(pentAudio[winNote], 0.5f);
-					winNote--;
-				}
-			}
+			//if (frameCount%4 == 0){
+			//	if (winNote > 0){
+			//		winNote = Mathf.Min(winNote, pentAudio.Length-1);
+			//		cameraAudio.PlayOneShot(pentAudio[winNote], 0.5f);
+			//		winNote--;
+			//	}
+			//}
 
             for (int x = 0; x < gridWidth; x++)
             {
@@ -355,20 +340,16 @@ public class CameraScript : MonoBehaviour
 
                     float fallSpeed = grid[x, z].getFallSpeed();
 
-                    if (fallSpeed == 0f)
-                    {
-//                        if (!grid[x, z].hasPlayedAudio())
-//                        {
-//                            grid[x, z].playAudioClip(audioPriority);
-//                            audioPriority -= audioDecrement;
-//                        }
-                        continue;
-                    };
+                    if (fallSpeed == 0f) continue;
 
                     float y = grid[x, z].getY() - fallSpeed * Time.deltaTime;
 
-                    grid[x, z].fallTo(y);
-                    fallingDone = false;
+                    bool hitBottom = grid[x, z].fallTo(y);
+                    if (hitBottom)
+                    {
+                        grid[x, z].playAudioClip(frameCount % 255);
+                    }
+                    else fallingDone = false;
                 }
             }
 			if (fallingDone){
@@ -626,7 +607,7 @@ public class CameraScript : MonoBehaviour
         if (gameState==GameState.WON)
         {
             Debug.Log("Frames/sec=" + frameCount/ timeOfLevel);
-            cameraAudio.PlayOneShot(harpEndLevel0, 0.5f); 
+            cameraAudio.PlayOneShot(harpEndLevel[curLevel % harpEndLevel.Length], 1.0f); 
         }
     }
 

@@ -23,6 +23,7 @@ public class CrateScript : MonoBehaviour
         spawnParticles.Emit(10);
 
         crateAudio.clip = spawnClip;
+        crateAudio.volume = 1.0f;
         crateAudio.Play();
     }
 
@@ -33,6 +34,7 @@ public class CrateScript : MonoBehaviour
         crateParticles.Emit(10);
         //crateAudio.Stop();
         crateAudio.clip = detonateClip;
+        crateAudio.volume = 1.0f;
         crateAudio.Play();
         //crateAudio.clip = clipsDetonate[Random.Range(0, clipsDetonate.Length)];
         GetComponent<Renderer>().enabled = false;

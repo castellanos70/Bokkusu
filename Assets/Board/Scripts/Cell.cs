@@ -11,7 +11,7 @@ public class Cell
     private float fallSpeed;
     private int x, z;
 	private int audioX, audioZ;
-	private bool playedSound = false;
+	//private bool playedSound = false;
     private bool doorRaising = false;
     private bool doorLowering = false;
 
@@ -51,8 +51,8 @@ public class Cell
         audio = baseObj.AddComponent<AudioSource>();
 		audioX = audioZ = -1;
 
-        //fallSpeed = 8 + Random.value * 15;
-		fallSpeed = 11;
+        fallSpeed = 8 + Random.value * 15;
+		//fallSpeed = 11;
     }
 
 
@@ -68,18 +68,18 @@ public class Cell
 		this.audioClip = audioClip;
 	}
 
-	public bool hasPlayedAudio()
-    {
-		return playedSound;
-	}
+    //public bool hasPlayedAudio()
+    //{
+    //	return audioIndex;
+    //}
 
-	public void playAudioClip(float priority)
+    public void playAudioClip(float priority)
     {
 		//audio.Stop();
 		if (audioClip == null) return;
 		audio.priority = (int)priority;
 		audio.PlayOneShot(audioClip, 0.5f);
-		playedSound = true;
+		//playedSound = true;
 		//Debug.Log(priority);
 	}
 
@@ -92,14 +92,14 @@ public class Cell
 		audio.Stop();
 		audio.priority = (int)priority;
 		audio.PlayOneShot(audioClip, 0.5f);
-		playedSound = true;
+		//playedSound = true;
 	}
 		
     public float getFallSpeed() { return fallSpeed; }
 
     public float getY() { return baseObj.transform.position.y; }
 
-    public void fallTo(float y)
+    public bool fallTo(float y)
     {
         if (y <= bottomY)
         {
@@ -108,6 +108,8 @@ public class Cell
             if (type == CameraScript.Element.DOOR_A) doorIsDown = true;
         }
         baseObj.transform.Translate(0, y-getY(), 0);
+        if (y <= bottomY) return true;
+        return false;
     }
 
     public void addCrate(GameObject obj)
