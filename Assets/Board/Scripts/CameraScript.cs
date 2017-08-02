@@ -8,7 +8,7 @@ public class CameraScript : MonoBehaviour
 	private static float fullWidth = 32;
 	private static float fullHeight = 14;
     private int gridWidth, gridHeight;
-	private int winNote = 0;
+	//private int winNote = 0;
 	//private float audioPriority = 255;
 	//private float audioDecrement = 1;
     private float doorToggleSeconds;
@@ -105,7 +105,6 @@ public class CameraScript : MonoBehaviour
 					pentLength++;
 				}
 			}
-			winNote = pentAudio.Length-1;
 		}
 			
 
@@ -347,7 +346,7 @@ public class CameraScript : MonoBehaviour
                     bool hitBottom = grid[x, z].fallTo(y);
                     if (hitBottom)
                     {
-                        grid[x, z].playAudioClip(frameCount % 255);
+                        grid[x, z].playAudioClip(0);
                     }
                     else fallingDone = false;
                 }
