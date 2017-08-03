@@ -17,16 +17,9 @@ public class CameraScript : MonoBehaviour
     public AudioClip[] harpEndLevel; 
     public AudioSource cameraAudio;
 
-    //Unity can only mix 32 AudioSources. 
-    //When the board spawns, each block, when it falls into place, is an AudioSource.
-    //After an audioSource stops playing, it no longer counts towards the 32 limit.
-    //If a sound is played when there are already 32 actice sounds, then:
-    //   1) if there is a sound being played that has a lower priority, then it is stopped.
-    //   2) if no sound being played has a lower priority, then the new sound is not played.
-    //Most boards have more than 32 blocks. We set the first block to land with the lowest priority (255).
-    //Therefore, if a later block hits while 32 blocks still have active sound, then the oldest block's sound is stopped.
-    private int audioLevelSpawnCurrentBlockPriority; //0=highest priority, 255=0 lowest priority
-
+    private static int MAX_AUDIO_TRACKS = 32;
+    private AudioSource[] cellAudioList = new AudioSource[MAX_AUDIO_TRACKS];
+    private int cellAudioIdx;
 
     public GameObject boardBlock;
     public GameObject crateBlock;
@@ -161,7 +154,7 @@ public class CameraScript : MonoBehaviour
         doorToggleSeconds = -1f;
         frameCount = 0;
         timeOfLevel = 0;
-        audioLevelSpawnCurrentBlockPriority = 255;
+        cellAudioIdx = 0;
 
         curLevel = level;
         destroyOldBoard();
@@ -341,9 +334,12 @@ public class CameraScript : MonoBehaviour
                     bool hitBottom = grid[x, z].fallTo(y);
                     if (hitBottom)
                     {
-                        grid[x, z].playAudio(audioLevelSpawnCurrentBlockPriority);
-                        audioLevelSpawnCurrentBlockPriority--;
-                        if (audioLevelSpawnCurrentBlockPriority < 0) audioLevelSpawnCurrentBlockPriority = 0;
+                        if (cellAudioList[cellAudioIdx] != null)
+                        {
+                            if (cellAudioList[cellAudioIdx].isPlaying) cellAudioList[cellAudioIdx].Stop();
+                        }
+                        cellAudioList[cellAudioIdx] = grid[x, z].playAudio();
+                        cellAudioIdx = (cellAudioIdx + 1 ) % MAX_AUDIO_TRACKS;
                     }
                     else fallingDone = false;
                 }
@@ -541,7 +537,7 @@ public class CameraScript : MonoBehaviour
         //Debug.Log("CameraScript.movePlayer(): speed: ("+ script.getSpeedX() + ", "+ script.getSpeedZ()+")");
 
         bool moved = script.updateLocation(x, z);
-        if (moved) grid[gridX, gridZ].playAudio(0);
+        if (moved) grid[gridX, gridZ].playAudio();
     }
 
 
