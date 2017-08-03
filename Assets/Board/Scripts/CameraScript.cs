@@ -8,9 +8,7 @@ public class CameraScript : MonoBehaviour
 	private static float fullWidth = 32;
 	private static float fullHeight = 14;
     private int gridWidth, gridHeight;
-	//private int winNote = 0;
-	//private float audioPriority = 255;
-	//private float audioDecrement = 1;
+
     private float doorToggleSeconds;
 
 	//private AudioSource audio;
@@ -18,6 +16,16 @@ public class CameraScript : MonoBehaviour
 	private AudioClip[] pentAudio; //pantatonic scale
     public AudioClip[] harpEndLevel; 
     public AudioSource cameraAudio;
+
+    //Unity can only mix 32 AudioSources. 
+    //When the board spawns, each block, when it falls into place, is an AudioSource.
+    //After an audioSource stops playing, it no longer counts towards the 32 limit.
+    //If a sound is played when there are already 32 actice sounds, then:
+    //   1) if there is a sound being played that has a lower priority, then it is stopped.
+    //   2) if no sound being played has a lower priority, then the new sound is not played.
+    //Most boards have more than 32 blocks. We set the first block to land with the lowest priority (255).
+    //Therefore, if a later block hits while 32 blocks still have active sound, then the oldest block's sound is stopped.
+    private int audioLevelSpawnCurrentBlockPriority; //0=highest priority, 255=0 lowest priority
 
 
     public GameObject boardBlock;
@@ -82,7 +90,6 @@ public class CameraScript : MonoBehaviour
         elementValues = (Element[])System.Enum.GetValues(typeof(Element));
 
         gameMapList = MapLoader.loadAllMaps();
-        //audio = gameObject.AddComponent<AudioSource>();
 
 		{//audio stuff
 			harpAudio = Resources.LoadAll<AudioClip>("Audio/harpsichord");
@@ -151,10 +158,10 @@ public class CameraScript : MonoBehaviour
         dustBunny2.SetActive(false);
         dustBunnyPhase = 0;
 
-        //audioPriority = 255;
         doorToggleSeconds = -1f;
         frameCount = 0;
         timeOfLevel = 0;
+        audioLevelSpawnCurrentBlockPriority = 255;
 
         curLevel = level;
         destroyOldBoard();
@@ -213,7 +220,6 @@ public class CameraScript : MonoBehaviour
                     if (foundGoal)
                     {
                         Debug.Log("Each level must have Exactly ONE goal.");
-                        //UnityEditor.EditorApplication.isPlaying = false;
                     }
                     foundGoal = true;
                     goalBlock.transform.position = new Vector3(x, 1, z);
@@ -221,12 +227,9 @@ public class CameraScript : MonoBehaviour
             }
         }
 
-        //audioDecrement = 127.0f / numCells;
-
         if (!foundGoal)
         {
             Debug.Log("Each level must have Exactly ONE goal.");
-            //UnityEditor.EditorApplication.isPlaying = false;
         }
 
 
@@ -323,14 +326,6 @@ public class CameraScript : MonoBehaviour
         {
             bool fallingDone = true;
 
-			//if (frameCount%4 == 0){
-			//	if (winNote > 0){
-			//		winNote = Mathf.Min(winNote, pentAudio.Length-1);
-			//		cameraAudio.PlayOneShot(pentAudio[winNote], 0.5f);
-			//		winNote--;
-			//	}
-			//}
-
             for (int x = 0; x < gridWidth; x++)
             {
                 for (int z = 0; z < gridHeight; z++)
@@ -346,15 +341,18 @@ public class CameraScript : MonoBehaviour
                     bool hitBottom = grid[x, z].fallTo(y);
                     if (hitBottom)
                     {
-                        grid[x, z].playAudioClip(0);
+                        grid[x, z].playAudio(audioLevelSpawnCurrentBlockPriority);
+                        audioLevelSpawnCurrentBlockPriority--;
+                        if (audioLevelSpawnCurrentBlockPriority < 0) audioLevelSpawnCurrentBlockPriority = 0;
                     }
                     else fallingDone = false;
                 }
             }
 			if (fallingDone){
 				gameState = GameState.PLAYING;
-				//cameraAudio.Stop();
-			}
+                playerScript1.startPlaying();
+                playerScript2.startPlaying();
+            }
         }
 
         else if (gameState == GameState.PLAYING)
@@ -451,12 +449,6 @@ public class CameraScript : MonoBehaviour
 
         else if (gameState == GameState.WON)
         {
-            //if (frameCount%2 == 0){
-            //	if (winNote < pentAudio.Length){
-            //		cameraAudio.PlayOneShot(pentAudio[winNote], 0.5f);
-            //		winNote++;
-            //	}
-            //}
             if (Vector2.Distance(transform.position, eyePositonAboveGoal) > 4)
             {
                 Vector3 lookPos = goalBlock.transform.position - transform.position;
@@ -469,8 +461,7 @@ public class CameraScript : MonoBehaviour
             else
             {
                 if (!cameraAudio.isPlaying)
-                {    //cameraAudio.Stop();
-
+                {  
                     curLevel++;
                     if (curLevel >= gameMapList.Length) curLevel = 1;
 
@@ -538,9 +529,6 @@ public class CameraScript : MonoBehaviour
 
         if ((toX != gridX) || (toZ != gridZ))
         {
-			//play audio clip
-			grid[gridX, gridZ].playAudioClip(frameCount%255, toX, toZ);
-
             float speed = script.getSpeedMagnitude();
             bool smashCrate = false;
             if (speed >= CrateScript.getStrength()) smashCrate = true;
@@ -552,7 +540,8 @@ public class CameraScript : MonoBehaviour
         }
         //Debug.Log("CameraScript.movePlayer(): speed: ("+ script.getSpeedX() + ", "+ script.getSpeedZ()+")");
 
-        script.updateLocation(x, z);
+        bool moved = script.updateLocation(x, z);
+        if (moved) grid[gridX, gridZ].playAudio(0);
     }
 
 
@@ -570,17 +559,6 @@ public class CameraScript : MonoBehaviour
                 if (grid[x, z] != null) grid[x, z].destroyObjects();
             }
         }
-
-        //Will be needed when there are more objects moving than just the players
-        //foreach (GameObject obj in entityList)
-        //{
-        //    if (obj == null) continue;
-        //    if (obj.tag != "Player")
-        //    {
-        //        Destroy(obj);
-        //    }
-        //}
-        //entityList.Clear();
     }
 
     public PlayerScript getPlayerObject(Element playerEnum)
@@ -597,7 +575,7 @@ public class CameraScript : MonoBehaviour
         crateClone.SetActive(true);
         grid[x, z].addCrate(crateClone);
 
-        crateClone.GetComponent<CrateScript>().spawnAnimation(player);
+        crateClone.GetComponent<CrateScript>().spawnAnimation(cameraAudio, player);
     }
 
     public void setGameState(GameState state)
@@ -634,7 +612,7 @@ public class CameraScript : MonoBehaviour
 
         if (type == Element.CRATE && smashCrate)
         {
-            grid[x, z].smashCrate(speed);
+            grid[x, z].smashCrate();
             return true;
         }
 

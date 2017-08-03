@@ -57,22 +57,22 @@ public class Voronoi
             if (pointListX[i] < 0)
             {
                 pointListX[i] = 0;
-                speedX[i] = Random.Range(1, 5);
+                speedX[i] = Random.Range(1, 2);
             }
             if (pointListY[i] < 0)
             {
                 pointListY[i] = 0;
-                speedY[i] = Random.Range(1, 5);
+                speedY[i] = Random.Range(1, 2);
             }
             if (pointListX[i] > pixelSize - 1)
             {
                 pointListX[i] = pixelSize - 1;
-                speedX[i] = Random.Range(-5, -1);
+                speedX[i] = Random.Range(-2, -1);
             }
             if (pointListY[i] > pixelSize - 1)
             {
                 pointListY[i] = pixelSize - 1;
-                speedY[i] = Random.Range(-5, -1);
+                speedY[i] = Random.Range(-2, -1);
             }
         }
 
@@ -115,8 +115,8 @@ public class Voronoi
             pointListX[i] = Random.Range(0, pixelSize - 1);
             pointListY[i] = Random.Range(0, pixelSize - 1);
 
-            speedX[i] = Random.Range(-5, 5);
-            speedY[i] = Random.Range(-5, 5);
+            speedX[i] = Random.Range(-2, 2);
+            speedY[i] = Random.Range(-2, 2);
         }
     }
 }

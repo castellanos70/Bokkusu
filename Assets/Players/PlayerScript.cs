@@ -44,6 +44,7 @@ public class PlayerScript : MonoBehaviour
 
     private Material playerMat;
     private Voronoi voronoiScript;
+    private float nextVoronoiUpdateTime;
 
     void Start()
     {
@@ -113,13 +114,16 @@ public class PlayerScript : MonoBehaviour
 
     public void setBoard(CameraScript cameraScript, Cell[,] myGrid)
     {
+        nextVoronoiUpdateTime = 0;
         this.cameraScript = cameraScript;
         iHaveWon = false;
         grid = myGrid;
         CameraScript.Element otherPlayerEnum = CameraScript.Element.PLAYER1;
         if (otherPlayerEnum == myPlayerEnum) otherPlayerEnum = CameraScript.Element.PLAYER2;
         //otherPlayerScript = cameraScript.getPlayerObject(otherPlayerEnum);
-}
+        spawnSpotObj.SetActive(false);
+        gameObject.SetActive(false);
+    }
 
     public void setStartPosition(int x, int z)
     {
@@ -138,15 +142,24 @@ public class PlayerScript : MonoBehaviour
 
         //spawnSpotObj.transform.position =  new Vector3(transform.position.x, 0.51f, transform.position.z);
         spawnSpotObj.transform.position = new Vector3(transform.position.x, 1f, transform.position.z);
+    }
 
+
+    public void startPlaying()
+    {
+        spawnSpotObj.SetActive(true);
+        gameObject.SetActive(true);
     }
 
 
     // Update is called once per main game loop iteration
     void Update()
     {
-
-
+        if (Time.time > nextVoronoiUpdateTime)
+        {
+            voronoiScript.next();
+            nextVoronoiUpdateTime = Time.time + 0.1f;
+        }
         if (cameraScript.getGameState() == CameraScript.GameState.WON && iHaveWon)
         {
             transform.localScale *= 0.985f;
@@ -219,7 +232,7 @@ public class PlayerScript : MonoBehaviour
             toZ = gridZ + joystickZ;
         }
 
-        if (playerIsPressingMove) voronoiScript.next();
+        //if (playerIsPressingMove) voronoiScript.next();
 
 
 
@@ -261,7 +274,7 @@ public class PlayerScript : MonoBehaviour
 
     public float getSpeedMagnitude() { return Mathf.Max(Mathf.Abs(speedX), Mathf.Abs(speedZ)); }
 
-    public void updateLocation(float x, float z)
+    public bool updateLocation(float x, float z)
     {
         transform.position = new Vector3(x, 1, z);
         bool moved = false;
@@ -306,7 +319,7 @@ public class PlayerScript : MonoBehaviour
         }
         else if (type == CameraScript.Element.CRATE)
         {
-            grid[gridX, gridZ].smashCrate(getSpeedMagnitude());
+            grid[gridX, gridZ].smashCrate();
 
         }
         else if (moved)
@@ -319,7 +332,7 @@ public class PlayerScript : MonoBehaviour
                 cameraScript.toggleDoors();
             }
         }
-
+        return moved;
         //Debug.Log("PlayerScript.updateLocation(" + x + ", " + z + "):  grid[" + gridX + ", " + gridZ + "]");
 
     }
@@ -367,7 +380,7 @@ public class PlayerScript : MonoBehaviour
             readyToSpawnCrate = false;
             if (grid[gridX, gridZ].getType() == CameraScript.Element.CRATE)
             {
-                grid[gridX, gridZ].smashCrate(getSpeedMagnitude());
+                grid[gridX, gridZ].smashCrate();
 
             }
         }
