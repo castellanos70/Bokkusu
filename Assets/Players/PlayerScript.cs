@@ -9,14 +9,11 @@ public class PlayerScript : MonoBehaviour
     public AudioSource playerAudio;
 
     public int playerNumber;
-    public int speedMax;
-    public int speedMin;
-    public int acceleration;
+    private static float speedMax = 20;
+    private static float speedMin = 1;
+    private static float acceleration = 30;
     public GameObject spawnSpotObj;
 
-    private float spawnSpotDeltaTransparency;
-
-    //private Material playerMaterial;
     private bool moving = false;
     private float speedX = 0;
     private float speedZ = 0;
@@ -40,11 +37,14 @@ public class PlayerScript : MonoBehaviour
     
     private CameraScript.Element myPlayerEnum;
     private CameraScript cameraScript;
-    //private PlayerScript otherPlayerScript;
     private int libertyCount;
 
     private KeyCode[] keycode = new KeyCode[5];
     private String axisHorizontal, axisVertical;
+
+    private Material playerMat;
+    private Voronoi voronoiScript;
+    private float nextVoronoiUpdateTime;
 
     void Start()
     {
@@ -62,8 +62,6 @@ public class PlayerScript : MonoBehaviour
 
 
         arrow.SetActive(false);
-        //playerMaterial = gameObject.GetComponent<Renderer>().material;
-
         
         if (playerNumber == 1)
         {
@@ -89,18 +87,43 @@ public class PlayerScript : MonoBehaviour
             timingOffset = 50;
         }
         libertyCount = 4;
+
+
+        playerMat = gameObject.GetComponent<Renderer>().material;
+        if (playerNumber == 1) voronoiScript = new Voronoi(playerMat, 256, 240, 0, 21);
+        else voronoiScript = new Voronoi(playerMat, 256, 218, 216, 29);
+        //Renderer renderer = GetComponent<Renderer>();
+        //renderer.material = playerMat;
+
+        //Renderer spawnRenderer = spawnSpotObj.GetComponent<Renderer>();
+        //Shader spawnSpotShader = Shader.Find("Transparent/Diffuse");
+        //Material spawnSpotMat = spawnRenderer.material;
+        //spawnSpotMat.shader = spawnSpotShader;
+
+        //spawnSpotMat.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
+        //spawnSpotMat.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
+        //spawnSpotMat.SetFloat("_Glossiness", 0.0f);
+        //spawnSpotMat.SetFloat("_Metallic", 0.0f);
+
+
+        //spawnSpotMat.mainTexture = playerMat.mainTexture;
+        //spawnSpotMat.color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+
     }
 
 
     public void setBoard(CameraScript cameraScript, Cell[,] myGrid)
     {
+        nextVoronoiUpdateTime = 0;
         this.cameraScript = cameraScript;
         iHaveWon = false;
         grid = myGrid;
         CameraScript.Element otherPlayerEnum = CameraScript.Element.PLAYER1;
         if (otherPlayerEnum == myPlayerEnum) otherPlayerEnum = CameraScript.Element.PLAYER2;
         //otherPlayerScript = cameraScript.getPlayerObject(otherPlayerEnum);
-}
+        spawnSpotObj.SetActive(false);
+        gameObject.SetActive(false);
+    }
 
     public void setStartPosition(int x, int z)
     {
@@ -117,19 +140,29 @@ public class PlayerScript : MonoBehaviour
         speedX = 0;
         speedZ = 0;
 
-        spawnSpotDeltaTransparency = -1;
         //spawnSpotObj.transform.position =  new Vector3(transform.position.x, 0.51f, transform.position.z);
         spawnSpotObj.transform.position = new Vector3(transform.position.x, 1f, transform.position.z);
+    }
 
+
+    public void startPlaying()
+    {
+        spawnSpotObj.SetActive(true);
+        gameObject.SetActive(true);
     }
 
 
     // Update is called once per main game loop iteration
     void Update()
     {
+        if (Time.time > nextVoronoiUpdateTime)
+        {
+            voronoiScript.next();
+            nextVoronoiUpdateTime = Time.time + 0.1f;
+        }
         if (cameraScript.getGameState() == CameraScript.GameState.WON && iHaveWon)
         {
-            transform.localScale *= 0.995f;
+            transform.localScale *= 0.985f;
             transform.Rotate(Vector3.up * Time.deltaTime * 90);
             float x = transform.position.x + (gridX - transform.position.x) / 4;
             float z = transform.position.z + (gridZ - transform.position.z) / 4;
@@ -141,27 +174,6 @@ public class PlayerScript : MonoBehaviour
             updateSpawnCrate();
             updateSpeed();
             updateArrows();
-
-            /*
-            Color color = spawnSpotObj.GetComponent<Renderer>().material.color;
-            
-            color.a = color.a + spawnSpotDeltaTransparency*Time.deltaTime;
-            if (color.a < 0)
-            {
-                color.a = 0;
-                spawnSpotDeltaTransparency = 1;
-            }
-            if (color.a > 1)
-            {
-                color.a = 1;
-                spawnSpotDeltaTransparency = -1;
-            }
-            Vector3 scale = spawnSpotObj.transform.localScale;
-            scale.x = 0.1f + 0.9f * color.a;
-            scale.z = scale.x;
-            spawnSpotObj.transform.localScale = scale;
-            spawnSpotObj.GetComponent<Renderer>().material.SetColor("_Color", color);
-            */
         }
         updateArrows();
     }
@@ -184,23 +196,44 @@ public class PlayerScript : MonoBehaviour
         int joystickZ = readJoystickZ();
         
 
-        if (joystickZ != 0 && speedX == 0)
+        if (joystickX != 0 && speedZ == 0)
         {
             playerIsPressingMove = true;
-            speedZ += joystickZ * acceleration * Time.deltaTime;
-            toZ = gridZ + joystickZ;
-        }
-        
-        else if (joystickX != 0 && speedZ == 0)
-        {
-            playerIsPressingMove = true;
-            speedX += joystickX * acceleration * Time.deltaTime;
+            float speed = speedX + joystickX*acceleration * Time.deltaTime;
+            if (speedX > 0)
+            {
+                if (speed > speedMax) speed = speedMax;
+                else if (speed < speedMin) speed = speedMin;
+            }
+            else if (speedX < 0)
+            {
+                if (speed < -speedMax) speed = -speedMax;
+                else if (speed > -speedMin) speed = -speedMin;
+            }
+            speedX = speed;
             toX = gridX + joystickX;
         }
 
-        speedX = toSpeedBounds(speedX);
-        speedZ = toSpeedBounds(speedZ);
-        //Debug.Log("Player["+playerNumber+"] speed=(" + tmpx+", "+tmpz+") === > (" + speedX+", "+speedZ+")");
+        else if (joystickZ != 0 && speedX == 0)
+        {
+            playerIsPressingMove = true;
+            float speed = speedZ + joystickZ * acceleration * Time.deltaTime;
+            if (speedZ > 0)
+            {
+                if (speed > speedMax) speed = speedMax;
+                else if (speed < speedMin) speed = speedMin;
+            }
+            else if (speedZ < 0)
+            {
+                if (speed < -speedMax) speed = -speedMax;
+                else if (speed > -speedMin) speed = -speedMin;
+            }
+            speedZ = speed;
+            toZ = gridZ + joystickZ;
+        }
+
+        //if (playerIsPressingMove) voronoiScript.next();
+
 
 
         if ((!moving) && playerIsPressingMove)
@@ -208,32 +241,24 @@ public class PlayerScript : MonoBehaviour
             if (cameraScript.enterIfPossible(toX, toZ, true, getSpeedMagnitude()))
             {
                 moving = true;
-                playerAudio.Play();
             }
             else
             {
+                
                 speedX = 0;
                 speedZ = 0;
             }
-        }
-        if (moving)
-        {
-            float speed = speedX + speedZ;
-            playerAudio.pitch = 0.5f + floatToUnit(speed) * (speed / (speedMax / 2.5f));
         }
     }
 
     public bool isMoving()
     {
-        //if (speedX == 0f && speedZ == 0f) return true;
-        //return false;
         return moving;
     }
 
 
     public void hit()
     {
-        playerAudio.Stop();
         transform.position = new Vector3(gridX, 1, gridZ);
         moving = false;
         speedX = 0;
@@ -249,7 +274,7 @@ public class PlayerScript : MonoBehaviour
 
     public float getSpeedMagnitude() { return Mathf.Max(Mathf.Abs(speedX), Mathf.Abs(speedZ)); }
 
-    public void updateLocation(float x, float z)
+    public bool updateLocation(float x, float z)
     {
         transform.position = new Vector3(x, 1, z);
         bool moved = false;
@@ -288,13 +313,13 @@ public class PlayerScript : MonoBehaviour
         CameraScript.Element type = grid[gridX, gridZ].getType();
         if (type == CameraScript.Element.GOAL)
         {
-            playerAudio.Stop();
+            //playerAudio.Stop();
             iHaveWon = true;
             cameraScript.setGameState(CameraScript.GameState.WON);
         }
         else if (type == CameraScript.Element.CRATE)
         {
-            grid[gridX, gridZ].smashCrate(getSpeedMagnitude());
+            grid[gridX, gridZ].smashCrate();
 
         }
         else if (moved)
@@ -307,7 +332,7 @@ public class PlayerScript : MonoBehaviour
                 cameraScript.toggleDoors();
             }
         }
-
+        return moved;
         //Debug.Log("PlayerScript.updateLocation(" + x + ", " + z + "):  grid[" + gridX + ", " + gridZ + "]");
 
     }
@@ -355,7 +380,7 @@ public class PlayerScript : MonoBehaviour
             readyToSpawnCrate = false;
             if (grid[gridX, gridZ].getType() == CameraScript.Element.CRATE)
             {
-                grid[gridX, gridZ].smashCrate(getSpeedMagnitude());
+                grid[gridX, gridZ].smashCrate();
 
             }
         }
@@ -387,17 +412,6 @@ public class PlayerScript : MonoBehaviour
         return 0;
     }
 
-    private float toSpeedBounds(float speed)
-    {
-        if (speed == 0f) return 0f;
-        if (speed > speedMax) return speedMax;
-        if (speed < -speedMax) return -speedMax;
-
-        if (speed > 0 && speed < speedMin) return speedMin;
-        if (speed < 0 && speed > -speedMin) return -speedMin;
-
-        return speed;
-    }
 
     private int intToUnit(int n)
     {

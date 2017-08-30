@@ -8,29 +8,39 @@ public class CameraScript : MonoBehaviour
 	private static float fullWidth = 32;
 	private static float fullHeight = 14;
     private int gridWidth, gridHeight;
-	private float audioPriority = 255;
-	private float audioDecrement = 1;
+
     private float doorToggleSeconds;
 
 	//private AudioSource audio;
 	private AudioClip[] harpAudio;
+	private AudioClip[] pentAudio; //pantatonic scale
+    public AudioClip[] harpEndLevel; 
+    public AudioSource cameraAudio;
+
+    private static int MAX_AUDIO_TRACKS = 32;
+    private AudioSource[] cellAudioList = new AudioSource[MAX_AUDIO_TRACKS];
+    private int cellAudioIdx;
 
     public GameObject boardBlock;
     public GameObject crateBlock;
     public GameObject player1, player2;
-    public GameObject dustBunny;
+    public GameObject dustBunny1, dustBunny2;
 
+    private int dustBunnyPhase;
+
+    private int frameCount;
+    private float timeOfLevel;
 
 
     private Material wallMat;
+    private NoiseTexture wallScript;
     private int wallTextureSize = 128;
     private float wallMorphScale = 0.05f;
-    private float wallTextureShift;
 
     private Material floorMat;
+    private NoiseTexture floorScript;
     private int floorTextureSize = 128;
-    private float floorMorphScale = 0.08f;
-    private float floorTextureShift;
+    private float floorMorphScale = 0.1f;
    
 
     public GameObject goalBlock;
@@ -39,10 +49,8 @@ public class CameraScript : MonoBehaviour
     private Background_AbstractScript backgroundScript;
 
     private Kaleidoscope doorKaleidoscope;
-    private Material doorMat;
-    private int doorTextureSize = 128;
-    private float doorUpdateTime;
-    private float doorDownScale, doorDownDeltaScale;
+    private Material doorMat1, doorMat2;
+    private int doorTextureSize = 256;
 
 
     public enum GameState { INTRO, INITIALIZING, PLAYING, WON };
@@ -75,47 +83,60 @@ public class CameraScript : MonoBehaviour
         elementValues = (Element[])System.Enum.GetValues(typeof(Element));
 
         gameMapList = MapLoader.loadAllMaps();
-        //audio = gameObject.AddComponent<AudioSource>();
-        harpAudio = Resources.LoadAll<AudioClip>("Audio/harpsichord");
+
+		{//audio stuff
+			harpAudio = Resources.LoadAll<AudioClip>("Audio/harpsichord");
+			int[] pentatonic = { 0, 2, 4, 7, 9 };
+
+			pentAudio = new AudioClip[(int)(harpAudio.Length*(5f/12f))];
+
+			//Debug.Log("pent: " + pentAudio.Length);
+
+			int pentLength = 0;
+			for (int i = 0; i < harpAudio.Length; i++){
+				bool isPent = false;
+				for (var j = 0; j < 5; j++){ 
+					if (i%12 == pentatonic[j]){
+						isPent = true; break;
+					}
+				}
+				if (isPent && pentLength < pentAudio.Length){
+					pentAudio[pentLength] = harpAudio[i];
+					pentLength++;
+				}
+			}
+		}
+			
 
         boardBlock.SetActive(false);
         crateBlock.SetActive(false);
-
-
-        doorMat = new Material(Shader.Find("Standard"));
-        doorMat.SetFloat("_Glossiness", 0.0f);
-        doorMat.SetFloat("_Metallic", 0.0f);
-        doorMat.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
-        doorMat.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
-
-        wallMat = new Material(Shader.Find("Standard"));
-        wallMat.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
-        wallMat.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
-        wallTextureShift = Random.value * 100;
-        DrawUtilities.generateWallTexture(wallMat, wallTextureSize, wallTextureShift);
-
-
-        floorMat = new Material(Shader.Find("Standard"));
-        floorMat.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
-        floorMat.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
-        floorTextureShift = Random.value * 100;
-        DrawUtilities.generateFloorTexture(floorMat, floorTextureSize, floorTextureShift);
-
     }
 
 
 
     void Start()
     {
+        doorMat1 = new Material(Shader.Find("Standard"));
+        doorMat2 = new Material(Shader.Find("Standard"));
+        doorKaleidoscope = new Kaleidoscope(doorMat1, doorMat2, doorTextureSize);
+        Cell.setDoorMat(doorMat1, doorMat2);
+
+        wallMat = new Material(Shader.Find("Standard"));
+        wallScript = new NoiseTexture(wallMat, wallTextureSize, 0.02f, wallMorphScale, 1);
+
+        floorMat = new Material(Shader.Find("Standard"));
+        floorScript = new NoiseTexture(floorMat, floorTextureSize, 0.03f, floorMorphScale, 0);
+
+
+
 
         backgroundScript = GetComponent<Background_AbstractScript>();
         Texture2D texture = backgroundScript.create();
         Renderer renderer = backgroundPlane.GetComponent<Renderer>();
         renderer.material.mainTexture = texture;
+        backgroundScript.clear(Random.Range(0,1));
 
-        doorKaleidoscope = new Kaleidoscope(doorMat, doorTextureSize);
-        
-
+        Cursor.visible = false;
         spawnBoard(0);
     }
 
@@ -125,19 +146,18 @@ public class CameraScript : MonoBehaviour
     private void spawnBoard(int level)
     {
         gameState = GameState.INITIALIZING;
-        doorUpdateTime = 0;
 
-        audioPriority = 255;
+        dustBunny1.SetActive(false);
+        dustBunny2.SetActive(false);
+        dustBunnyPhase = 0;
+
         doorToggleSeconds = -1f;
-        doorDownScale = 1f;
-        doorDownDeltaScale = 0.1f;
-
+        frameCount = 0;
+        timeOfLevel = 0;
+        cellAudioIdx = 0;
 
         curLevel = level;
         destroyOldBoard();
-
-
-
 
         gameMap = gameMapList[level];
         startMap = gameMap.getMap();
@@ -148,8 +168,6 @@ public class CameraScript : MonoBehaviour
 
         grid = new Cell[gridWidth, gridHeight];
         bool foundGoal = false;
-
-        int[] pentatonic = { 0, 2, 4, 7, 9 };
 
         // Spawn board blocks
         //Debug.Log("Spawn Board(" + level + "): " + grid.GetLength(0) + "(" + gridWidth + ") x " + grid.GetLength(1) + "(" + gridHeight + ")");
@@ -168,30 +186,33 @@ public class CameraScript : MonoBehaviour
                 Material mat = null;
                 if (startMap[x, z] == CameraScript.Element.WALL)
                 {
-                    //mat = wallMat[Random.Range(0, wallMat.Length)];
                     mat = wallMat;
                 }
-                else if (startMap[x, z] == CameraScript.Element.DOOR_A || startMap[x, z] == CameraScript.Element.DOOR_B)
+                else if (startMap[x, z] == CameraScript.Element.DOOR_A)
                 {
-                    mat = doorMat;
+                    mat = doorMat1;
+                }
+                else if (startMap[x, z] == CameraScript.Element.DOOR_B)
+                {
+                    mat = doorMat2;
                 }
                 else
                 {
-                    mat = floorMat;//floorMat[Random.Range(0, floorMat.Length)];
+                    mat = floorMat;
                 }
 
+				grid[x, z] = new Cell(startMap[x, z], block, mat);
 
-                grid[x, z] = new Cell(startMap[x, z], block, mat);
-                int audioIndex = pentatonic[Random.Range(0, 5)] + (Random.Range(0, (harpAudio.Length / 12) - 1) * 12);
-                //int audioIndex = (x * gridWidth) / harpAudio.Length;
-                grid[x, z].setAudioClip(harpAudio[audioIndex]);
+				int audioIndex = (int)(((40 - y)/40.0f)*pentAudio.Length);
+				//Debug.Log("audioIndex="+audioIndex);
+
+                grid[x, z].setAudioClip(pentAudio[audioIndex]);
 
                 if (startMap[x, z] == Element.GOAL)
                 {
                     if (foundGoal)
                     {
                         Debug.Log("Each level must have Exactly ONE goal.");
-                        //UnityEditor.EditorApplication.isPlaying = false;
                     }
                     foundGoal = true;
                     goalBlock.transform.position = new Vector3(x, 1, z);
@@ -199,12 +220,9 @@ public class CameraScript : MonoBehaviour
             }
         }
 
-        audioDecrement = 127.0f / numCells;
-
         if (!foundGoal)
         {
             Debug.Log("Each level must have Exactly ONE goal.");
-            //UnityEditor.EditorApplication.isPlaying = false;
         }
 
 
@@ -271,16 +289,18 @@ public class CameraScript : MonoBehaviour
         float scale = Mathf.Max(gridWidth, gridHeight) * 0.25f;
         backgroundPlane.transform.position = new Vector3(gridWidth / 2, 0.4f, gridHeight / 2);
         backgroundPlane.transform.localScale = new Vector3(scale, 1, scale);
-        backgroundScript.clear(curLevel);
+        if (backgroundScript.isDone()) backgroundScript.clear(curLevel);
 
     }
 
     // Update is called once per frame
     void Update()
     {
+        frameCount++;
+        timeOfLevel += Time.deltaTime;
+
         if (Input.GetKey(KeyCode.Escape))
         {
-            //if (!Application.isEditor) System.Diagnostics.Process.GetCurrentProcess().Kill();
             Application.Quit();
         }
 
@@ -288,22 +308,10 @@ public class CameraScript : MonoBehaviour
         goalBlock.transform.Rotate(Vector3.up * Time.deltaTime*40);
         backgroundPlane.transform.Rotate(Vector3.up * Time.deltaTime*.5f);
 
-        float goalAngle = Mathf.PI*goalBlock.transform.rotation.eulerAngles.y/180f;
-        //float goalScale = Mathf.Sin(2 * goalAngle) * 0.0125f;
-        float goalScale = 1 - 0.2f* Mathf.Abs(Mathf.Sin(2 * goalAngle));
-        goalBlock.transform.localScale = new Vector3(goalScale, goalScale, goalScale);
+        wallScript.next();
+        floorScript.next();
 
-       wallTextureShift += Time.deltaTime * wallMorphScale;
-        DrawUtilities.generateWallTexture(wallMat, wallTextureSize, wallTextureShift);
-
-        floorTextureShift += Time.deltaTime * floorMorphScale;
-        DrawUtilities.generateFloorTexture(floorMat, floorTextureSize, floorTextureShift);
-
-        if (Time.time > doorUpdateTime)
-        {
-            doorUpdateTime = Time.time + 0.1f;
-            doorKaleidoscope.updateTexture();
-        }
+        doorKaleidoscope.updateTexture();
 
         //Debug.Log(wallTextureShift + "," + floorTextureShift);
 
@@ -319,21 +327,28 @@ public class CameraScript : MonoBehaviour
 
                     float fallSpeed = grid[x, z].getFallSpeed();
 
-                    if (fallSpeed == 0f) {
-                        if (!grid[x, z].hasPlayedAudio()) {
-                            grid[x, z].playAudioClip(audioPriority);
-                            audioPriority -= audioDecrement;
-                        }
-                        continue;
-                    };
+                    if (fallSpeed == 0f) continue;
 
                     float y = grid[x, z].getY() - fallSpeed * Time.deltaTime;
 
-                    grid[x, z].fallTo(y);
-                    fallingDone = false;
+                    bool hitBottom = grid[x, z].fallTo(y);
+                    if (hitBottom)
+                    {
+                        if (cellAudioList[cellAudioIdx] != null)
+                        {
+                            if (cellAudioList[cellAudioIdx].isPlaying) cellAudioList[cellAudioIdx].Stop();
+                        }
+                        cellAudioList[cellAudioIdx] = grid[x, z].playAudio();
+                        cellAudioIdx = (cellAudioIdx + 1 ) % MAX_AUDIO_TRACKS;
+                    }
+                    else fallingDone = false;
                 }
             }
-            if (fallingDone) gameState = GameState.PLAYING;
+			if (fallingDone){
+				gameState = GameState.PLAYING;
+                playerScript1.startPlaying();
+                playerScript2.startPlaying();
+            }
         }
 
         else if (gameState == GameState.PLAYING)
@@ -365,20 +380,9 @@ public class CameraScript : MonoBehaviour
                 if (Vector3.Distance(transform.position, eyePosition3) < 1.0f) eyeMovingTo = 1;
             }
 
+            //doorDownAngle = doorDownAngle - 0.1f * Time.deltaTime;
+            //float doorScale = 1 - 0.2f* Mathf.Abs(Mathf.Sin(2 * doorDownAngle));
 
-
-
-            doorDownScale = doorDownScale + doorDownDeltaScale * Time.deltaTime;
-            if (doorDownDeltaScale > 0 && doorDownScale > 1f)
-            {
-                doorDownScale = 1f;
-                doorDownDeltaScale = -0.1f;
-            }
-            else if (doorDownDeltaScale < 0 && doorDownScale < 0.4f)
-            {
-                doorDownScale = 0.4f;
-                doorDownDeltaScale = 0.1f;
-            }
 
             if (doorToggleSeconds >= 0f)
             {
@@ -386,7 +390,7 @@ public class CameraScript : MonoBehaviour
                 if (doorToggleSeconds < 0f)
                 {
                     doorToggleSeconds = 0f;
-                    doorDownScale = 1f;
+                    //doorDownAngle = 0f;
                 }
             }
 
@@ -401,41 +405,92 @@ public class CameraScript : MonoBehaviour
                     Element type = grid[x, z].getType();
                     if (type == Element.DOOR_A || type == Element.DOOR_B)
                     {
-                        grid[x, z].updateDoor(doorToggleSeconds, doorDownScale);
+                        grid[x, z].updateDoor(doorToggleSeconds);
                     }
                 }
             }
             if (doorToggleSeconds == 0f) doorToggleSeconds = -1f;
-        }
 
+
+
+
+            //Dustbunny
+            if ((dustBunnyPhase == 0) && (Random.value < 0.002))
+            {
+                float dustBunnyY1 = gridWidth + gridHeight - Random.value * 4f;
+                float dustBunnyY2 = gridWidth + gridHeight - Random.value * 4f;
+                float dustBunnyX = goalBlock.transform.position.x;
+                float dustBunnyZ = goalBlock.transform.position.z;
+                dustBunny1.transform.position = new Vector3(dustBunnyX, dustBunnyY1, dustBunnyZ);
+                dustBunny2.transform.position = new Vector3(dustBunnyX, dustBunnyY2, dustBunnyZ);
+
+                dustBunny1.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                dustBunny2.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                dustBunny1.SetActive(true);
+                dustBunny2.SetActive(true);
+                dustBunnyPhase = 1;
+                //Debug.Log(" dustBunnyY=" + dustBunnyY);
+            }
+            else if (dustBunnyPhase == 1)
+            {
+                updateDustBunny(dustBunny1, 0f);
+                updateDustBunny(dustBunny2, Mathf.PI);
+
+                if (!dustBunny1.activeSelf && !dustBunny2.activeSelf)
+                {
+                    dustBunnyPhase = 0;
+                }
+            }
+        }
 
         else if (gameState == GameState.WON)
         {
             if (Vector2.Distance(transform.position, eyePositonAboveGoal) > 4)
             {
-                //winTime -= Time.deltaTime;
-                //transform.position = Vector3.Lerp(transform.position, eyePositonAboveGoal, Time.deltaTime * eyeSpeed * 8);
-                //transform.rotation = Quaternion.Lerp(transform.rotation, eyeRotation1, Time.deltaTime * eyeSpeed * 4);
-                //transform.LookAt(goalBlock.transform);
                 Vector3 lookPos = goalBlock.transform.position - transform.position;
                 Quaternion lookRot = Quaternion.LookRotation(lookPos);
-                transform.rotation = Quaternion.Lerp(transform.rotation, lookRot, 1 * Time.deltaTime);
+                transform.rotation = Quaternion.Lerp(transform.rotation, lookRot, 1.7f * Time.deltaTime);
 
-                transform.position += transform.forward * Time.deltaTime * 3;
+                transform.position += transform.forward * Time.deltaTime * 5;
                 if (transform.position.y < 2) transform.position = new Vector3(transform.position.x, 2, transform.position.z);
-                //float dx = (goalBlock.transform.position.x - transform.position.x) * Time.deltaTime * 3;
-                //float dz = (goalBlock.transform.position.z - transform.position.z) * Time.deltaTime * 3;
-                //float dy = (transform.position.y - 2) * Time.deltaTime;
-                //transform.Translate(dx, dz, dy);
             }
             else
             {
+                if (!cameraAudio.isPlaying)
+                {  
+                    curLevel++;
+                    if (curLevel >= gameMapList.Length) curLevel = 1;
 
-                curLevel++;
-                if (curLevel >= gameMapList.Length) curLevel = 1;
-
-                spawnBoard(curLevel);
+                    spawnBoard(curLevel);
+                }
             }
+        }
+    }
+
+
+
+    private void updateDustBunny(GameObject dustBunny, float phase)
+    {
+        if (dustBunny.activeSelf)
+        {
+            float dustBunnyY = dustBunny.transform.position.y - Time.deltaTime * 3;
+            if (dustBunnyY < 1)
+            {
+                dustBunnyY = 1;
+                float scale = dustBunny.transform.localScale.x;
+                scale = scale - Time.deltaTime / 10;
+                if (scale < 0)
+                {
+                    dustBunny.SetActive(false);
+                }
+                else
+                {
+                    dustBunny.transform.localScale = new Vector3(scale, scale, scale);
+                }
+            }
+            float dustBunnyX = (dustBunnyY - 1) / 3 * Mathf.Cos(Time.time+phase) + goalBlock.transform.position.x;
+            float dustBunnyZ = (dustBunnyY - 1) / 3 * Mathf.Sin(Time.time + phase) + goalBlock.transform.position.z;
+            dustBunny.transform.position = new Vector3(dustBunnyX, dustBunnyY, dustBunnyZ);
         }
     }
 
@@ -470,7 +525,6 @@ public class CameraScript : MonoBehaviour
 
         if ((toX != gridX) || (toZ != gridZ))
         {
-            //grid[gridX, gridZ].playAudioClip(audioPriority);
             float speed = script.getSpeedMagnitude();
             bool smashCrate = false;
             if (speed >= CrateScript.getStrength()) smashCrate = true;
@@ -482,7 +536,8 @@ public class CameraScript : MonoBehaviour
         }
         //Debug.Log("CameraScript.movePlayer(): speed: ("+ script.getSpeedX() + ", "+ script.getSpeedZ()+")");
 
-        script.updateLocation(x, z);
+        bool moved = script.updateLocation(x, z);
+        if (moved) grid[gridX, gridZ].playAudio();
     }
 
 
@@ -500,17 +555,6 @@ public class CameraScript : MonoBehaviour
                 if (grid[x, z] != null) grid[x, z].destroyObjects();
             }
         }
-
-        //Will be needed when there are more objects moving than just the players
-        //foreach (GameObject obj in entityList)
-        //{
-        //    if (obj == null) continue;
-        //    if (obj.tag != "Player")
-        //    {
-        //        Destroy(obj);
-        //    }
-        //}
-        //entityList.Clear();
     }
 
     public PlayerScript getPlayerObject(Element playerEnum)
@@ -527,13 +571,17 @@ public class CameraScript : MonoBehaviour
         crateClone.SetActive(true);
         grid[x, z].addCrate(crateClone);
 
-        if (player == player1) crateClone.GetComponent<CrateScript>().spawnAnimation(true);
-        else crateClone.GetComponent<CrateScript>().spawnAnimation(false);
+        crateClone.GetComponent<CrateScript>().spawnAnimation(cameraAudio, player);
     }
 
     public void setGameState(GameState state)
     {
         gameState = state;
+        if (gameState==GameState.WON)
+        {
+            Debug.Log("Frames/sec=" + frameCount/ timeOfLevel);
+            cameraAudio.PlayOneShot(harpEndLevel[curLevel % harpEndLevel.Length], 1.0f); 
+        }
     }
 
     public GameState getGameState()
@@ -560,7 +608,7 @@ public class CameraScript : MonoBehaviour
 
         if (type == Element.CRATE && smashCrate)
         {
-            grid[x, z].smashCrate(speed);
+            grid[x, z].smashCrate();
             return true;
         }
 

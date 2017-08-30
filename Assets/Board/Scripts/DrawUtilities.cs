@@ -8,7 +8,7 @@ public class DrawUtilities : MonoBehaviour
 
 
 
-public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
+public static void drawTriangle(Color32[] colorData, int imageWidth, Color color, Vector2[] v)
     {
         // at first sort the three vertices by y-coordinate ascending so v1 is the topmost vertice
         sortVerticesAscendingByY(v);
@@ -17,12 +17,12 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
         // check for trivial case of bottom-flat triangle
         if (v[1].y == v[2].y)
         {
-              fillBottomFlatTriangle(texture, color, v[0], v[1], v[2]);
+              fillBottomFlatTriangle(colorData, imageWidth, color, v[0], v[1], v[2]);
         }
         // check for trivial case of top-flat triangle 
         else if (v[0].y == v[1].y)
         {
-            fillTopFlatTriangle(texture, color, v[0], v[1], v[2]);
+            fillTopFlatTriangle(colorData, imageWidth, color, v[0], v[1], v[2]);
         }
         else
         {
@@ -32,13 +32,13 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
 
            // Debug.Log("v4=(" + v4.x + ", " + v4.y + ")");
 
-            fillBottomFlatTriangle(texture, color, v[0], v[1], v4);
-            fillTopFlatTriangle(texture, color, v[1], v4, v[2]);
+            fillBottomFlatTriangle(colorData, imageWidth, color, v[0], v[1], v4);
+            fillTopFlatTriangle(colorData, imageWidth, color, v[1], v4, v[2]);
         }
     }
 
 
-    private static void fillBottomFlatTriangle(Texture2D texture, Color color, Vector2 v1, Vector2 v2, Vector2 v3)
+    private static void fillBottomFlatTriangle(Color32[] colorData, int imageWidth, Color color, Vector2 v1, Vector2 v2, Vector2 v3)
     {
         //Debug.Log("fillBottomFlatTriangle   v={ (" + v1.x + "," + v1.y + "), (" +
         //        v2.x + "," + v2.y + "), (" +
@@ -52,7 +52,7 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
 
         for (int y = (int)v1.y; y <= v2.y; y++)
         {
-            drawHorzLine(texture, color, (int)curx1, (int)curx2, y);
+            drawHorzLine(colorData, imageWidth, color, (int)curx1, (int)curx2, y);
             //Debug.Log("    curx1=" + curx1 + ", curx2=" + curx2);
             curx1 += invslope1;
             curx2 += invslope2;
@@ -60,7 +60,7 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
     }
 
 
-    private static void fillTopFlatTriangle(Texture2D texture, Color color, Vector2 v1, Vector2 v2, Vector2 v3)
+    private static void fillTopFlatTriangle(Color32[] colorData, int imageWidth, Color color, Vector2 v1, Vector2 v2, Vector2 v3)
     {
         float invslope1 = (v3.x - v1.x) / (v3.y - v1.y);
         float invslope2 = (v3.x - v2.x) / (v3.y - v2.y);
@@ -70,7 +70,7 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
 
         for (int y = (int)v3.y; y > v1.y; y--)
         {
-            drawHorzLine(texture, color, (int)curx1, (int)curx2, y);
+            drawHorzLine(colorData, imageWidth, color, (int)curx1, (int)curx2, y);
             curx1 -= invslope1;
             curx2 -= invslope2;
         }
@@ -104,7 +104,7 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
     }
 
 
-    private static void drawHorzLine(Texture2D texture, Color color, int x1, int x2, int y)
+    private static void drawHorzLine(Color32[] colorData, int imageWidth, Color color, int x1, int x2, int y)
     {
         if (x1 > x2)
         {
@@ -112,9 +112,11 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
             x1 = x2;
             x2 = tmp;
         }
+        int yy = y * imageWidth;
         for (int x = x1; x <= x2; x++)
         {
-            texture.SetPixel(x, y, color);
+            //texture.SetPixel(x, y, color);
+            colorData[yy + x] = color;
         }
     }
 
@@ -125,136 +127,17 @@ public static void drawTriangle(Texture2D texture, Color color, Vector2[] v)
         {
             for (int y = 0; y < pixelSize; y++)
             {
-                texture.SetPixel(x, y, Color.black);
+                texture.SetPixel(x, y, color);
             }
         }
     }
 
 
-
-
-
-
-
-
-    public static void generateWallTexture(Material material, int pixelSize, float textureShift)
+    public static void clear(Color32[] colorData, Color32 c)
     {
-        material.SetFloat("_Glossiness", 0.0f);
-        material.SetFloat("_Metallic", 0.0f);
-        Texture2D texture = new Texture2D(pixelSize, pixelSize, TextureFormat.ARGB32, false);
-
-
-        
-
-
-        //Color[] palette = {
-        //   new Color(0.000f, 0.000f, 0.000f),
-        //   new Color(0.118f, 0.118f, 0.118f),
-        //    //new Color(0.243f, 0.243f, 0.259f),
-        //    new Color(0.188f, 0.420f, 0.290f)
-        // };
-
-        Color[] palette = {
-           new Color(0.000f, 0.000f, 0.000f),
-          // new Color(0.349f, 0.173f, 0.000f),
-          // new Color(0.592f, 0.259f, 0.063f)
-           new Color(0.190f, 0.190f, 0.231f),
-           new Color(0.380f, 0.380f, 0.463f)
-           //new Color(1.000f, 0.459f, 0.094f)
-        };
-
-
-        float noiseScale = 0.02f;
-
-        float x0 = textureShift;// Random.value*32768;
-        float y0 = textureShift;// Random.value * 32768;
-
-        for (int x = 0; x < pixelSize; x++)
+        for (int i = 0; i < colorData.Length; i++)
         {
-            for (int y = 0; y < pixelSize; y++)
-            {
-                //(1 + sin((x + noise(x * 5, y * 5) / 2) * 50)) / 2
-                //var val = (1 + sin((x + noise(x*noiseScale, y*noiseScale)/2)*50))*128;
-
-                //float xCoord = noiseScale*(x0 + (x / pixelSize));
-                //float yCoord = noiseScale*(y0 + (y / pixelSize));
-
-                //float noise = Mathf.PerlinNoise(xCoord, yCoord);
-
-                //float val = (1 + Mathf.Sin((x/pixelSize + noise) * pixelSize/2)) / 2;
-                //Debug.Log("noise=" + noise);
-                //float val = noise;
-
-
-                float xCoord = x0+ x * noiseScale;
-                float yCoord = y0 + y * noiseScale;
-                float noise = Mathf.PerlinNoise(xCoord, yCoord);
-
-                float val = (1 + Mathf.Sin((x + noise / 2) * 50)) * 0.501960784f;
-
-
-                int idx = 0;
-                if (val < 0.3333f) idx = 0;
-                else if (val < 0.95f) idx = 1;
-                else idx = 2;
-                texture.SetPixel(x, y, palette[idx]);
-                //texture.SetPixel(x, y, new Color(val, val, val));
-            }
+            colorData[i] = c;
         }
-
-        texture.Apply();
-        material.mainTexture = texture;
-    }
-
-
-
-
-
-
-
-
-
-    public static void generateFloorTexture(Material material, int pixelSize, float textureShift)
-    {
-        material.SetFloat("_Glossiness", 0.0f);
-        material.SetFloat("_Metallic", 0.0f);
-        Texture2D texture = new Texture2D(pixelSize, pixelSize, TextureFormat.ARGB32, false);
-
-
-        Color[] palette = {
-           new Color(0.910f, 0.949f, 0.961f),
-           new Color(0.843f, 0.898f, 0.947f),
-           new Color(0.776f, 0.847f, 0.933f),
-           new Color(0.690f, 0.749f, 0.893f)
-        };
-
-
-        float noiseScale = 0.03f;
-        for (int x = 0; x < pixelSize; x++)
-        {
-            for (int y = 0; y < pixelSize; y++)
-            {
-                if (x == 0 || y == 0 || x == pixelSize - 1 || y == pixelSize - 1) texture.SetPixel(x, y, Color.white);
-                else
-                {
-                    float xCoord = textureShift + x * noiseScale;
-                    float yCoord = textureShift + y * noiseScale;
-                    float noise = Mathf.PerlinNoise(xCoord, yCoord);
-
-                    float val = (1 + Mathf.Sin((x + noise / 4) * 25)) * 0.501960784f;
-
-
-                    int idx = 0;
-                    if (val < 0.3333f) idx = 0;
-                    else if (val < 0.7f) idx = 1;
-                    else if (val < 0.95f) idx = 2;
-                    else idx = 3;
-                    texture.SetPixel(x, y, palette[idx]);
-                }
-            }
-        }
-
-        texture.Apply();
-        material.mainTexture = texture;
     }
 }

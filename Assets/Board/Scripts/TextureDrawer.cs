@@ -50,8 +50,9 @@ public class TextureDrawer {
 
 	//sets all colors to black
 	public void clear(){
-		for (var i = 0; i < colors.Length; i++){
-			colors[i] = new Color(0, 0, 0);
+        Color c = new Color(0, 0, 0);
+        for (var i = 0; i < colors.Length; i++){
+            colors[i] = c;
 		}
 	}
 

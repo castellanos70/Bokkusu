@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Background_DLA_Script : Background_AbstractScript
 {
@@ -88,6 +86,12 @@ public class Background_DLA_Script : Background_AbstractScript
         paletteSize = palette.GetLength(1);
 
         return texture;
+    }
+
+    public override bool isDone()
+    {
+        if (crystalCount < maxCrystals) return false;
+        return true;
     }
 
 

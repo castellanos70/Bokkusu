@@ -10,14 +10,15 @@ public class Cell
     private float bottomY = 0;
     private float fallSpeed;
     private int x, z;
-	private bool playedSound = false;
     private bool doorRaising = false;
     private bool doorLowering = false;
 
     private bool doorIsDown = false;
 
-    private AudioSource audio;
-    private AudioClip audioClip;
+    private AudioSource audioSource;
+
+    private static Material doorMat1, doorMat2;
+    
 
     
 
@@ -28,8 +29,6 @@ public class Cell
         this.x = (int)baseObj.transform.position.x;
         this.z = (int)baseObj.transform.position.z;
 
-        Renderer renderer = baseObj.GetComponent<Renderer>();
-        renderer.material = mat;
 
         if (type == CameraScript.Element.FLOOR || type == CameraScript.Element.WALL)
         {
@@ -39,32 +38,46 @@ public class Cell
         bottomY = 0f;
         if (type == CameraScript.Element.WALL) bottomY = 1f;
         else if (type == CameraScript.Element.DOOR_B) bottomY = 1f;
+  
 
-       audio = baseObj.AddComponent<AudioSource>();
+        Renderer renderer = baseObj.GetComponent<Renderer>();
+        renderer.material = mat;
 
         fallSpeed = 8 + Random.value * 15;
     }
-		
-	public void setAudioClip(AudioClip audioClip){
-		this.audioClip = audioClip;
-	}
 
-	public bool hasPlayedAudio(){
-		return playedSound;
-	}
 
-	public void playAudioClip(float priority){
-		audio.priority = (int)priority;
-		audio.PlayOneShot(audioClip, 0.1f);
-		playedSound = true;
-		//Debug.Log(priority);
-	}
-		
+    public static void setDoorMat(Material mat1, Material mat2)
+    {
+        doorMat1 = mat1;
+        doorMat2 = mat2;
+    }
+
+
+    public void setAudioClip(AudioClip audioClip)
+    {
+        audioSource = baseObj.AddComponent<AudioSource>();
+        audioSource.clip = audioClip;
+    }
+
+
+    public AudioSource playAudio()
+    {
+    	if (audioSource == null) return null;
+        if (audioSource.isPlaying) audioSource.Stop();
+        audioSource.priority = 0;
+        audioSource.volume = 0.4f;
+        audioSource.Play();
+        return audioSource;
+    }
+
+
+
     public float getFallSpeed() { return fallSpeed; }
 
     public float getY() { return baseObj.transform.position.y; }
 
-    public void fallTo(float y)
+    public bool fallTo(float y)
     {
         if (y <= bottomY)
         {
@@ -73,6 +86,8 @@ public class Cell
             if (type == CameraScript.Element.DOOR_A) doorIsDown = true;
         }
         baseObj.transform.Translate(0, y-getY(), 0);
+        if (y <= bottomY) return true;
+        return false;
     }
 
     public void addCrate(GameObject obj)
@@ -91,9 +106,13 @@ public class Cell
         {
             if (crateObj != null) return;
 
-            baseObj.transform.localScale = new Vector3(1f, 1f, 1f);
+            //baseObj.transform.localScale = new Vector3(1f, 1f, 1f);
+            baseObj.transform.position = new Vector3(x, 0f, z);
+            baseObj.transform.rotation = Quaternion.identity;
             doorRaising = true;
             doorIsDown = false;
+            Renderer renderer = baseObj.GetComponent<Renderer>();
+            renderer.material = doorMat2;
         }
 
     }
@@ -111,12 +130,8 @@ public class Cell
 
 
 
-    public void updateDoor(float doorToggleSeconds, float doorDownScale)
+    public void updateDoor(float doorToggleSeconds)
     {
-        if (doorIsDown)
-        {
-            baseObj.transform.localScale = new Vector3(doorDownScale, 1f, doorDownScale);
-        }
 
         if (!doorLowering && !doorRaising) return;
 
@@ -128,7 +143,10 @@ public class Cell
         {
             if (doorLowering)
             {
+                yy = - 0f;
                 doorIsDown = true;
+                Renderer renderer = baseObj.GetComponent<Renderer>();
+                renderer.material = doorMat1;
             }
             
             doorLowering = false;
@@ -140,10 +158,6 @@ public class Cell
 
     public CameraScript.Element getType()
     {
-        //if (crateObj != null)
-        //{
-        //    return CameraScript.Element.CRATE;
-        //}
         return type;
     }
 
@@ -153,13 +167,13 @@ public class Cell
         this.type = type;
     }
 
-    public void smashCrate(float speed)
+    public void smashCrate()
     {
         if (type != CameraScript.Element.CRATE) return;
         if (crateObj == null) return;
 
         CrateScript crate = (CrateScript)crateObj.GetComponent(typeof(CrateScript));
-        crate.detonate(speed);
+        crate.detonate(audioSource);
         type = CameraScript.Element.FLOOR;
         crateObj = null;
     }
