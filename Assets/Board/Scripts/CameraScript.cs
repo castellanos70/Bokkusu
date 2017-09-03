@@ -26,6 +26,9 @@ public class CameraScript : MonoBehaviour
     public GameObject player1, player2;
     public GameObject dustBunny1, dustBunny2;
 
+    public GameObject textLevelName, textScore1, textScore2;
+    private UnityEngine.UI.Text textScore1Data, textScore2Data;
+
     private int dustBunnyPhase;
 
     private int frameCount;
@@ -74,6 +77,7 @@ public class CameraScript : MonoBehaviour
     private Quaternion eyeRotation1, eyeRotation2, eyeRotation3;
     private int eyeMovingTo;
     private float eyeSpeed = 0.09f;
+    private int player1Score, player2Score, player1ScoreEndLevel, player2ScoreEndLevel;
 
 
     void Awake()
@@ -81,6 +85,12 @@ public class CameraScript : MonoBehaviour
         playerScript1 = player1.GetComponent<PlayerScript>();
         playerScript2 = player2.GetComponent<PlayerScript>();
         elementValues = (Element[])System.Enum.GetValues(typeof(Element));
+
+        textScore1Data = textScore1.GetComponent<UnityEngine.UI.Text>();
+        textScore2Data = textScore2.GetComponent<UnityEngine.UI.Text>();
+
+        player1Score = 0;
+        player2Score = 0;
 
         gameMapList = MapLoader.loadAllMaps();
 
@@ -107,11 +117,9 @@ public class CameraScript : MonoBehaviour
 			}
 		}
 			
-
         boardBlock.SetActive(false);
         crateBlock.SetActive(false);
     }
-
 
 
     void Start()
@@ -146,6 +154,10 @@ public class CameraScript : MonoBehaviour
     private void spawnBoard(int level)
     {
         gameState = GameState.INITIALIZING;
+        textLevelName.SetActive(false);
+        textScore1.SetActive(false);
+        textScore2.SetActive(false);
+
 
         dustBunny1.SetActive(false);
         dustBunny2.SetActive(false);
@@ -306,8 +318,11 @@ public class CameraScript : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Equals))
         {
-            Debug.Log("Advance to Next Level....");
-            setGameState(GameState.WON);
+            if (gameState == GameState.PLAYING)
+            {
+                Debug.Log("Advance to Next Level....");
+                setGameState(GameState.WON);
+            }
         }
 
         backgroundScript.next();
@@ -451,6 +466,21 @@ public class CameraScript : MonoBehaviour
 
         else if (gameState == GameState.WON)
         {
+            if (player1Score < player1ScoreEndLevel)
+            {
+                if (player1ScoreEndLevel - player1Score > 100) player1Score+=23;
+                else player1Score++;
+
+                textScore1Data.text = player1Score.ToString();
+            }
+            if (player2Score < player2ScoreEndLevel)
+            {
+                if (player2ScoreEndLevel - player2Score > 100) player2Score += 23;
+                else player2Score++;
+                textScore2Data.text = player2Score.ToString();
+            }
+
+
             if (Vector2.Distance(transform.position, eyePositonAboveGoal) > 4)
             {
                 Vector3 lookPos = goalBlock.transform.position - transform.position;
@@ -582,11 +612,27 @@ public class CameraScript : MonoBehaviour
 
     public void setGameState(GameState state)
     {
+        if (gameState == state) return;
+
         gameState = state;
         if (gameState==GameState.WON)
         {
-            Debug.Log("Frames/sec=" + frameCount/ timeOfLevel);
-            cameraAudio.PlayOneShot(harpEndLevel[curLevel % harpEndLevel.Length], 1.0f); 
+            
+            cameraAudio.PlayOneShot(harpEndLevel[curLevel % harpEndLevel.Length], 1.0f);
+            textLevelName.GetComponent<UnityEngine.UI.Text>().text = gameMap.getName();
+
+            textScore1Data.text = player1Score.ToString();
+            textScore2Data.text = player2Score.ToString();
+
+            player1ScoreEndLevel = player1Score + playerScript1.getLevelScore(gameMap.getPar());
+            player2ScoreEndLevel = player2Score + playerScript2.getLevelScore(gameMap.getPar());
+
+            Debug.Log("Frames/sec=" + frameCount / timeOfLevel + ",    score: " + player1ScoreEndLevel + ", " + player2ScoreEndLevel);
+
+
+            textLevelName.SetActive(true);
+            textScore1.SetActive(true);
+            textScore2.SetActive(true);
         }
     }
 
@@ -603,15 +649,15 @@ public class CameraScript : MonoBehaviour
         Element type = grid[x, z].getType();
         if ((x == playerScript1.getGridX()) && (z == playerScript1.getGridZ()))
         {
-            playerScript1.spawnCrate();
-            playerScript2.spawnCrate();
+            playerScript1.spawnCrate(true);
+            playerScript2.spawnCrate(true);
             //playerScript1.hit();
             return false;
         }
         if ((x == playerScript2.getGridX()) && (z == playerScript2.getGridZ()))
         {
-            playerScript1.spawnCrate();
-            playerScript2.spawnCrate();
+            playerScript1.spawnCrate(true);
+            playerScript2.spawnCrate(true);
             //playerScript2.hit();
             return false;
         }

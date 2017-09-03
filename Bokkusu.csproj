@@ -99,7 +99,7 @@
     <None Include="Assets\Resources\Maps\01_Donjon.txt" />
     <None Include="Assets\Resources\Maps\02_InnerChamber.txt" />
     <None Include="Assets\Resources\Maps\03_CircuitBreaker.txt" />
-    <None Include="Assets\Resources\Maps\04_Z-shape.txt" />
+    <None Include="Assets\Resources\Maps\04_Tetris-Z.txt" />
     <None Include="Assets\Resources\Maps\05_SoccerField.txt" />
     <None Include="Assets\Resources\Maps\06_Castle.txt" />
     <None Include="Assets\Resources\Maps\07_InkBottle.txt" />
