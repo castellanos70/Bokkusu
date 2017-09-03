@@ -22,6 +22,8 @@ public class PlayerScript : MonoBehaviour
     private bool readyToSpawnCrate;
     private bool iHaveWon;
 
+    private int scoreGame, scoreLevel;
+
 
     private GameObject[] arrows; //up down left right
 	private float[,] arrowDirs = new float[4,2]
@@ -92,22 +94,6 @@ public class PlayerScript : MonoBehaviour
         playerMat = gameObject.GetComponent<Renderer>().material;
         if (playerNumber == 1) voronoiScript = new Voronoi(playerMat, 256, 240, 0, 21);
         else voronoiScript = new Voronoi(playerMat, 256, 218, 216, 29);
-        //Renderer renderer = GetComponent<Renderer>();
-        //renderer.material = playerMat;
-
-        //Renderer spawnRenderer = spawnSpotObj.GetComponent<Renderer>();
-        //Shader spawnSpotShader = Shader.Find("Transparent/Diffuse");
-        //Material spawnSpotMat = spawnRenderer.material;
-        //spawnSpotMat.shader = spawnSpotShader;
-
-        //spawnSpotMat.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
-        //spawnSpotMat.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
-        //spawnSpotMat.SetFloat("_Glossiness", 0.0f);
-        //spawnSpotMat.SetFloat("_Metallic", 0.0f);
-
-
-        //spawnSpotMat.mainTexture = playerMat.mainTexture;
-        //spawnSpotMat.color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
 
     }
 
@@ -231,8 +217,6 @@ public class PlayerScript : MonoBehaviour
             speedZ = speed;
             toZ = gridZ + joystickZ;
         }
-
-        //if (playerIsPressingMove) voronoiScript.next();
 
 
 
@@ -371,20 +355,22 @@ public class PlayerScript : MonoBehaviour
     {
         if (moving) return;
         if (!readyToSpawnCrate) return;
-        if (isButtonPressed())
-        {
-            cameraScript.spawnCrate(gridX, gridZ, gameObject);
-            gridX = startX;
-            gridZ = startZ;
-            hit();
-            readyToSpawnCrate = false;
-            if (grid[gridX, gridZ].getType() == CameraScript.Element.CRATE)
-            {
-                grid[gridX, gridZ].smashCrate();
+        if (isButtonPressed()) spawnCrate();
+    }
 
-            }
+
+    public void spawnCrate()
+    {
+        cameraScript.spawnCrate(gridX, gridZ, gameObject);
+        gridX = startX;
+        gridZ = startZ;
+        hit();
+        readyToSpawnCrate = false;
+        if (grid[gridX, gridZ].getType() == CameraScript.Element.CRATE)
+        {
+            grid[gridX, gridZ].smashCrate();
+
         }
-  
     }
 
 

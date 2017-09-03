@@ -95,14 +95,14 @@ public class Background_DLA_Script : Background_AbstractScript
     }
 
 
-    override public void clear(int level)
+    override public void clear()
     {
         //It is such stupid syntax that reading a value changes the value.
         //  If C# were not stupid, this would be a function call: Random.value()
         //Debug.Log(Random.value + ", " + Random.value + ", " + Random.value);
         totalSec = 0;
         crystalCount = 0;
-        paletteIdx = level % paletteCount;
+        paletteIdx = Random.Range(0,paletteCount);
         Color nearBlack = new Color(0.01f, 0f, 0f);
 
         for (int x = 0; x < textureSize; x++)

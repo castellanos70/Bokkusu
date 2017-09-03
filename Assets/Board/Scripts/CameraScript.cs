@@ -134,7 +134,7 @@ public class CameraScript : MonoBehaviour
         Texture2D texture = backgroundScript.create();
         Renderer renderer = backgroundPlane.GetComponent<Renderer>();
         renderer.material.mainTexture = texture;
-        backgroundScript.clear(Random.Range(0,1));
+        backgroundScript.clear();
 
         Cursor.visible = false;
         spawnBoard(0);
@@ -289,7 +289,7 @@ public class CameraScript : MonoBehaviour
         float scale = Mathf.Max(gridWidth, gridHeight) * 0.25f;
         backgroundPlane.transform.position = new Vector3(gridWidth / 2, 0.4f, gridHeight / 2);
         backgroundPlane.transform.localScale = new Vector3(scale, 1, scale);
-        if (backgroundScript.isDone()) backgroundScript.clear(curLevel);
+        if (backgroundScript.isDone()) backgroundScript.clear();
 
     }
 
@@ -302,6 +302,12 @@ public class CameraScript : MonoBehaviour
         if (Input.GetKey(KeyCode.Escape))
         {
             Application.Quit();
+        }
+
+        if (Input.GetKey(KeyCode.Equals))
+        {
+            Debug.Log("Advance to Next Level....");
+            setGameState(GameState.WON);
         }
 
         backgroundScript.next();
@@ -597,12 +603,16 @@ public class CameraScript : MonoBehaviour
         Element type = grid[x, z].getType();
         if ((x == playerScript1.getGridX()) && (z == playerScript1.getGridZ()))
         {
-            playerScript1.hit();
+            playerScript1.spawnCrate();
+            playerScript2.spawnCrate();
+            //playerScript1.hit();
             return false;
         }
         if ((x == playerScript2.getGridX()) && (z == playerScript2.getGridZ()))
         {
-            playerScript2.hit();
+            playerScript1.spawnCrate();
+            playerScript2.spawnCrate();
+            //playerScript2.hit();
             return false;
         }
 
