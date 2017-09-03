@@ -5,7 +5,7 @@ using UnityEngine;
 public class Voronoi
 {
     private Texture2D texture;
-    private Color[] colorData;
+    private Color32[] colorData;
     private int pixelSize;
 
     private static int POINTCOUNT = 7;
@@ -37,7 +37,7 @@ public class Voronoi
         material.SetFloat("_Metallic", 0.0f);
 
         texture = new Texture2D(pixelSize, pixelSize, TextureFormat.ARGB32, false);
-        colorData = new Color[pixelSize * pixelSize];
+        colorData = new Color32[pixelSize * pixelSize];
 
         material.mainTexture = texture;
 
@@ -98,11 +98,16 @@ public class Voronoi
                 float g = green0 * brightness;
                 float b = blue0 * brightness;
 
- 
-                colorData[y * pixelSize + x] = new Color(r, g, b);
+
+                //colorData[y * pixelSize + x] = new Color(r, g, b);
+                int idx = y * pixelSize + x;
+                colorData[idx].r = (byte)(r * 255);
+                colorData[idx].g = (byte)(g * 255);
+                colorData[idx].b = (byte)(b * 255);
             }
         }
-        texture.SetPixels(colorData);
+        //texture.SetPixels(colorData);
+        texture.SetPixels32(colorData);
         texture.Apply();
     }
 
