@@ -373,6 +373,7 @@ public class PlayerScript : MonoBehaviour
     public void spawnCrate(bool hitPlayer)
     {
         if (hitPlayer) levelPlayerHitCount++;
+        else levelMoveCount++;
         cameraScript.spawnCrate(gridX, gridZ, gameObject);
         gridX = startX;
         gridZ = startZ;
@@ -495,19 +496,18 @@ public class PlayerScript : MonoBehaviour
     }
 
 
-    public int getLevelScore(int par)
+    public int getScore(int par)
     {
-        int winScore = 0;
+        int n = Math.Max(0, (par * 3) - levelMoveCount);
+        if (n > primes.Length - 1) n = primes.Length - 1;
 
-        winScore = primes[par * 3]; //min score for winning
-        int n = (par * 3) - levelMoveCount;
-        for (int i = 0; i < n; i++)
-        {
-            winScore += primes[i];
-        }
-        if (iHaveWon) return winScore;
-        int score = levelMoveCount * 2 + 17 * levelPlayerHitCount;
-        if (score > 2 * winScore / 3) score = 2 * winScore / 3;
-        return score;
+        if (iHaveWon) return primes[n];
+
+        int m = levelMoveCount + (5 * levelPlayerHitCount);
+        if (levelMoveCount == 0) return 0;
+
+        if (m > n - 1) m = Math.Max(0, n - 1);
+        
+        return primes[m];
     }
 }

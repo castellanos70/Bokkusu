@@ -89,9 +89,6 @@ public class CameraScript : MonoBehaviour
         textScore1Data = textScore1.GetComponent<UnityEngine.UI.Text>();
         textScore2Data = textScore2.GetComponent<UnityEngine.UI.Text>();
 
-        player1Score = 0;
-        player2Score = 0;
-
         gameMapList = MapLoader.loadAllMaps();
 
 		{//audio stuff
@@ -157,6 +154,8 @@ public class CameraScript : MonoBehaviour
         textLevelName.SetActive(false);
         textScore1.SetActive(false);
         textScore2.SetActive(false);
+        player1Score = 0;
+        player2Score = 0;
 
 
         dustBunny1.SetActive(false);
@@ -624,8 +623,8 @@ public class CameraScript : MonoBehaviour
             textScore1Data.text = player1Score.ToString();
             textScore2Data.text = player2Score.ToString();
 
-            player1ScoreEndLevel = player1Score + playerScript1.getLevelScore(gameMap.getPar());
-            player2ScoreEndLevel = player2Score + playerScript2.getLevelScore(gameMap.getPar());
+            player1ScoreEndLevel = player1Score + playerScript1.getScore(gameMap.getPar());
+            player2ScoreEndLevel = player2Score + playerScript2.getScore(gameMap.getPar());
 
             Debug.Log("Frames/sec=" + frameCount / timeOfLevel + ",    score: " + player1ScoreEndLevel + ", " + player2ScoreEndLevel);
 
