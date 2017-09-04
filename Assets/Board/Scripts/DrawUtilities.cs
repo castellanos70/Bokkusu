@@ -146,9 +146,9 @@ public static void drawTriangle(Color32[] colorData, int imageWidth, Color color
         for (int i = 0; i < colorData.Length; i++)
         {
             //colorData[i] = c;
-            colorData[i].r = (byte)(color.r * 255);
-            colorData[i].g = (byte)(color.g * 255);
-            colorData[i].b = (byte)(color.b * 255);
+            colorData[i].r = color.r;
+            colorData[i].g = color.g;
+            colorData[i].b = color.b;
         }
     }
 }
