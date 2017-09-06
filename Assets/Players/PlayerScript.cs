@@ -232,7 +232,7 @@ public class PlayerScript : MonoBehaviour
 
         if ((!moving) && playerIsPressingMove)
         {
-            if (cameraScript.enterIfPossible(toX, toZ, true, getSpeedMagnitude()))
+            if (cameraScript.enterIfPossible(toX, toZ, true, true))
             {
                 moving = true;
                 levelMoveCount++;

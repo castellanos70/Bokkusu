@@ -375,8 +375,8 @@ public class CameraScript : MonoBehaviour
         {
 
 
-            movePlayer(player1, playerScript1);
-            movePlayer(player2, playerScript2);
+            movePlayer(player1, playerScript1, playerScript2);
+            movePlayer(player2, playerScript2, playerScript1);
 
             if (eyeMovingTo == 1)
             {
@@ -530,7 +530,7 @@ public class CameraScript : MonoBehaviour
     }
 
 
-    private void movePlayer(GameObject player, PlayerScript script)
+    private void movePlayer(GameObject player, PlayerScript script, PlayerScript scriptOther)
     {
         if (!script.isMoving()) return;
 
@@ -562,8 +562,9 @@ public class CameraScript : MonoBehaviour
         {
             float speed = script.getSpeedMagnitude();
             bool smashCrate = false;
+            bool smashPlayer = false;
             if (speed >= CrateScript.getStrength()) smashCrate = true;
-            if (!enterIfPossible(toX, toZ, smashCrate, speed))
+            if (!enterIfPossible(toX, toZ, smashCrate, false))
             {
                 script.hit();
                 return;
@@ -641,23 +642,27 @@ public class CameraScript : MonoBehaviour
     }
 
 
-    public bool enterIfPossible(int x, int z, bool smashCrate, float speed)
+    public bool enterIfPossible(int x, int z, bool smashCrate, bool smashPlayer)
     {
         if (isEnterable(x, z)) return true;
 
         Element type = grid[x, z].getType();
         if ((x == playerScript1.getGridX()) && (z == playerScript1.getGridZ()))
         {
-            playerScript1.spawnCrate(true);
-            playerScript2.spawnCrate(true);
-            //playerScript1.hit();
+            if (smashPlayer && playerScript1.getSpeedMagnitude()==0)
+            {
+                playerScript1.spawnCrate(true);
+            }
+            else playerScript1.hit();
             return false;
         }
         if ((x == playerScript2.getGridX()) && (z == playerScript2.getGridZ()))
         {
-            playerScript1.spawnCrate(true);
-            playerScript2.spawnCrate(true);
-            //playerScript2.hit();
+            if (smashPlayer && playerScript2.getSpeedMagnitude() == 0)
+            {
+                playerScript2.spawnCrate(true);
+            }
+            else playerScript2.hit();
             return false;
         }
 
