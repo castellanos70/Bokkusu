@@ -232,7 +232,7 @@ public class PlayerScript : MonoBehaviour
 
         if ((!moving) && playerIsPressingMove)
         {
-            if (cameraScript.enterIfPossible(toX, toZ, true, true))
+            if (cameraScript.enterIfPossible(myPlayerEnum, toX, toZ, true, true))
             {
                 moving = true;
                 levelMoveCount++;
@@ -252,12 +252,19 @@ public class PlayerScript : MonoBehaviour
     }
 
 
-    public void hit()
+    public void hit(bool hitOtherPlayer)
+    {
+        if (hitOtherPlayer) levelPlayerHitCount++;
+        snapToGrid();
+
+    }
+
+    private void snapToGrid()
     {
         transform.position = new Vector3(gridX, 1, gridZ);
         moving = false;
         speedX = 0;
-        speedZ= 0;
+        speedZ = 0;
     }
 
 
@@ -366,18 +373,17 @@ public class PlayerScript : MonoBehaviour
     {
         if (moving) return;
         if (!readyToSpawnCrate) return;
-        if (isButtonPressed()) spawnCrate(false);
+        if (isButtonPressed()) spawnCrate();
     }
 
 
-    public void spawnCrate(bool hitPlayer)
+    public void spawnCrate()
     {
-        if (hitPlayer) levelPlayerHitCount++;
-        else levelMoveCount++;
+        levelMoveCount++;
         cameraScript.spawnCrate(gridX, gridZ, gameObject);
         gridX = startX;
         gridZ = startZ;
-        hit();
+        snapToGrid();
         readyToSpawnCrate = false;
         if (grid[gridX, gridZ].getType() == CameraScript.Element.CRATE)
         {
@@ -495,10 +501,12 @@ public class PlayerScript : MonoBehaviour
         //Debug.Log("PlayerScript["+ playerNumber +"].updateArrows(): libertyCount="+ libertyCount);
     }
 
+    public int getMoveCount() { return levelMoveCount; }
 
-    public int getScore(int par)
+    public int getScore(int par, PlayerScript other)
     {
-        int n = Math.Max(0, (par * 3) - levelMoveCount);
+        Debug.Log("levelMoveCount=" + levelMoveCount + ", levelPlayerHitCount=" + levelPlayerHitCount);
+        int n = Math.Max(0, (par * 3) - (levelMoveCount + other.getMoveCount()));
         if (n > primes.Length - 1) n = primes.Length - 1;
 
         if (iHaveWon) return primes[n];

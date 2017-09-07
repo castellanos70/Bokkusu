@@ -24,12 +24,10 @@ public class CameraScript : MonoBehaviour
     public GameObject boardBlock;
     public GameObject crateBlock;
     public GameObject player1, player2;
-    public GameObject dustBunny1, dustBunny2;
 
     public GameObject textLevelName, textScore1, textScore2;
     private UnityEngine.UI.Text textScore1Data, textScore2Data;
 
-    private int dustBunnyPhase;
 
     private int frameCount;
     private float timeOfLevel;
@@ -157,10 +155,6 @@ public class CameraScript : MonoBehaviour
         player1Score = 0;
         player2Score = 0;
 
-
-        dustBunny1.SetActive(false);
-        dustBunny2.SetActive(false);
-        dustBunnyPhase = 0;
 
         doorToggleSeconds = -1f;
         frameCount = 0;
@@ -430,37 +424,6 @@ public class CameraScript : MonoBehaviour
                 }
             }
             if (doorToggleSeconds == 0f) doorToggleSeconds = -1f;
-
-
-
-
-            //Dustbunny
-            if ((dustBunnyPhase == 0) && (Random.value < 0.002))
-            {
-                float dustBunnyY1 = gridWidth + gridHeight - Random.value * 4f;
-                float dustBunnyY2 = gridWidth + gridHeight - Random.value * 4f;
-                float dustBunnyX = goalBlock.transform.position.x;
-                float dustBunnyZ = goalBlock.transform.position.z;
-                dustBunny1.transform.position = new Vector3(dustBunnyX, dustBunnyY1, dustBunnyZ);
-                dustBunny2.transform.position = new Vector3(dustBunnyX, dustBunnyY2, dustBunnyZ);
-
-                dustBunny1.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
-                dustBunny2.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
-                dustBunny1.SetActive(true);
-                dustBunny2.SetActive(true);
-                dustBunnyPhase = 1;
-                //Debug.Log(" dustBunnyY=" + dustBunnyY);
-            }
-            else if (dustBunnyPhase == 1)
-            {
-                updateDustBunny(dustBunny1, 0f);
-                updateDustBunny(dustBunny2, Mathf.PI);
-
-                if (!dustBunny1.activeSelf && !dustBunny2.activeSelf)
-                {
-                    dustBunnyPhase = 0;
-                }
-            }
         }
 
         else if (gameState == GameState.WON)
@@ -504,31 +467,6 @@ public class CameraScript : MonoBehaviour
 
 
 
-    private void updateDustBunny(GameObject dustBunny, float phase)
-    {
-        if (dustBunny.activeSelf)
-        {
-            float dustBunnyY = dustBunny.transform.position.y - Time.deltaTime * 3;
-            if (dustBunnyY < 1)
-            {
-                dustBunnyY = 1;
-                float scale = dustBunny.transform.localScale.x;
-                scale = scale - Time.deltaTime / 10;
-                if (scale < 0)
-                {
-                    dustBunny.SetActive(false);
-                }
-                else
-                {
-                    dustBunny.transform.localScale = new Vector3(scale, scale, scale);
-                }
-            }
-            float dustBunnyX = (dustBunnyY - 1) / 3 * Mathf.Cos(Time.time+phase) + goalBlock.transform.position.x;
-            float dustBunnyZ = (dustBunnyY - 1) / 3 * Mathf.Sin(Time.time + phase) + goalBlock.transform.position.z;
-            dustBunny.transform.position = new Vector3(dustBunnyX, dustBunnyY, dustBunnyZ);
-        }
-    }
-
 
     private void movePlayer(GameObject player, PlayerScript script, PlayerScript scriptOther)
     {
@@ -562,11 +500,9 @@ public class CameraScript : MonoBehaviour
         {
             float speed = script.getSpeedMagnitude();
             bool smashCrate = false;
-            bool smashPlayer = false;
             if (speed >= CrateScript.getStrength()) smashCrate = true;
-            if (!enterIfPossible(toX, toZ, smashCrate, false))
+            if (!enterIfPossible(script, scriptOther, toX, toZ, smashCrate, false))
             {
-                script.hit();
                 return;
             }
         }
@@ -624,8 +560,8 @@ public class CameraScript : MonoBehaviour
             textScore1Data.text = player1Score.ToString();
             textScore2Data.text = player2Score.ToString();
 
-            player1ScoreEndLevel = player1Score + playerScript1.getScore(gameMap.getPar());
-            player2ScoreEndLevel = player2Score + playerScript2.getScore(gameMap.getPar());
+            player1ScoreEndLevel = player1Score + playerScript1.getScore(gameMap.getPar(), playerScript2);
+            player2ScoreEndLevel = player2Score + playerScript2.getScore(gameMap.getPar(), playerScript1);
 
             Debug.Log("Frames/sec=" + frameCount / timeOfLevel + ",    score: " + player1ScoreEndLevel + ", " + player2ScoreEndLevel);
 
@@ -642,29 +578,32 @@ public class CameraScript : MonoBehaviour
     }
 
 
-    public bool enterIfPossible(int x, int z, bool smashCrate, bool smashPlayer)
+
+    public bool enterIfPossible(Element player, int x, int z, bool smashCrate, bool smashPlayer)
+    {
+       if (player == Element.PLAYER1) return enterIfPossible(playerScript1, playerScript2, x, z, smashCrate, smashPlayer);
+       return enterIfPossible(playerScript2, playerScript1, x, z, smashCrate, smashPlayer);
+    }
+
+    public bool enterIfPossible(PlayerScript player, PlayerScript other, int x, int z, bool smashCrate, bool smashPlayer)
     {
         if (isEnterable(x, z)) return true;
 
         Element type = grid[x, z].getType();
-        if ((x == playerScript1.getGridX()) && (z == playerScript1.getGridZ()))
+        if ((x == other.getGridX()) && (z == other.getGridZ()))
         {
-            if (smashPlayer && playerScript1.getSpeedMagnitude()==0)
+            if (smashPlayer && other.getSpeedMagnitude() == 0)
             {
-                playerScript1.spawnCrate(true);
+                other.spawnCrate();
             }
-            else playerScript1.hit();
-            return false;
-        }
-        if ((x == playerScript2.getGridX()) && (z == playerScript2.getGridZ()))
-        {
-            if (smashPlayer && playerScript2.getSpeedMagnitude() == 0)
+            else
             {
-                playerScript2.spawnCrate(true);
+                player.hit(true);
+                other.hit(true);
+                return false;
             }
-            else playerScript2.hit();
-            return false;
         }
+        
 
         if (type == Element.CRATE && smashCrate)
         {
@@ -672,6 +611,7 @@ public class CameraScript : MonoBehaviour
             return true;
         }
 
+        player.hit(false);
         return false;
     }
 

@@ -5,7 +5,7 @@
 #.BA=AB.#
 #.BAAAB.#
 #.BBBBB.#
-#......2#
+#A.....2#
 #########
 *Mini Enigma
 *Par 8
