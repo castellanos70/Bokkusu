@@ -594,7 +594,7 @@ public class CameraScript : MonoBehaviour
         {
             if (smashPlayer && other.getSpeedMagnitude() == 0)
             {
-                other.spawnCrate();
+                other.spawnCrate(false);
             }
             else
             {

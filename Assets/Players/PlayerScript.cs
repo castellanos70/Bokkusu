@@ -373,13 +373,13 @@ public class PlayerScript : MonoBehaviour
     {
         if (moving) return;
         if (!readyToSpawnCrate) return;
-        if (isButtonPressed()) spawnCrate();
+        if (isButtonPressed()) spawnCrate(true);
     }
 
 
-    public void spawnCrate()
+    public void spawnCrate(bool byButton)
     {
-        levelMoveCount++;
+        if (byButton) levelMoveCount++;
         cameraScript.spawnCrate(gridX, gridZ, gameObject);
         gridX = startX;
         gridZ = startZ;
@@ -511,8 +511,8 @@ public class PlayerScript : MonoBehaviour
 
         if (iHaveWon) return primes[n];
 
-        int m = levelMoveCount + (5 * levelPlayerHitCount);
         if (levelMoveCount == 0) return 0;
+        int m = levelMoveCount + (5 * levelPlayerHitCount);
 
         if (m > n - 1) m = Math.Max(0, n - 1);
         
