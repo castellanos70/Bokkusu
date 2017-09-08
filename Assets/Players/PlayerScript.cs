@@ -345,25 +345,29 @@ public class PlayerScript : MonoBehaviour
         if (Input.GetKey(keycode[4])) return true;
         if (myPlayerEnum == CameraScript.Element.PLAYER1)
         {
-            if (Input.GetButtonDown("ArcadeOne0")) return true;
-            if (Input.GetButtonDown("ArcadeOne1")) return true;
-            if (Input.GetButtonDown("ArcadeOne2")) return true;
-            if (Input.GetButtonDown("ArcadeOne3")) return true;
-            if (Input.GetButtonDown("ArcadeOne4")) return true;
-            if (Input.GetButtonDown("ArcadeOne5")) return true;
-            if (Input.GetButtonDown("ArcadeOne6")) return true;
-            if (Input.GetButtonDown("ArcadeOne7")) return true;
+
+            //if (Input.GetButtonDown("ArcadeOne0")) return true;
+
+            if (Input.GetKeyDown("joystick 1 button 0")) return true;
+            if (Input.GetKeyDown("joystick 1 button 1")) return true;
+            if (Input.GetKeyDown("joystick 1 button 2")) return true;
+            if (Input.GetKeyDown("joystick 1 button 3")) return true;
+            if (Input.GetKeyDown("joystick 1 button 4")) return true;
+            if (Input.GetKeyDown("joystick 1 button 5")) return true;
+            if (Input.GetKeyDown("joystick 1 button 6")) return true;
+            if (Input.GetKeyDown("joystick 1 button 7")) return true;
         }
         else
         {
-            if (Input.GetButtonDown("ArcadeTwo0")) return true;
-            if (Input.GetButtonDown("ArcadeTwo1")) return true;
-            if (Input.GetButtonDown("ArcadeTwo2")) return true;
-            if (Input.GetButtonDown("ArcadeTwo3")) return true;
-            if (Input.GetButtonDown("ArcadeTwo4")) return true;
-            if (Input.GetButtonDown("ArcadeTwo5")) return true;
-            if (Input.GetButtonDown("ArcadeTwo6")) return true;
-            if (Input.GetButtonDown("ArcadeTwo7")) return true;
+            //    //if (Input.GetButtonDown("ArcadeTwo0")) return true;
+            if (Input.GetKeyDown("joystick 2 button 0")) return true;
+            if (Input.GetKeyDown("joystick 2 button 1")) return true;
+            if (Input.GetKeyDown("joystick 2 button 2")) return true;
+            if (Input.GetKeyDown("joystick 2 button 3")) return true;
+            if (Input.GetKeyDown("joystick 2 button 4")) return true;
+            if (Input.GetKeyDown("joystick 2 button 5")) return true;
+            if (Input.GetKeyDown("joystick 2 button 6")) return true;
+            if (Input.GetKeyDown("joystick 2 button 7")) return true;
         }
         return false;
     }
