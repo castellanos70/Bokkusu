@@ -385,6 +385,10 @@ public class PlayerScript : MonoBehaviour
     {
         if (byButton) levelMoveCount++;
         cameraScript.spawnCrate(gridX, gridZ, gameObject);
+        if (grid[gridX, gridZ].isDoor())
+        {
+            cameraScript.toggleDoors();
+        }
         gridX = startX;
         gridZ = startZ;
         snapToGrid();
