@@ -372,6 +372,7 @@ public class CameraScript : MonoBehaviour
             movePlayer(player1, playerScript1, playerScript2);
             movePlayer(player2, playerScript2, playerScript1);
 
+            
             if (eyeMovingTo == 1)
             {
                 transform.position = Vector3.Lerp(transform.position, eyePosition1, Time.deltaTime * eyeSpeed);
@@ -393,9 +394,15 @@ public class CameraScript : MonoBehaviour
                 //Debug.Log("moveTo=3: " + Vector3.Distance(transform.position, eyePosition3));
                 if (Vector3.Distance(transform.position, eyePosition3) < 1.0f) eyeMovingTo = 1;
             }
+            
+            //Vector3 boradCenter = new Vector3(gridWidth / 2.0f - .5f, 0, gridHeight / 2.0f - .5f);
+            //
+            //Vector3 eyePositionFront = new Vector3(gridWidth / 2.0f - .5f, 45, -3 * gridHeight / 2.0f);
+            //transform.position = eyePositionFront;
+            //transform.LookAt(boradCenter, Vector3.up);
+    
 
-            //doorDownAngle = doorDownAngle - 0.1f * Time.deltaTime;
-            //float doorScale = 1 - 0.2f* Mathf.Abs(Mathf.Sin(2 * doorDownAngle));
+
 
 
             if (doorToggleSeconds >= 0f)

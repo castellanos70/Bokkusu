@@ -94,7 +94,6 @@
     <Compile Include="Assets\Players\PlayerScript.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Resources\LogoMap.txt" />
     <None Include="Assets\Resources\Maps\00_MiniRhombas.txt" />
     <None Include="Assets\Resources\Maps\01_Donjon.txt" />
     <None Include="Assets\Resources\Maps\02_InnerChamber.txt" />
@@ -106,12 +105,14 @@
     <None Include="Assets\Resources\Maps\08_CrossRoads.txt" />
     <None Include="Assets\Resources\Maps\09_SpaceInvader.txt" />
     <None Include="Assets\Resources\Maps\10_Rhombus.txt" />
-    <None Include="Assets\Resources\Maps\11_DotDash.txt" />
-    <None Include="Assets\Resources\Maps\12_MiniEnigma.txt" />
-    <None Include="Assets\Resources\Maps\13_Celticknot.txt" />
-    <None Include="Assets\Resources\Maps\14_Enigma.txt" />
-    <None Include="Assets\Resources\Maps\15_Maze.txt" />
-    <None Include="Assets\Resources\Maps\16_SuperMaze.txt" />
+    <None Include="Assets\Resources\Maps\11_Hexomino.txt" />
+    <None Include="Assets\Resources\Maps\12_DotDash.txt" />
+    <None Include="Assets\Resources\Maps\13_Enigma.txt" />
+    <None Include="Assets\Resources\Maps\14_Celticknot.txt" />
+    <None Include="Assets\Resources\Maps\15_MiniEnigma.txt" />
+    <None Include="Assets\Resources\Maps\16_Maze.txt" />
+    <None Include="Assets\Resources\Maps\17_SuperMaze.txt" />
+    <None Include="Assets\Resources\SourceData\000LogoMap.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

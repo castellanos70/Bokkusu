@@ -102,7 +102,8 @@ public class Background_DLA_Script : Background_AbstractScript
         //Debug.Log(Random.value + ", " + Random.value + ", " + Random.value);
         totalSec = 0;
         crystalCount = 0;
-        paletteIdx = Random.Range(0,paletteCount);
+        //paletteIdx = Random.Range(0,paletteCount);
+        paletteIdx = 1;
         Color nearBlack = new Color(0.01f, 0f, 0f);
 
         for (int x = 0; x < textureSize; x++)
