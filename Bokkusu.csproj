@@ -99,8 +99,8 @@
     <None Include="Assets\Resources\Maps\02_InnerChamber.txt" />
     <None Include="Assets\Resources\Maps\03_CircuitBreaker.txt" />
     <None Include="Assets\Resources\Maps\04_Hexomino12.txt" />
-    <None Include="Assets\Resources\Maps\05_Hexomino-21.txt" />
-    <None Include="Assets\Resources\Maps\06_Hexomino-32.txt" />
+    <None Include="Assets\Resources\Maps\05_Hexomino21.txt" />
+    <None Include="Assets\Resources\Maps\06_Hexomino32.txt" />
     <None Include="Assets\Resources\Maps\07_Castle.txt" />
     <None Include="Assets\Resources\Maps\08_SoccerField.txt" />
     <None Include="Assets\Resources\Maps\09_InkBottle.txt" />
