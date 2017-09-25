@@ -9,7 +9,7 @@ public class PlayerScript : MonoBehaviour
     public AudioSource playerAudio;
 
     public int playerNumber;
-    private static float speedMax = 20;
+    private static float speedMax = 25;
     private static float speedMin = 1;
     private static float acceleration = 30;
     public GameObject spawnSpotObj;
