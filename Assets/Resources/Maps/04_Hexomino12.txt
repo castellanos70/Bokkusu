@@ -14,4 +14,4 @@
                #...#
                #####
 *Hexomino #12 of 35
-*Par 6
+*Par 8

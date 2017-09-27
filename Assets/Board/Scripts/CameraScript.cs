@@ -25,12 +25,13 @@ public class CameraScript : MonoBehaviour
     public GameObject crateBlock;
     public GameObject player1, player2;
 
-    public GameObject textLevelName, textScore, textPlayer1, textPlayer2;
-    private UnityEngine.UI.Text textNameData, textScoreData, textPlayer1Data, textPlayer2Data;
+    public GameObject textLevelName, textScore, textPlayer1, textPlayer2, textCheer;
+    private UnityEngine.UI.Text textNameData, textScoreData, textPlayer1Data, textPlayer2Data, textCheerData;
 
 
     private int frameCount;
-    private float timeOfLevel;
+    private float timeOfLevel, playTimeOfLevel;
+    private bool firstMoveWasMade;
 
 
     private Material wallMat;
@@ -133,7 +134,8 @@ public class CameraScript : MonoBehaviour
         textPlayer2Data = textPlayer2.GetComponent<UnityEngine.UI.Text>();
         textScoreData = textScore.GetComponent<UnityEngine.UI.Text>();
         textNameData  = textLevelName.GetComponent<UnityEngine.UI.Text>();
-        
+        textCheerData = textCheer.GetComponent<UnityEngine.UI.Text>();
+
 
         gameMapList = MapLoader.loadAllMaps();
 
@@ -206,11 +208,14 @@ public class CameraScript : MonoBehaviour
         textScore.SetActive(false);
         textPlayer1.SetActive(false);
         textPlayer2.SetActive(false);
-   
+        textCheer.SetActive(false);
+
 
         doorToggleSeconds = -1f;
         frameCount = 0;
         timeOfLevel = 0;
+        playTimeOfLevel = 0;
+        firstMoveWasMade = false;
         cellAudioIdx = 0;
 
         curLevel = level;
@@ -359,6 +364,7 @@ public class CameraScript : MonoBehaviour
     {
         frameCount++;
         timeOfLevel += Time.deltaTime;
+        if (firstMoveWasMade) playTimeOfLevel += Time.deltaTime;
 
         if (Input.GetKey(KeyCode.Escape))
         {
@@ -533,6 +539,7 @@ public class CameraScript : MonoBehaviour
     private void movePlayer(GameObject player, PlayerScript script, PlayerScript scriptOther)
     {
         if (!script.isMoving()) return;
+        if (!firstMoveWasMade) firstMoveWasMade = true;
 
         float x = player.transform.position.x + script.getSpeedX() * Time.deltaTime;
         float z = player.transform.position.z + script.getSpeedZ() * Time.deltaTime;
@@ -617,26 +624,44 @@ public class CameraScript : MonoBehaviour
         {
             cameraAudio.PlayOneShot(harpEndLevel[curLevel % harpEndLevel.Length], 1.0f);
 
-            int levelMoveCount = playerScript1.getMoveCount() + playerScript2.getMoveCount();
-            int parDiff = levelMoveCount - gameMap.getPar();
-            int deltaScoreIdx = Mathf.Max(1, 2 * gameMap.getPar() - levelMoveCount);
+            playTimeOfLevel = Mathf.Ceil(playTimeOfLevel);
 
-            if (parDiff < 0)
+            int levelMoveCount = playerScript1.getMoveCount() + playerScript2.getMoveCount();
+            textNameData.text = gameMap.getName() + " in " + levelMoveCount + " moves and " + playTimeOfLevel + " seconds!";
+
+            int parDiff = levelMoveCount - gameMap.getPar();
+            int deltaScoreIdx = 1;
+
+            if (parDiff < 0) deltaScoreIdx = 5 + (5 * Mathf.Abs(parDiff));
+            else if (parDiff > 0) deltaScoreIdx = (2 * gameMap.getPar()) - levelMoveCount;
+            else deltaScoreIdx = 5;
+
+            if (playTimeOfLevel > gameMap.getPar())
             {
-                parDiff = Mathf.Abs(parDiff);
-                textNameData.text = "*** " + parDiff.ToString() + " Under Par ***";
-                deltaScoreIdx += 5 * parDiff;
+                deltaScoreIdx -= (int)playTimeOfLevel - gameMap.getPar();
             }
-            else if (parDiff > 0) textNameData.text = parDiff.ToString() + " Over Par";
-            else textNameData.text = "On Par!";
+            else
+            {
+                if (parDiff < 0)
+                {
+                    textCheerData.text = "*** Under Par ***";
+                    textCheer.SetActive(true);
+                }
+                if (parDiff == 0)
+                {
+                    textCheerData.text = "On Par!";
+                    textCheer.SetActive(true);
+                }
+            }
+            deltaScoreIdx = Mathf.Max(1, deltaScoreIdx);
 
             textScoreData.text = "Score: " + primes[gameScoreIdx].ToString();
             tmpGameScore = primes[gameScoreIdx];
 
             gameScoreIdx += deltaScoreIdx;
 
-            textPlayer1Data.text = "Goals " + playerScript1.getGoalCount() + "\r\nMoves " + playerScript1.getMoveCount();
-            textPlayer2Data.text = "Goals " + playerScript2.getGoalCount() + "\r\nMoves " + playerScript2.getMoveCount();
+            textPlayer1Data.text = "Goals " + playerScript1.getGoalCount();
+            textPlayer2Data.text = "Goals " + playerScript2.getGoalCount();
 
 
             Debug.Log("Frames/sec=" + frameCount / timeOfLevel);
