@@ -71,12 +71,12 @@ public class Cell
     }
 
 
-    public AudioSource playAudio()
+    public AudioSource playAudio(float volume)
     {
     	if (audioSource == null) return null;
         if (audioSource.isPlaying) audioSource.Stop();
         audioSource.priority = 0;
-        audioSource.volume = 0.4f;
+        audioSource.volume = volume;
         audioSource.Play();
         return audioSource;
     }

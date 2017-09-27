@@ -10,4 +10,4 @@
     #.#   
      #     
 *Rhombas
-*Par 6
+*Par 4

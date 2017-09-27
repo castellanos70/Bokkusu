@@ -49,7 +49,7 @@ public class GameMap
 
         name = lines[height].Substring(1, lines[height].Length-1);
         par = int.Parse(lines[height+1].Substring(5, lines[height+1].Length-5));
-        Debug.Log("Level: " + name + " par="+par);
+        //Debug.Log("Level: " + name + " par="+par);
 
 
     }
