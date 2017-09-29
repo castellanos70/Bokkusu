@@ -636,9 +636,10 @@ public class CameraScript : MonoBehaviour
             else if (parDiff > 0) deltaScoreIdx = (2 * gameMap.getPar()) - levelMoveCount;
             else deltaScoreIdx = 5;
 
-            if (playTimeOfLevel > gameMap.getPar())
+            double parTime = gameMap.getPar() * 1.5;
+            if (playTimeOfLevel > parTime)
             {
-                deltaScoreIdx -= (int)playTimeOfLevel - gameMap.getPar();
+                deltaScoreIdx -= (int)(playTimeOfLevel - parTime);
             }
             else
             {
