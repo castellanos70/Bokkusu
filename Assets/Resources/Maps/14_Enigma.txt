@@ -7,5 +7,4 @@
 #.BBBBB.#
 #A.....2#
 #########
-*Mini Enigma
-*Par 8
+*Enigma

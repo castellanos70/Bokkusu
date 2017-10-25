@@ -6,14 +6,17 @@ public class GameMap
 {
     private int width, height;
     private CameraScript.Element [,] map;
-    private int par;
-    private string name;
+    private int leastMoves = 100;
+    private float fastestTime = 600; //seconds
+    private string levelName;
+    private string player1Name;
+    private string player2Name;
 
     public GameMap(string mapString)
     {
 		string[] lines = mapString.Split(new string[] { "\r\n", "\n" }, System.StringSplitOptions.None);
 
-		height = lines.Length-2;
+		height = lines.Length-1;
 		width = 0;
 
 		for (int i = 0; i < height; i++)
@@ -47,15 +50,19 @@ public class GameMap
         //Debug.Log("name: " + lines[height]);
         //Debug.Log("par: " + lines[height+1]);
 
-        name = lines[height].Substring(1, lines[height].Length-1);
-        par = int.Parse(lines[height+1].Substring(5, lines[height+1].Length-5));
-        //Debug.Log("Level: " + name + " par="+par);
-
-
+        levelName = lines[height].Substring(1, lines[height].Length-1);
+       
+        Debug.Log("Level: " + levelName);
     }
 
     public CameraScript.Element[,] getMap() { return map; }
-    public string getName() { return name; }
-    public int getPar() { return par; }
+    public string getName() { return levelName; }
+    public int getLeastMoves() { return leastMoves; }
+    public float getFastestTime() { return fastestTime; }
 
+    public void setLeader(int score, float seconds)
+    {
+        leastMoves = score;
+        fastestTime = seconds;
+    }
 }

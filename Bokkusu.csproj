@@ -86,6 +86,7 @@
     <Compile Include="Assets\Board\Scripts\DrawToolTester.cs" />
     <Compile Include="Assets\Board\Scripts\DrawUtilities.cs" />
     <Compile Include="Assets\Board\Scripts\GameMap.cs" />
+    <Compile Include="Assets\Board\Scripts\HighScoreIO.cs" />
     <Compile Include="Assets\Board\Scripts\Kaleidoscope.cs" />
     <Compile Include="Assets\Board\Scripts\MapLoader.cs" />
     <Compile Include="Assets\Board\Scripts\NoiseTexture.cs" />
@@ -94,6 +95,8 @@
     <Compile Include="Assets\Players\PlayerScript.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Resources\BaseInitScores.txt" />
+    <None Include="Assets\Resources\HighScores.txt" />
     <None Include="Assets\Resources\Maps\00_Rhombas.txt" />
     <None Include="Assets\Resources\Maps\01_Donjon.txt" />
     <None Include="Assets\Resources\Maps\02_InnerChamber.txt" />
