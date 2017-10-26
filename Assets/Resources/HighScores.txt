@@ -1,6 +1,6 @@
 LevelName,Moves,Time
-name: Rhombas,22,50.6
-Donjon,14,11
+name: Rhombas,9,30.7
+Donjon,14,10.8
 Inner Chamber,18,24
 Circuit Breaker,28,40
 Hexomino #1,9,18.2
