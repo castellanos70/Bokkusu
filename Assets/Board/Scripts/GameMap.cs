@@ -52,7 +52,7 @@ public class GameMap
 
         levelName = lines[height].Substring(1, lines[height].Length-1);
        
-        Debug.Log("Level: " + levelName);
+        //Debug.Log("Level: " + levelName);
     }
 
     public CameraScript.Element[,] getMap() { return map; }

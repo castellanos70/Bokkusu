@@ -9,4 +9,4 @@
    ##..# 
     #.#   
      #     
-*Rhombas
+*name: Rhombas

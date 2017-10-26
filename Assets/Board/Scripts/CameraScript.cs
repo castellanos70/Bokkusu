@@ -99,29 +99,33 @@ public class CameraScript : MonoBehaviour
         HighScoreIO.loadHighScores(gameMapList);
 
 
-    {//audio stuff
-			harpAudio = Resources.LoadAll<AudioClip>("Audio/harpsichord");
-			int[] pentatonic = { 0, 2, 4, 7, 9 };
+        //audio stuff
+		harpAudio = Resources.LoadAll<AudioClip>("Audio/harpsichord");
+		int[] pentatonic = { 0, 2, 4, 7, 9 };
 
-			pentAudio = new AudioClip[(int)(harpAudio.Length*(5f/12f))];
+		pentAudio = new AudioClip[(int)(harpAudio.Length*(5f/12f))];
 
-			//Debug.Log("pent: " + pentAudio.Length);
+		//Debug.Log("pent: " + pentAudio.Length);
 
-			int pentLength = 0;
-			for (int i = 0; i < harpAudio.Length; i++){
-				bool isPent = false;
-				for (var j = 0; j < 5; j++){ 
-					if (i%12 == pentatonic[j]){
-						isPent = true; break;
-					}
-				}
-				if (isPent && pentLength < pentAudio.Length){
-					pentAudio[pentLength] = harpAudio[i];
-					pentLength++;
-				}
-			}
-		}
-			
+		int pentLength = 0;
+        for (int i = 0; i < harpAudio.Length; i++)
+        {
+            bool isPent = false;
+            for (var j = 0; j < 5; j++)
+            {
+                if (i % 12 == pentatonic[j])
+                {
+                    isPent = true; break;
+                }
+            }
+            if (isPent && pentLength < pentAudio.Length)
+            {
+                pentAudio[pentLength] = harpAudio[i];
+                pentLength++;
+            }
+        }
+        //end audio stuff
+
         boardBlock.SetActive(false);
         crateBlock.SetActive(false);
     }
@@ -201,6 +205,7 @@ public class CameraScript : MonoBehaviour
             for (int z = 0; z < gridHeight; z++)
             {
                 if (startMap[x, z] == Element.NOTHING) continue;
+                Debug.Log("startMap[" + x + ", " + z + "]=" + startMap[x, z]);
 
                 numCells++;
 
@@ -228,10 +233,64 @@ public class CameraScript : MonoBehaviour
 
 				grid[x, z] = new Cell(startMap[x, z], block, mat);
 
-				int audioIndex = (int)(((40 - y)/40.0f)*pentAudio.Length);
-				//Debug.Log("audioIndex="+audioIndex);
+				
+                //Debug.Log("harpAudio.Length=" + harpAudio.Length);
 
-                grid[x, z].setAudioClip(pentAudio[audioIndex]);
+                if (curLevel == 0)
+                {
+                    if (x == 1 && z == 5) grid[x, z].setAudioClip(harpAudio[37]);
+
+                    else if (x == 2 && z == 4) grid[x, z].setAudioClip(harpAudio[33]);
+                    else if (x == 2 && z == 5) grid[x, z].setAudioClip(harpAudio[35]);
+
+                    else if (x == 3 && z == 3) grid[x, z].setAudioClip(harpAudio[30]);
+                    else if (x == 3 && z == 4) grid[x, z].setAudioClip(harpAudio[32]);
+                    else if (x == 3 && z == 5) grid[x, z].setAudioClip(harpAudio[33]);
+                    else if (x == 3 && z == 6) grid[x, z].setAudioClip(harpAudio[35]);
+                    else if (x == 3 && z == 7) grid[x, z].setAudioClip(harpAudio[37]);
+
+                    else if (x == 4 && z == 2) grid[x, z].setAudioClip(harpAudio[33]);
+                    else if (x == 4 && z == 3) grid[x, z].setAudioClip(harpAudio[32]);
+                    else if (x == 4 && z == 4) grid[x, z].setAudioClip(harpAudio[30]);
+                    else if (x == 4 && z == 5) grid[x, z].setAudioClip(harpAudio[32]);
+                    else if (x == 4 && z == 6) grid[x, z].setAudioClip(harpAudio[33]);
+                    else if (x == 4 && z == 7) grid[x, z].setAudioClip(harpAudio[35]);
+                    else if (x == 4 && z == 8) grid[x, z].setAudioClip(harpAudio[33]);
+
+                    else if (x == 5 && z == 1) grid[x, z].setAudioClip(harpAudio[37]);
+                    else if (x == 5 && z == 2) grid[x, z].setAudioClip(harpAudio[35]);
+                    else if (x == 5 && z == 3) grid[x, z].setAudioClip(harpAudio[33]);
+                    else if (x == 5 && z == 4) grid[x, z].setAudioClip(harpAudio[32]);
+                    else if (x == 5 && z == 6) grid[x, z].setAudioClip(harpAudio[32]);
+                    else if (x == 5 && z == 7) grid[x, z].setAudioClip(harpAudio[33]);
+                    else if (x == 5 && z == 8) grid[x, z].setAudioClip(harpAudio[35]);
+                    else if (x == 5 && z == 9) grid[x, z].setAudioClip(harpAudio[37]);
+
+                    else if (x == 6 && z == 2) grid[x, z].setAudioClip(harpAudio[33]);
+                    else if (x == 6 && z == 3) grid[x, z].setAudioClip(harpAudio[35]);
+                    else if (x == 6 && z == 4) grid[x, z].setAudioClip(harpAudio[33]);
+                    else if (x == 6 && z == 5) grid[x, z].setAudioClip(harpAudio[32]);
+                    else if (x == 6 && z == 6) grid[x, z].setAudioClip(harpAudio[30]);
+                    else if (x == 6 && z == 7) grid[x, z].setAudioClip(harpAudio[32]);
+                    else if (x == 6 && z == 8) grid[x, z].setAudioClip(harpAudio[33]);
+
+                    else if (x == 7 && z == 3) grid[x, z].setAudioClip(harpAudio[37]);
+                    else if (x == 7 && z == 4) grid[x, z].setAudioClip(harpAudio[35]);
+                    else if (x == 7 && z == 5) grid[x, z].setAudioClip(harpAudio[33]);
+                    else if (x == 7 && z == 6) grid[x, z].setAudioClip(harpAudio[32]);
+                    else if (x == 7 && z == 7) grid[x, z].setAudioClip(harpAudio[35]);
+
+                    else if (x == 8 && z == 5) grid[x, z].setAudioClip(harpAudio[35]);
+                    else if (x == 8 && z == 6) grid[x, z].setAudioClip(harpAudio[33]);
+
+                    else if (x == 9 && z == 5) grid[x, z].setAudioClip(harpAudio[37]);
+
+                }
+                else
+                {
+                    int audioIndex = (int)(((40 - y) / 40.0f) * pentAudio.Length);
+                    grid[x, z].setAudioClip(pentAudio[audioIndex]);
+                }
 
                 if (startMap[x, z] == Element.GOAL)
                 {
