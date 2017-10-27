@@ -4,8 +4,26 @@ using UnityEngine;
 
 public class CameraScript : MonoBehaviour
 {
-	//based on the current camera FOV 
-	private static float fullWidth = 32;
+
+    public AudioClip[] harpEndLevel;
+    public AudioSource cameraAudio;
+
+    public GameObject boardBlock;
+    public GameObject crateBlock;
+    public GameObject player1, player2;
+
+    public GameObject textCurrentScore, textHighScore, textPlayerGoals1, textPlayerGoals2;
+    public ParticleSystem textEffectHighScore;
+
+    public GameObject goalBlock;
+    public GameObject backgroundPlane;
+
+    public enum Element { FLOOR, WALL, GOAL, CRATE, PLAYER1, PLAYER2, DOOR_A, DOOR_B, NOTHING };
+    public static char[] ELEMENT_ASCII = { '.', '#', '=', '&', '1', '2', 'A', 'B', ' ' };
+
+
+    //based on the current camera FOV 
+    private static float fullWidth = 32;
 	private static float fullHeight = 14;
     private int gridWidth, gridHeight;
 
@@ -14,19 +32,14 @@ public class CameraScript : MonoBehaviour
 	//private AudioSource audio;
 	private AudioClip[] harpAudio;
 	private AudioClip[] pentAudio; //pantatonic scale
-    public AudioClip[] harpEndLevel; 
-    public AudioSource cameraAudio;
+    
 
     private static int MAX_AUDIO_TRACKS = 32;
     private AudioSource[] cellAudioList = new AudioSource[MAX_AUDIO_TRACKS];
     private int cellAudioIdx;
 
-    public GameObject boardBlock;
-    public GameObject crateBlock;
-    public GameObject player1, player2;
-
-    public GameObject textLevelName, textScore, textPlayer1, textPlayer2, textCheer;
-    private UnityEngine.UI.Text textNameData, textScoreData, textPlayer1Data, textPlayer2Data, textCheerData;
+    
+    private UnityEngine.UI.Text textNameData, textScoreData, textPlayer1Data, textPlayer2Data;
 
 
     private int frameCount;
@@ -45,9 +58,7 @@ public class CameraScript : MonoBehaviour
     private float floorMorphScale = 0.1f;
    
 
-    public GameObject goalBlock;
-
-    public GameObject backgroundPlane;
+    
     private Background_AbstractScript backgroundScript;
 
     private Kaleidoscope doorKaleidoscope;
@@ -60,8 +71,7 @@ public class CameraScript : MonoBehaviour
     private GameMap gameMap;
     private Element[,] startMap;
 
-    public enum Element                  { FLOOR, WALL, GOAL, CRATE, PLAYER1, PLAYER2, DOOR_A, DOOR_B, NOTHING };
-    public static char[] ELEMENT_ASCII = { '.'  , '#' , '=',  '&',    '1'    , '2'    , 'A',     'B',     ' '    };
+    
 
 
     private static Element[] elementValues;
@@ -86,11 +96,10 @@ public class CameraScript : MonoBehaviour
         playerScript2 = player2.GetComponent<PlayerScript>();
         elementValues = (Element[])System.Enum.GetValues(typeof(Element));
 
-        textPlayer1Data = textPlayer1.GetComponent<UnityEngine.UI.Text>();
-        textPlayer2Data = textPlayer2.GetComponent<UnityEngine.UI.Text>();
-        textScoreData = textScore.GetComponent<UnityEngine.UI.Text>();
-        textNameData  = textLevelName.GetComponent<UnityEngine.UI.Text>();
-        textCheerData = textCheer.GetComponent<UnityEngine.UI.Text>();
+        textPlayer1Data = textPlayerGoals1.GetComponent<UnityEngine.UI.Text>();
+        textPlayer2Data = textPlayerGoals2.GetComponent<UnityEngine.UI.Text>();
+        textScoreData = textHighScore.GetComponent<UnityEngine.UI.Text>();
+        textNameData  = textCurrentScore.GetComponent<UnityEngine.UI.Text>();
 
 
         gameMapList = MapLoader.loadAllMaps();
@@ -168,10 +177,12 @@ public class CameraScript : MonoBehaviour
     {
         gameState = GameState.INITIALIZING;
 
-        textScore.SetActive(false);
-        textPlayer1.SetActive(false);
-        textPlayer2.SetActive(false);
-        textCheer.SetActive(false);
+        textEffectHighScore.Stop();
+        textEffectHighScore.Clear();
+
+        textHighScore.SetActive(false);
+        textPlayerGoals1.SetActive(false);
+        textPlayerGoals2.SetActive(false);
 
 
         doorToggleSeconds = -1f;
@@ -192,8 +203,8 @@ public class CameraScript : MonoBehaviour
         int numCells = 0;
         textNameData.text = gameMap.getName();
         textScoreData.text = "Leader: " + gameMap.getLeastMoves() + " moves in " + gameMap.getFastestTime() + " sec.";
-        textLevelName.SetActive(true);
-        textScore.SetActive(true);
+        textCurrentScore.SetActive(true);
+        textHighScore.SetActive(true);
 
         grid = new Cell[gridWidth, gridHeight];
         bool foundGoal = false;
@@ -442,8 +453,8 @@ public class CameraScript : MonoBehaviour
 			if (fallingDone)
             {
 				gameState = GameState.PLAYING;
-                textLevelName.SetActive(false);
-                textScore.SetActive(false);
+                textCurrentScore.SetActive(false);
+                textHighScore.SetActive(false);
                 playerScript1.startLevel();
                 playerScript2.startLevel();
             }
@@ -635,13 +646,18 @@ public class CameraScript : MonoBehaviour
 
             int levelMoveCount = playerScript1.getMoveCount() + playerScript2.getMoveCount();
             textNameData.text = gameMap.getName() + " in " + levelMoveCount + " moves and " + timeStr + " seconds!";
-            textScoreData.text = "Leader: " + gameMap.getLeastMoves() + " moves in " + gameMap.getFastestTime() + " sec.";
+            
             if ((levelMoveCount < gameMap.getLeastMoves()) || (levelMoveCount == gameMap.getLeastMoves() && playTimeOfLevel < gameMap.getFastestTime()))
             {
-                textCheer.SetActive(true);
-                textScoreData.text = "Old " + textScoreData.text;
                 gameMap.setLeader(levelMoveCount, playTimeOfLevel);
                 HighScoreIO.writeHighScores(gameMapList);
+                textEffectHighScore.transform.position = new Vector3(goalBlock.transform.position.x, 1.5f, goalBlock.transform.position.z);
+                textEffectHighScore.Play();
+            }
+            else
+            {
+                textScoreData.text = "Leader: " + gameMap.getLeastMoves() + " moves in " + gameMap.getFastestTime() + " sec.";
+                textHighScore.SetActive(true);
             }
 
 
@@ -651,10 +667,9 @@ public class CameraScript : MonoBehaviour
 
             Debug.Log("Frames/sec=" + frameCount / timeOfLevel);
 
-            textLevelName.SetActive(true);
-            textScore.SetActive(true);
-            textPlayer1.SetActive(true);
-            textPlayer2.SetActive(true);
+            textCurrentScore.SetActive(true);
+            textPlayerGoals1.SetActive(true);
+            textPlayerGoals2.SetActive(true);
         }
     }
 
