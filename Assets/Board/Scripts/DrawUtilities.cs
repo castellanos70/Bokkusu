@@ -116,7 +116,15 @@ public static void drawTriangle(Color32[] colorData, int imageWidth, Color color
         for (int x = x1; x <= x2; x++)
         {
             //texture.SetPixel(x, y, color);
-            colorData[yy + x] = color;
+            //colorData[yy + x] = color;
+            //The statement:
+            //    colorData[yy + x] = color
+            //does an implicit object conversion of Color to Color32,
+            //  instantiating a new object for every pixel for every frame. 
+            //The three lines below offer many times speed up.
+            colorData[yy + x].r = (byte)(color.r * 255);
+            colorData[yy + x].g = (byte)(color.g * 255);
+            colorData[yy + x].b = (byte)(color.b * 255);
         }
     }
 
@@ -133,11 +141,14 @@ public static void drawTriangle(Color32[] colorData, int imageWidth, Color color
     }
 
 
-    public static void clear(Color32[] colorData, Color32 c)
+    public static void clear(Color32[] colorData, Color32 color)
     {
         for (int i = 0; i < colorData.Length; i++)
         {
-            colorData[i] = c;
+            //colorData[i] = c;
+            colorData[i].r = color.r;
+            colorData[i].g = color.g;
+            colorData[i].b = color.b;
         }
     }
 }

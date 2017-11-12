@@ -94,7 +94,12 @@ public class NoiseTexture
                     }
                     //if (x==1) Debug.Log("val=" + val + ", idx=" + idx);
                     //texture.SetPixel(x, y, palette[idx]);
-                    colorData[pixel] = palette[idx];
+                    //colorData[pixel] = palette[idx];
+
+                    colorData[pixel].r = palette[idx].r;
+                    colorData[pixel].g = palette[idx].g;
+                    colorData[pixel].b = palette[idx].b;
+
                 }
             }
         }

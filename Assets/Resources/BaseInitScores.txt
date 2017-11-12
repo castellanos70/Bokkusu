@@ -1,0 +1,16 @@
+LevelName,Moves,Time
+Rhombas,5,5.0
+Donjon,14,11.0
+Inner Chamber,18,24.0
+Circuit Breaker,28,40.0
+Hexomino #1,9,18.2
+Hexomino #2,27,32.8
+Hexomino #3,43,33.3
+Hexomino #4,17,34.5
+Castle,36,32.9
+Soccer Field,15,38.8
+Ink Bottle,37,44.4
+Cross Roads,10,10
+Space Invader,32,32.0
+Celtic Knot,24,49.6
+Enigma,8,16.4

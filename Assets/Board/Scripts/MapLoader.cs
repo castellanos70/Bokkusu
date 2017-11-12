@@ -1,11 +1,9 @@
 ﻿using UnityEngine;
 
-public static class MapLoader : object{
-	                                  
-
-
-	public static GameMap[] loadAllMaps(){
-		
+public static class MapLoader : object
+{
+	public static GameMap[] loadAllMaps()
+    {
 		Object[] mapTexts = Resources.LoadAll ("Maps", typeof (TextAsset));
         if (mapTexts.Length == 0)
         {

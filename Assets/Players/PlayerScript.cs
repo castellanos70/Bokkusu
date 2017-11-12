@@ -9,7 +9,7 @@ public class PlayerScript : MonoBehaviour
     public AudioSource playerAudio;
 
     public int playerNumber;
-    private static float speedMax = 20;
+    private static float speedMax = 25;
     private static float speedMin = 1;
     private static float acceleration = 30;
     public GameObject spawnSpotObj;
@@ -21,6 +21,8 @@ public class PlayerScript : MonoBehaviour
     private int gridX, gridZ;
     private bool readyToSpawnCrate;
     private bool iHaveWon;
+
+    private int moveCount, goalCount;
 
 
     private GameObject[] arrows; //up down left right
@@ -92,23 +94,8 @@ public class PlayerScript : MonoBehaviour
         playerMat = gameObject.GetComponent<Renderer>().material;
         if (playerNumber == 1) voronoiScript = new Voronoi(playerMat, 256, 240, 0, 21);
         else voronoiScript = new Voronoi(playerMat, 256, 218, 216, 29);
-        //Renderer renderer = GetComponent<Renderer>();
-        //renderer.material = playerMat;
 
-        //Renderer spawnRenderer = spawnSpotObj.GetComponent<Renderer>();
-        //Shader spawnSpotShader = Shader.Find("Transparent/Diffuse");
-        //Material spawnSpotMat = spawnRenderer.material;
-        //spawnSpotMat.shader = spawnSpotShader;
-
-        //spawnSpotMat.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
-        //spawnSpotMat.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
-        //spawnSpotMat.SetFloat("_Glossiness", 0.0f);
-        //spawnSpotMat.SetFloat("_Metallic", 0.0f);
-
-
-        //spawnSpotMat.mainTexture = playerMat.mainTexture;
-        //spawnSpotMat.color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
-
+        startGame();
     }
 
 
@@ -145,10 +132,16 @@ public class PlayerScript : MonoBehaviour
     }
 
 
-    public void startPlaying()
+    public void startGame()
+    {
+        goalCount = 0;
+    }
+
+    public void startLevel()
     {
         spawnSpotObj.SetActive(true);
         gameObject.SetActive(true);
+        moveCount = 0;
     }
 
 
@@ -188,7 +181,7 @@ public class PlayerScript : MonoBehaviour
             speedZ = 0;
         }
 
-        int toX  = gridX;
+        int toX = gridX;
         int toZ = gridZ;
 
         bool playerIsPressingMove = false;
@@ -232,19 +225,17 @@ public class PlayerScript : MonoBehaviour
             toZ = gridZ + joystickZ;
         }
 
-        //if (playerIsPressingMove) voronoiScript.next();
-
 
 
         if ((!moving) && playerIsPressingMove)
         {
-            if (cameraScript.enterIfPossible(toX, toZ, true, getSpeedMagnitude()))
+            if (cameraScript.enterIfPossible(myPlayerEnum, toX, toZ, true, true))
             {
                 moving = true;
+                moveCount++;
             }
             else
             {
-                
                 speedX = 0;
                 speedZ = 0;
             }
@@ -257,12 +248,17 @@ public class PlayerScript : MonoBehaviour
     }
 
 
-    public void hit()
+    public void hit(bool hitOtherPlayer)
+    {
+        snapToGrid();
+    }
+
+    private void snapToGrid()
     {
         transform.position = new Vector3(gridX, 1, gridZ);
         moving = false;
         speedX = 0;
-        speedZ= 0;
+        speedZ = 0;
     }
 
 
@@ -315,6 +311,7 @@ public class PlayerScript : MonoBehaviour
         {
             //playerAudio.Stop();
             iHaveWon = true;
+            goalCount++;
             cameraScript.setGameState(CameraScript.GameState.WON);
         }
         else if (type == CameraScript.Element.CRATE)
@@ -343,25 +340,29 @@ public class PlayerScript : MonoBehaviour
         if (Input.GetKey(keycode[4])) return true;
         if (myPlayerEnum == CameraScript.Element.PLAYER1)
         {
-            if (Input.GetButtonDown("ArcadeOne0")) return true;
-            if (Input.GetButtonDown("ArcadeOne1")) return true;
-            if (Input.GetButtonDown("ArcadeOne2")) return true;
-            if (Input.GetButtonDown("ArcadeOne3")) return true;
-            if (Input.GetButtonDown("ArcadeOne4")) return true;
-            if (Input.GetButtonDown("ArcadeOne5")) return true;
-            if (Input.GetButtonDown("ArcadeOne6")) return true;
-            if (Input.GetButtonDown("ArcadeOne7")) return true;
+
+            //if (Input.GetButtonDown("ArcadeOne0")) return true;
+
+            if (Input.GetKeyDown("joystick 1 button 0")) return true;
+            if (Input.GetKeyDown("joystick 1 button 1")) return true;
+            if (Input.GetKeyDown("joystick 1 button 2")) return true;
+            if (Input.GetKeyDown("joystick 1 button 3")) return true;
+            if (Input.GetKeyDown("joystick 1 button 4")) return true;
+            if (Input.GetKeyDown("joystick 1 button 5")) return true;
+            if (Input.GetKeyDown("joystick 1 button 6")) return true;
+            if (Input.GetKeyDown("joystick 1 button 7")) return true;
         }
         else
         {
-            if (Input.GetButtonDown("ArcadeTwo0")) return true;
-            if (Input.GetButtonDown("ArcadeTwo1")) return true;
-            if (Input.GetButtonDown("ArcadeTwo2")) return true;
-            if (Input.GetButtonDown("ArcadeTwo3")) return true;
-            if (Input.GetButtonDown("ArcadeTwo4")) return true;
-            if (Input.GetButtonDown("ArcadeTwo5")) return true;
-            if (Input.GetButtonDown("ArcadeTwo6")) return true;
-            if (Input.GetButtonDown("ArcadeTwo7")) return true;
+            //    //if (Input.GetButtonDown("ArcadeTwo0")) return true;
+            if (Input.GetKeyDown("joystick 2 button 0")) return true;
+            if (Input.GetKeyDown("joystick 2 button 1")) return true;
+            if (Input.GetKeyDown("joystick 2 button 2")) return true;
+            if (Input.GetKeyDown("joystick 2 button 3")) return true;
+            if (Input.GetKeyDown("joystick 2 button 4")) return true;
+            if (Input.GetKeyDown("joystick 2 button 5")) return true;
+            if (Input.GetKeyDown("joystick 2 button 6")) return true;
+            if (Input.GetKeyDown("joystick 2 button 7")) return true;
         }
         return false;
     }
@@ -371,20 +372,26 @@ public class PlayerScript : MonoBehaviour
     {
         if (moving) return;
         if (!readyToSpawnCrate) return;
-        if (isButtonPressed())
-        {
-            cameraScript.spawnCrate(gridX, gridZ, gameObject);
-            gridX = startX;
-            gridZ = startZ;
-            hit();
-            readyToSpawnCrate = false;
-            if (grid[gridX, gridZ].getType() == CameraScript.Element.CRATE)
-            {
-                grid[gridX, gridZ].smashCrate();
+        if (isButtonPressed()) spawnCrate(true);
+    }
 
-            }
+
+    public void spawnCrate(bool byButton)
+    {
+        if (byButton) moveCount++;
+        cameraScript.spawnCrate(gridX, gridZ, gameObject);
+        if (grid[gridX, gridZ].isDoor())
+        {
+            cameraScript.toggleDoors();
         }
-  
+        gridX = startX;
+        gridZ = startZ;
+        snapToGrid();
+        readyToSpawnCrate = false;
+        if (grid[gridX, gridZ].getType() == CameraScript.Element.CRATE)
+        {
+            grid[gridX, gridZ].smashCrate();
+        }
     }
 
 
@@ -496,4 +503,7 @@ public class PlayerScript : MonoBehaviour
         }
         //Debug.Log("PlayerScript["+ playerNumber +"].updateArrows(): libertyCount="+ libertyCount);
     }
+
+    public int getMoveCount() { return moveCount; }
+    public int getGoalCount() { return goalCount; }
 }
