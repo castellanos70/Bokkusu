@@ -53,7 +53,7 @@ public class Background_DLA_Script : Background_AbstractScript
            new Color(1.000f, 0.820f, 0.310f)
         }
     };
-    private int paletteSize, paletteCount;
+    private int paletteSize;
 
  
     private float totalSec;
@@ -82,7 +82,6 @@ public class Background_DLA_Script : Background_AbstractScript
             pointList[i] = new Particle();
         }
 
-        paletteCount = palette.GetLength(0);
         paletteSize = palette.GetLength(1);
 
         return texture;

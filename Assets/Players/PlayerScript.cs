@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 
 public class PlayerScript : MonoBehaviour
@@ -7,6 +8,7 @@ public class PlayerScript : MonoBehaviour
 	public GameObject arrow;
 	public Material arrowMaterial;
     public AudioSource playerAudio;
+    public GameObject editBoxPlayerName;
 
     public int playerNumber;
     private static float speedMax = 25;
@@ -51,6 +53,7 @@ public class PlayerScript : MonoBehaviour
     void Start()
     {
         //Debug.Log("PlayerScript.Start(): creating Arrows.");
+
         arrows = new GameObject[4];
 
         for (int i = 0; i < 4; i++)
@@ -141,7 +144,14 @@ public class PlayerScript : MonoBehaviour
     {
         spawnSpotObj.SetActive(true);
         gameObject.SetActive(true);
+        //editBoxPlayerName.SetActive(false);
         moveCount = 0;
+    }
+
+
+    public void showEditBoxForPlayerName()
+    {
+        //editBoxPlayerName.SetActive(true);
     }
 
 

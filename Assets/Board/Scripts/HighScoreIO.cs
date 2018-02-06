@@ -21,7 +21,7 @@ public class HighScoreIO : MonoBehaviour
             Debug.Log(line);
             while (line != null)
             {
-                setHighScope(gameMapList, line);
+                setHighScoreRecord(gameMapList, line);
                 
 
                 line = myReader.ReadLine();
@@ -47,7 +47,8 @@ public class HighScoreIO : MonoBehaviour
             for (int i = 0; i < gameMapList.Length; i++)
             {
                 GameMap map = gameMapList[i];
-                string line = map.getName() + "," + map.getLeastMoves() + "," + map.getFastestTime();
+                string line = map.getLevelName() + "," + map.getLeastMoves() + "," + map.getFastestTime() + "," + map.getPlayerName(1) + "," + map.getPlayerName(2);
+
                 myWriter.WriteLine(line);
 
             }
@@ -58,14 +59,14 @@ public class HighScoreIO : MonoBehaviour
 
 
 
-    private static void setHighScope(GameMap[] gameMapList, string line)
+    private static void setHighScoreRecord(GameMap[] gameMapList, string line)
     {
         string[] fields = line.Split(',');
-        Debug.Log("LevelName=" + fields[0] + ", Moves=" + fields[1] + ", Time=" + fields[2]);
+        //Debug.Log("LevelName=" + fields[0] + ", Moves=" + fields[1] + ", Time=" + fields[2]);
         for (int i=0; i<gameMapList.Length; i++)
         {
             GameMap map = gameMapList[i];
-            if (map.getName().Equals(fields[0]))
+            if (map.getLevelName().Equals(fields[0]))
             {
                
                 int moveCount;
@@ -73,7 +74,8 @@ public class HighScoreIO : MonoBehaviour
                 int.TryParse(fields[1], out moveCount);
                 float.TryParse(fields[2], out levelTime);
 
-                map.setLeader(moveCount, levelTime);
+                map.setLeader(moveCount, levelTime, fields[3], fields[4]);
+                return;
             }
 
         }
