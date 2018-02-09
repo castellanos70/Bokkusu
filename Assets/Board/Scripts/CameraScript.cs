@@ -202,8 +202,8 @@ public class CameraScript : MonoBehaviour
 
         int numCells = 0;
         textNameData.text = gameMap.getLevelName();
-        textScoreData.text = gameMap.getLeastMoves() + " moves in " + gameMap.getFastestTime() + " sec by " +
-            gameMap.getPlayerNames(); ;
+        textScoreData.text = "Leader: " + gameMap.getLeastMoves() + " moves in " + gameMap.getFastestTime() + " sec by " +
+            gameMap.getPlayerNames();
         textCurrentScore.SetActive(true);
         textHighScore.SetActive(true);
 

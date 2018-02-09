@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2017
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bokkusu-411c9619ed79e55c03a40fc8b8b3dd372138ed15", "Bokkusu-411c9619ed79e55c03a40fc8b8b3dd372138ed15.csproj", "{1F1E73F5-4084-F5A8-CAD3-C1A884CBDB1C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1F1E73F5-4084-F5A8-CAD3-C1A884CBDB1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F1E73F5-4084-F5A8-CAD3-C1A884CBDB1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F1E73F5-4084-F5A8-CAD3-C1A884CBDB1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F1E73F5-4084-F5A8-CAD3-C1A884CBDB1C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -47,8 +47,7 @@ public class HighScoreIO : MonoBehaviour
             for (int i = 0; i < gameMapList.Length; i++)
             {
                 GameMap map = gameMapList[i];
-                string line = map.getLevelName() + "," + map.getLeastMoves() + "," + map.getFastestTime() + "," + map.getPlayerName(1) + "," + map.getPlayerName(2);
-
+                string line = map.getLevelName() + "," + map.getLeastMoves() + "," + map.getFastestTime();
                 myWriter.WriteLine(line);
 
             }
@@ -75,7 +74,6 @@ public class HighScoreIO : MonoBehaviour
                 float.TryParse(fields[2], out levelTime);
 
                 map.setLeader(moveCount, levelTime, fields[3], fields[4]);
-                return;
             }
 
         }

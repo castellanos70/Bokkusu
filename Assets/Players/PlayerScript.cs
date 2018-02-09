@@ -53,7 +53,6 @@ public class PlayerScript : MonoBehaviour
     void Start()
     {
         //Debug.Log("PlayerScript.Start(): creating Arrows.");
-
         arrows = new GameObject[4];
 
         for (int i = 0; i < 4; i++)
@@ -148,12 +147,10 @@ public class PlayerScript : MonoBehaviour
         moveCount = 0;
     }
 
-
     public void showEditBoxForPlayerName()
     {
         //editBoxPlayerName.SetActive(true);
     }
-
 
     // Update is called once per main game loop iteration
     void Update()
