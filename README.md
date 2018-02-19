@@ -1,7 +1,7 @@
-# Bokkusu 
+﻿# Bokkusu 
 (http://www.wordhippo.com/what-is/how-do-you-pronounce-the/japanese-word-6e41e14883374d4702a3adbdac62d63b0aafcec1.html)
 
-Albuquerque Game Developers Guild Arcade Cabinet: https://agdg.co/arcade-submission/
+Albuquerque Game Developers Guild Arcade Cabinet: https://agdg.co/arcade-submission/   
 
 <br><b>System Requirements</b><br>
   Run on the Windows 7 or higher operating system.
