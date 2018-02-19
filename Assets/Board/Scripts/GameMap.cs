@@ -68,7 +68,11 @@ public class GameMap
 
     private void generateMap(int width, int height, string[] lines, bool rotate, int mirror)
     {
-        if (rotate)
+        int[] posPlayer1, posPlayer2;
+        posPlayer1 = new int[2];
+        posPlayer2 = new int[2];
+
+        if (rotate && height * 1.5 < width)
         {
             map = new CameraScript.Element[height, width];
 
@@ -86,10 +90,25 @@ public class GameMap
                 string row = lines[j];
                 for (int i = 0; i < row.Length; i++)
                 {
-                    if (mirror == 0) map[j, i] = CameraScript.getElement(row[i]);
-                    else if (mirror == 1) map[height - 1 - j, i] = CameraScript.getElement(row[i]);
-                    else if (mirror == 2) map[j, row.Length - 1 - i] = CameraScript.getElement(row[i]);
-                    else if (mirror == 3) map[height - 1 - j, row.Length - 1 - i] = CameraScript.getElement(row[i]);
+                    CameraScript.Element element = CameraScript.getElement(row[i]);
+                    int[] mapIndex = new int[2];
+                    if (mirror == 0) { mapIndex[0] = j; mapIndex[1] = i; }
+                    else if (mirror == 1) { mapIndex[0] = height - 1 - j; mapIndex[1] = i; }
+                    else if (mirror == 2) { mapIndex[0] = j; mapIndex[1] = row.Length - 1 - i; }
+                    else if (mirror == 3) { mapIndex[0] = height - 1 - j; mapIndex[1] = row.Length - 1 - i; }
+
+                    map[mapIndex[0], mapIndex[1]] = element;
+
+                    if (CameraScript.getElement(row[i]) == CameraScript.Element.PLAYER1)
+                    {
+                        posPlayer1[0] = mapIndex[0];
+                        posPlayer1[1] = mapIndex[1];
+                    }
+                    else if (CameraScript.getElement(row[i]) == CameraScript.Element.PLAYER2)
+                    {
+                        posPlayer2[0] = mapIndex[0];
+                        posPlayer2[1] = mapIndex[1];
+                    }
                 }
             }
         }
@@ -111,12 +130,34 @@ public class GameMap
                 string row = lines[j];
                 for (int i = 0; i < row.Length; i++)
                 {
-                    if (mirror == 0) map[i, j] = CameraScript.getElement(row[i]);
-                    else if (mirror == 1) map[row.Length - 1 - i, j] = CameraScript.getElement(row[i]);
-                    else if (mirror == 2) map[i, height - 1 - j] = CameraScript.getElement(row[i]);
-                    else if (mirror == 3) map[row.Length - 1 - i, height - 1 - j] = CameraScript.getElement(row[i]);
+                    CameraScript.Element element = CameraScript.getElement(row[i]);
+                    int[] mapIndex = new int[2];
+                    if (mirror == 0) { mapIndex[0] = i; mapIndex[1] = j; }
+                    else if (mirror == 1) { mapIndex[0] = row.Length - 1 - i; mapIndex[1] = j; }
+                    else if (mirror == 2) { mapIndex[0] = i; mapIndex[1] = height - 1 - j; }
+                    else if (mirror == 3) { mapIndex[0] = row.Length - 1 - i; mapIndex[1] = height - 1 - j; }
+
+                    map[mapIndex[0], mapIndex[1]] = element;
+
+                    if (CameraScript.getElement(row[i]) == CameraScript.Element.PLAYER1)
+                    {
+                        posPlayer1[0] = mapIndex[0];
+                        posPlayer1[1] = mapIndex[1];
+                    }
+                    else if (CameraScript.getElement(row[i]) == CameraScript.Element.PLAYER2)
+                    {
+                        posPlayer2[0] = mapIndex[0];
+                        posPlayer2[1] = mapIndex[1];
+                    }
                 }
             }
         }
+
+        // switch places if Player 2 is on the left
+        if (posPlayer1[0] > posPlayer2[0])
+        {
+            map[posPlayer1[0], posPlayer1[1]] = CameraScript.Element.PLAYER2;
+            map[posPlayer2[0], posPlayer2[1]] = CameraScript.Element.PLAYER1;
+        }        
     }
 }

@@ -54,4 +54,9 @@ public class CrateScript : MonoBehaviour
     {
         return strength;
     }
+
+    public void Update()
+    {
+        if (Input.GetKey(KeyCode.B)) crateParticles.Emit(10); 
+    }
 }
