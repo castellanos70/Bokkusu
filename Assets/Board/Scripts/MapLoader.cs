@@ -15,7 +15,7 @@ public static class MapLoader : object
         {
             string text = ((TextAsset)mapTexts[i]).text;
             //Debug.Log("Loading map: " + filename);
-			gameMaps [i] = new GameMap (text);
+			gameMaps[i] = new GameMap (text);
 		}
 
 		return gameMaps;

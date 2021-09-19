@@ -66,7 +66,7 @@ public class CameraScript : MonoBehaviour
     private int doorTextureSize = 256;
 
 
-    public enum GameState { INTRO, INITIALIZING, PLAYING, WON, GAME_OVER};
+    public enum GameState { INTRO, INITIALIZING, PLAYING, WON, ENTER_HIGHSCORE, GAME_OVER};
     private GameState gameState;
     private GameMap gameMap;
     private Element[,] startMap;
@@ -201,8 +201,9 @@ public class CameraScript : MonoBehaviour
         gridHeight = startMap.GetLength(1);
 
         int numCells = 0;
-        textNameData.text = gameMap.getName();
-        textScoreData.text = "Leader: " + gameMap.getLeastMoves() + " moves in " + gameMap.getFastestTime() + " sec.";
+        textNameData.text = gameMap.getLevelName();
+        textScoreData.text = gameMap.getLeastMoves() + " moves in " + gameMap.getFastestTime() + " sec by " +
+            gameMap.getPlayerNames(); ;
         textCurrentScore.SetActive(true);
         textHighScore.SetActive(true);
 
@@ -216,7 +217,7 @@ public class CameraScript : MonoBehaviour
             for (int z = 0; z < gridHeight; z++)
             {
                 if (startMap[x, z] == Element.NOTHING) continue;
-                Debug.Log("startMap[" + x + ", " + z + "]=" + startMap[x, z]);
+                //Debug.Log("startMap[" + x + ", " + z + "]=" + startMap[x, z]);
 
                 numCells++;
 
@@ -400,16 +401,6 @@ public class CameraScript : MonoBehaviour
             Application.Quit();
         }
 
-        if (Input.GetKey(KeyCode.Equals))
-        {
-            if (gameState == GameState.PLAYING)
-            {
-                Debug.Log("Advance to Next Level....");
-                //setGameState(GameState.WON);
-                gameState = GameState.WON;
-            }
-        }
-
         backgroundScript.next();
         goalBlock.transform.Rotate(Vector3.up * Time.deltaTime*40);
         backgroundPlane.transform.Rotate(Vector3.up * Time.deltaTime*.5f);
@@ -528,7 +519,7 @@ public class CameraScript : MonoBehaviour
             if (doorToggleSeconds == 0f) doorToggleSeconds = -1f;
         }
 
-        else if (gameState == GameState.WON)
+        else if (gameState == GameState.WON || gameState == GameState.ENTER_HIGHSCORE)
         {
             if (Vector2.Distance(transform.position, eyePositonAboveGoal) > 4)
             {
@@ -541,7 +532,7 @@ public class CameraScript : MonoBehaviour
             }
             else
             {
-                if (!cameraAudio.isPlaying)
+                if (gameState == GameState.WON && !cameraAudio.isPlaying)
                 {
                     curLevel = (curLevel + 1) % gameMapList.Length; 
                     spawnBoard(curLevel);
@@ -645,14 +636,16 @@ public class CameraScript : MonoBehaviour
             string timeStr = playTimeOfLevel.ToString("F1");
 
             int levelMoveCount = playerScript1.getMoveCount() + playerScript2.getMoveCount();
-            textNameData.text = gameMap.getName() + " in " + levelMoveCount + " moves and " + timeStr + " seconds!";
+            textNameData.text = gameMap.getLevelName() + " in " + levelMoveCount + " moves and " + timeStr + " seconds!";
             
             if ((levelMoveCount < gameMap.getLeastMoves()) || (levelMoveCount == gameMap.getLeastMoves() && playTimeOfLevel < gameMap.getFastestTime()))
             {
-                gameMap.setLeader(levelMoveCount, playTimeOfLevel);
-                HighScoreIO.writeHighScores(gameMapList);
+                gameMap.setLeader(levelMoveCount, playTimeOfLevel, "Joel", "");
+                //HighScoreIO.writeHighScores(gameMapList);
                 textEffectHighScore.transform.position = new Vector3(goalBlock.transform.position.x, 1.5f, goalBlock.transform.position.z);
                 textEffectHighScore.Play();
+                playerScript1.showEditBoxForPlayerName();
+                playerScript2.showEditBoxForPlayerName();
             }
             else
             {
